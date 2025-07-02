@@ -34,7 +34,7 @@ app.use(session({
 
 // CORS
 app.use(cors({
-  origin: ["http://localhost:3000", "https://swadhyay.co"],
+  origin: ["http://localhost:3000", "https://swadhyay.onrender.com"],
   credentials: true,
 }));
 
