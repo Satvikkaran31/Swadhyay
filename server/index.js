@@ -5,7 +5,7 @@ import bodyParser from "body-parser";
 import session from 'express-session';
 import path from 'path';
 import { fileURLToPath } from 'url'; // Required for __dirname in ES modules
-import MongoStore from 'connect-mongo';
+
 import calendarRoutes from "./routes/calendarRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
 import authRoutes from './routes/authRoutes.js';
@@ -22,21 +22,18 @@ const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-import session from 'express-session';
-import connectRedis from 'connect-redis';
-import Redis from 'ioredis';
 
-const RedisStore = connectRedis(session);
-const redisClient = new Redis(process.env.REDIS_URL);
-
+const RedisStore = new (connectRedis(session))({
+  client: new Redis(process.env.REDIS_URL),
+});
 app.use(
   session({
-    store: new RedisStore({ client: redisClient }),
+    store: RedisStore,
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: process.env.NODE_ENV === 'production', 
+      secure: process.env.NODE_ENV === 'production',
       httpOnly: true,
       sameSite: 'lax',
     }
