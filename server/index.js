@@ -11,7 +11,8 @@ import paymentRoutes from "./routes/paymentRoutes.js";
 import authRoutes from './routes/authRoutes.js';
 import availabilityRoutes from "./routes/availabilityRoutes.js";
 import { ensureAuthenticated } from "./controllers/auth.js";
-
+import connectRedis from 'connect-redis';
+import Redis from 'ioredis';
 dotenv.config();
 
 const app = express();
@@ -19,22 +20,23 @@ const app = express();
 // Fix for __dirname in ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const RedisStore = connectRedis(session);
+const redisClient = new Redis(process.env.REDIS_URL);
 
 // Session setup
-app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
-  store: MongoStore.create({
-    mongoUrl: process.env.MONGODB_URI, // Add this to your .env
-    collectionName: 'sessions'
-  }),
-  cookie: {
-    secure: false, // true in HTTPS
-    httpOnly: true,
-    sameSite: 'lax',
-  }
-}));
+app.use(
+  session({
+    store: new RedisStore({ client: redisClient }),
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: false, // true if HTTPS
+      httpOnly: true,
+      sameSite: 'lax',
+    }
+  })
+);
 
 
 
