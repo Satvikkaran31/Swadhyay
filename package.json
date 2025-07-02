@@ -1,12 +1,16 @@
 {
   "name": "coaching-app",
   "version": "1.0.0",
-  "description": "Fullstack coaching application",
+  "description": "Fullstack coaching application monorepo",
   "scripts": {
     "install-server": "cd server && npm install",
-    "install-client": "cd client && npm ci", 
-    "build-client": "cd client && npx vite build",
+    "install-client": "cd client && npm install",
+    "build-client": "cd client && npm run build",
     "build": "npm run install-server && npm run install-client && npm run build-client",
-    "start": "cd server && npm start"
+    "start": "cd server && npm start",
+    "dev": "concurrently \"cd server && npm run dev\" \"cd client && npm run dev\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0"
   }
 }
