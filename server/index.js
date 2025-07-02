@@ -5,7 +5,7 @@ import bodyParser from "body-parser";
 import session from 'express-session';
 import path from 'path';
 import { fileURLToPath } from 'url'; // Required for __dirname in ES modules
-
+import MongoStore from 'connect-mongo';
 import calendarRoutes from "./routes/calendarRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
 import authRoutes from './routes/authRoutes.js';
@@ -25,39 +25,41 @@ app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGODB_URI, // Add this to your .env
+    collectionName: 'sessions'
+  }),
   cookie: {
-    secure: false,
+    secure: false, // true in HTTPS
     httpOnly: true,
     sameSite: 'lax',
   }
 }));
 
-// CORS
+
+
 app.use(cors({
   origin: ["http://localhost:3000", "https://swadhyay.onrender.com"],
   credentials: true,
 }));
 
-// Body parser
+
 app.use(bodyParser.json());
 
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use("/api/payment", ensureAuthenticated, paymentRoutes);
-app.use("/api", calendarRoutes);
-app.use("/api", availabilityRoutes);
+app.use("/api/calendar", calendarRoutes);
+app.use("/api/availability", availabilityRoutes);
 
-// -------------------------------
-// Serve frontend (AFTER API ROUTES)
+
+// Serving frontend
 app.use(express.static(path.join(__dirname, '../client/dist')));
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../client/dist', 'index.html'));
 });
-// -------------------------------
 
-// Start server
 app.listen(process.env.PORT || 5000, () =>
   console.log("Server running on port", process.env.PORT || 5000)
 );
-  
