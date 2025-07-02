@@ -13,6 +13,7 @@ import availabilityRoutes from "./routes/availabilityRoutes.js";
 import { ensureAuthenticated } from "./controllers/auth.js";
 import connectRedis from 'connect-redis';
 import Redis from 'ioredis';
+import { createClient } from 'redis';
 dotenv.config();
 
 const app = express();
@@ -20,24 +21,25 @@ const app = express();
 // Fix for __dirname in ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const RedisStore = connectRedis(session);
-const redisClient = new Redis(process.env.REDIS_URL);
 
-// Session setup
-app.use(
-  session({
-    store: new RedisStore({ client: redisClient }),
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      secure: false, // true if HTTPS
-      httpOnly: true,
-      sameSite: 'lax',
-    }
-  })
-);
+const redisClient = createClient({
+  url: process.env.REDIS_URL,
+  legacyMode: true, 
+});
+redisClient.connect().catch(console.error);
 
+//Session with Redis
+app.use(session({
+  store: new RedisStore({ client: redisClient }),
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: process.env.NODE_ENV === "production",
+    httpOnly: true,
+    sameSite: "lax",
+  },
+}));
 
 
 app.use(cors({
