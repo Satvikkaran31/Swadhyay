@@ -1,0 +1,539 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap');
+
+.main{
+  border-bottom-left-radius: 40px;
+  border-bottom-right-radius: 40px;
+  background-color: #ECF5EE;
+}
+.gradient-background {
+  
+  /* background: linear-gradient(135deg, #2A363E, #22304A, #3A2A4E); */
+  /* background: linear-gradient(135deg, #1A2A40, #163650, #2A1A40);
+  background: linear-gradient(135deg, #2A1A40, #1A2A40, #101525);
+  background: linear-gradient(135deg, #251845, #182845, #103030);
+  background: linear-gradient(135deg, #101F2B, #1A1A3A, #153030); */
+  /* background: linear-gradient(135deg, #0D1C1F, #122A2D, #0C2427);
+  background: linear-gradient(135deg, #142225, #1A3033, #132C2F); */
+  background: linear-gradient(135deg, #1D2A2D, #22383B, #1C3437);
+  border-bottom-left-radius: 40px;
+  border-bottom-right-radius: 40px;
+}
+
+.home-section {
+  font-family: "Segoe UI", sans-serif;
+  padding: 0rem 1rem 1rem;
+  /* background-color: #121212; */
+
+  border-bottom-left-radius: 40px;
+  border-bottom-right-radius: 40px;
+  -webkit-box-shadow: 0 4px 6px -6px #222;
+  -moz-box-shadow: 0 4px 6px -6px #222;
+  box-shadow: 0 6px 12px -7px #222;
+  animation: fadeIn 0.5s ease-in-out;
+  /* border: 2px solid red; */
+}
+
+
+
+/* Hero */
+.hero {
+  text-align: center;
+  padding: 1rem 1rem 0rem 1rem ;
+  animation: fadeIn 1s ease-in-out;
+  /* border: 2px solid green; */
+}
+
+.hero h1 {
+  font-family: 'Poppins';
+  font-size: 3rem;
+  font-weight:bold;
+  margin-top: 0rem;
+  color: #E0E7E9;
+}
+
+/* HERO QUOTE */
+.quote-svg-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5rem 0 0 0;  
+  /* border: 2px solid brown; */
+}
+
+.handwriting-svg {
+  height: auto;
+  max-width: 45%;
+  display: block;
+  flex-wrap: wrap;
+  /* border: 2px solid gray; */
+}
+.handwriting-svg path {
+  stroke: #9AE6B4;
+  fill: transparent;
+  stroke-width: 3;
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: draw 0.5s ease forwards;
+  
+  animation-fill-mode: forwards;
+}
+
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+/* --------------------------------------- */
+/* NEHA SHARMA CREDS */
+.typewriter-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: nowrap; 
+  gap: 0.3rem;
+  color: #E0E7E9;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.2rem;
+  white-space: nowrap;
+  padding: 1rem 1rem 0rem 1rem;
+  margin-top: 1rem;
+  font-weight: 500;
+  
+}
+
+.typed-name {
+  font-family: "Poppins",roboto;
+  font-weight: 500;
+  color:#E0E7E9;
+  font-size: 1.3rem; 
+
+}
+
+.suffix-container {
+  position: relative;
+  min-width: 240px; /* Prevent overlap shift */
+  height: 1.6rem;
+}
+
+.suffix {
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  transition: opacity 0.8s ease-in-out;
+  white-space: nowrap;
+}
+.highlight {
+  color: #FF6B6B; /* Customize as needed */
+  font-weight: bold;
+}
+
+.fade-in {
+  opacity: 1;
+}
+.fade-out {
+  opacity: 0;
+}
+/* -------------------------------------------- */
+/* about me button */
+.home-about-me{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* border: 2px solid purple; */
+  padding: 1rem 1rem 2rem 1rem;
+
+}
+.home-about-me-button {
+  padding: 0.5rem 1.5rem;
+  background-color: #1A2B3C;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+
+/* Coaching Info Section */
+.coaching-info {
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: 1fr 1fr 1fr;
+  margin: 0rem 1rem 1rem;
+  padding: 2rem 0rem;
+  border-radius: 40px;
+  animation: fadeIn 0.5s ease-in-out;
+  /* box-shadow:  0 0 20px rgba(168, 221, 193, 0.7);  */
+ 
+}
+
+.info-box, .book-now-box {
+  /* background-color: #f1f5f9; */
+  padding: 1.5rem;
+  border-radius: 30px;
+  transition: transform 0.3s ease;
+  /* border: 3px solid  #2a9d8f  ; */
+  font-size: 1.1rem;
+}
+
+.info-box:hover, .book-now-box:hover {
+  transform: translateY(-5px);
+}
+
+.info-box h2, .book-now-box h2 {
+  font-family: 'Poppins',roboto;
+  color: #E0E7E9;
+  margin-bottom: 0.5rem;
+}
+.info-box, .book-now-box p{
+  font-family: 'Poppins',roboto;
+  color:#E0E7E9 ;
+}
+/* book now button */
+.book-now-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  background-color: #9AE6B4;
+  border: 2px solid #1A2B3C;
+  color: #4A5457;
+  gap: 0.5rem;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  margin: 1rem 0 0 0rem;
+  font-family: 'Poppins',roboto;
+}
+
+.book-now-btn:hover {
+  background-color: #1A2B3C;
+  border-color:#1A2B3C ;
+  color: #E0E7E9;
+}
+
+
+.book-now-btn .text {
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+
+}
+
+.book-now-btn .svg {
+  padding-top: 0px  ;
+  height: 100%;
+  width: fit-content;
+  color: #4A5457;
+
+}
+
+.book-now-btn .svg svg {
+  width: 50px;
+  height: 30px;
+  stroke:#4A5457; 
+  stroke-width:2.5 
+  
+}
+.book-now-btn:hover .svg svg{
+  
+  stroke-width:2.5 ;
+  animation: jello-vertical 0.9s both;
+  transform-origin: left;  
+  stroke:#E0E7E9; 
+}
+
+
+@keyframes jello-vertical {
+  0% { transform: scale3d(1, 1, 1); }
+  30% { transform: scale3d(0.75, 1.25, 1); }
+  40% { transform: scale3d(1.25, 0.75, 1); }
+  50% { transform: scale3d(0.85, 1.15, 1); }
+  65% { transform: scale3d(1.05, 0.95, 1); }
+  75% { transform: scale3d(0.95, 1.05, 1); }
+  100% { transform: scale3d(1, 1, 1); }
+}
+/* ------------------------------------------------------ */
+
+/* Responsive layout for small screens */
+
+@media (max-width: 768px) {
+  .coaching-info {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+@media (max-width: 600px) {
+  .typewriter-wrapper {
+    flex-direction: column;
+    gap: 0.3rem;
+    text-align: center;
+    font-size: 1.1rem;
+  }
+
+  .typed-name {
+    font-size: 1.3rem;
+  }
+
+  .suffix-container {
+    min-width: auto;
+    height: 1.5em;
+  }
+
+  .suffix {
+    left: 50%;
+    transform: translateX(-50%);
+  } .handwriting-svg {
+    max-width: 90vw;
+  }
+
+  .quote-svg-wrapper {
+    padding: 0.5rem;
+  }
+
+}
+
+
+/* Responsive font scaling */
+@media (max-width: 768px) {
+  .typed-name {
+    font-size: 1.2rem;
+  }
+
+  .suffix {
+    font-size: 0.95rem;
+    max-width: 90vw;
+  }
+}
+
+@media (max-width: 480px) {
+  .typed-name {
+    font-size: 1rem;
+  }
+
+  .suffix {
+    font-size: 0.9rem;
+    max-width: 90vw;
+  }
+
+  .typewriter-wrapper {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+}
+
+/* about section */
+.about-section {
+  margin-top: 5rem;
+  padding: 3rem 3rem;
+  background-color: #ECF5EE;
+  color: #333;
+  font-family: 'Segoe UI', sans-serif;
+
+}
+.about-goal {
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  flex-wrap: nowrap;
+  gap: 3rem;
+  flex-direction: row;
+  padding: 1rem;
+  font-family: "Poppins" ,sans-serif;
+  margin-bottom: 2rem;
+}
+.about-goal-left-text{
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+}
+/* .about-goal-left-text-heading{
+  font-size: 4rem;
+  font-family: "Playwrite HU";
+  margin-bottom: 2rem;
+  font-weight: 800;
+  text-decoration: underline ;
+  text-underline-offset:10px ;
+} */
+.about-goal-left-text-heading {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 3px;
+  font-family: 'Playwrite HU', sans-serif; 
+  font-size: 4rem;
+  font-weight: 800;
+  margin-bottom: 2rem;
+}
+
+.about-goal-left-text-heading::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 3rem;
+  width: 40%; 
+  height: 6px; 
+  background-color: #333333;
+  border-radius: 20px; 
+}
+.about-goal-left-text p{
+  margin-top: 0;
+  font-size: 1.2rem;
+}
+.about-goal-left-text h3{
+  font-family: 'Playwrite HU';
+  font-size: 1.5rem;
+  margin-top: 1rem;
+  font-style: italic;
+}
+.about-goal-right-column img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.75rem;
+  object-fit: cover;
+
+}
+/* ABOUT NEHA SHARMA ---------------------------------------------------------------- */
+.about-content {
+  display: grid;
+  grid-template-columns: 3fr 3fr; 
+  gap: 6rem;
+  padding: 0 0 1rem 0;
+  /* border: 2px solid red; */
+  box-shadow:-15px 15px 15px -2px rgba(0, 0, 0, 0.3);
+  animation: fadeIn 0.5s ease-in-out;
+  background-color: white;
+  box-sizing: border-box;
+  border-radius: 20px;
+  margin: 8rem  auto 0rem;
+  max-width: 90%;
+}
+.left-side {
+  display: flex;
+  flex-direction: column  ;
+  
+  justify-content: space-between;
+  gap: 2rem;
+  /* padding: 1rem; */
+
+  border-radius: 20px;
+}
+.left-image {
+  display: flex;
+  flex-direction: column;
+  
+  /* filter: grayscale(1) contrast(1.1); */
+  border-radius: 20px;
+  
+}
+
+.left-image img {
+  width: 100%;
+  /* border-radius: 8px; */
+  background: linear-gradient(to right, #E0D8D0, #C8C4BE, #B0B5AD);
+  /* border: 2px solid gray; */
+  max-height: 400px;
+  filter:none ;
+  border-top-left-radius: 20px;
+}
+.contact-info{
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  gap: 0.5rem;
+  font-size: 1.5rem;
+  font-family: "Playwrite HU", sans-serif;
+  display: flex;
+  align-self: center;
+  
+  font-weight: 600
+}
+.contact-links{
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+.right-text {
+  font-family: 'Poppins',roboto;
+  font-weight: 300;
+  max-height: 80vh; 
+  overflow-y: auto;
+  padding: 1rem 1rem 2rem 1rem;
+  scrollbar-width: thin;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;
+  scroll-behavior: smooth;
+}
+.right-text::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+.right-text h1{
+  font-family: "Playwrite HU";
+  padding: 3rem 0 1rem 0 ;
+  font-size: 3.1rem;
+}
+.right-text h3{
+  font-family: "Playwrite HU";
+  padding: 0.5rem 0;
+}
+/* -------------------------------------------------------------------------- */
+
+@media (max-width: 768px) {
+  .about-section{
+    padding: 0.5rem;
+  }
+.about-goal-left-text h3{
+  font-size: 1.1rem;
+  font-family: 'Playwrite HU';
+  margin-top: 1rem;
+  font-style: italic;
+}
+  .about-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+  }
+
+  .left-image img {
+    max-width: 100%;
+    border-top-right-radius: 20px;
+  }
+
+  .right-text {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  /* border: 2px solid green; */
+  padding: 1rem;
+  overflow: auto;
+
+}
+
+  .about-goal {
+    flex-direction: column;
+    padding: 2rem 1.5rem;
+  }
+
+  .about-goal-left-text h1 {
+    font-size: 2rem;
+    text-align: center;
+  }
+
+  .about-goal-left-text p {
+    font-size: 1rem;
+  }
+
+  .first-image{
+    display: none;
+  }
+}
+@media (max-width: 600px) {
+  .about-goal-left-text-heading::after {
+    left: 0;
+    width: 60%;
+  }
+}

@@ -1,0 +1,225 @@
+@import url('https://fonts.googleapis.com/css2?family=Sacramento&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Sacramento&display=swap');
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  padding: 0.25rem 1rem 0.25rem;
+
+
+/* Light transparent background */
+  /* border: 2px solid aquamarine;  */
+  /* transition: all 0.3s ease-in-out , transform 0.3s ease-in-out; */
+  transform-origin: top center;
+  transition: all 0.4 ease;
+}
+
+.nav-container {
+  display: flex;
+  flex-direction: row;
+  justify-content:space-between ;
+  align-items: center;
+  padding: 0.5rem 0 0.5rem 0;
+}
+
+.nav-logo {
+  font-size: 2.6rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color:#E0E7E9 ;
+  font-family: 'Sacramento', cursive; /* Custom font */
+  font-style: normal;
+   font-size: 2.6rem;
+  transition: font-size 0.4s ease, transform 0.4s ease, opacity 0.4s ease;
+  opacity: 1;
+  transform: scale(1);
+}
+
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.nav-links a,
+.nav-link-btn {
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.5rem;
+  color: #E0E7E9; 
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.3s ease, transform 0.2s ease;
+  font-family:'Poppins', sans-serif; /* Default font */
+  padding: 0; 
+  line-height: normal; 
+  -webkit-appearance: none; /* For WebKit/Safari default button styles */
+  -moz-appearance: none;    /* For Firefox default button styles */
+  appearance: none;         /* Standard property */
+ 
+}
+
+.nav-links a:hover,
+.nav-link-btn:hover {/* Indigo hover */
+  transform: translateY(-2px);
+}
+.profile-pic {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #2a9d8f;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  position: relative;
+}
+
+.dropdown-menu {
+  position: absolute;
+  right: 0;
+  top: 45px;
+  background-color: #222;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+  z-index: 1000;
+  text-align: right;
+}
+
+.user-name {
+  font-size: 1rem;
+  color: #f5f5f5;
+  margin-bottom: 0.5rem;
+}
+
+.logout-btn {
+  background: #e63946;
+  border: none;
+  padding: 0.5rem 1.25rem;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.logout-btn:hover {
+  background: #c9182b;
+}
+/* shrink */
+ @keyframes scale-down-center {
+  0% {
+    transform: translateX(-50%) scale(0.1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-50%) translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+@keyframes scale-up-center {
+  0% {
+    transform: translateX(0) scale(0.5);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+.navbar.shrink {
+  position: fixed;
+  top: 1rem;
+  left: 50%;
+  transform: translateX(-50%) scale(0.5);
+  transform-origin: center  ;
+  border-radius: 30px;
+  padding: 0.5rem 1rem;
+  box-shadow: 0 10px 27px rgba(0, 0, 0, 0.3);
+  background: rgba(18, 53, 36, 0.4);; /* Green tint + transparency */
+  backdrop-filter: blur(10px);      /* Blur effect */
+  -webkit-backdrop-filter: blur(10px);
+  animation: scale-down-center 0.4s cubic-bezier(.25,.46,.45,.94) forwards;
+
+}
+
+
+.navbar.expand{
+  position: sticky;
+  top: 0;
+  left: 0;
+  animation: scale-up-center 0.3s cubic-bezier(.25,.46,.45,.94) forwards;
+}
+.navbar.shrink .nav-links a,
+.navbar.shrink .nav-link-btn {
+  font-size: 1.3rem;
+  color:white ; /* Deep gray */
+  transition: font-size 0.8s ease, color 0.8s ease;
+
+}
+.navbar.shrink .profile-pic{
+  display: none;
+}
+  .navbar.shrink .login-button{
+  display: none;
+}
+/* ------------------------------------------- */
+/* LOGIN BUTTON */
+.login-button {
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.5rem;
+  color: #FF6B6B; 
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.1s ease, transform 0.2s ease;
+  font-family:'Poppins', sans-serif; /* Default font */
+  padding: 0; 
+  line-height: normal; 
+  -webkit-appearance: none; /* For WebKit/Safari default button styles */
+  -moz-appearance: none;    /* For Firefox default button styles */
+  appearance: none;         /* Standard property */
+  
+}
+.login-button:hover{
+  transform: translateY(-2px);
+}
+
+/* -------------------------------------------- */
+
+/* Mobile friendly */
+@media (max-width: 768px) {
+  .nav-container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+   .navbar.shrink{
+    max-width: 90%;
+  }
+  .navbar.shrink :first-child{
+    margin-left: 0;
+  }
+  .navbar.shrink .nav-links a,
+  .navbar.shrink .nav-link-btn {
+    font-size: 1rem;
+  }
+  .navbar{
+    padding: 0.5rem 1.5rem;
+  }
+  .nav-links a,
+  .nav-link-btn,.login-button {
+    font-size: 1.1rem;         /* Standard property */
+  }
+}
+@media (max-width:370px){
+  .profile-pic{
+    width: 1rem;
+    height: 1rem;
+    
+  }
+}

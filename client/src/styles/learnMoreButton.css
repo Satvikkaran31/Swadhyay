@@ -1,0 +1,63 @@
+.learnmore {
+  --clr: #9AE6B4; /* Light mint green to match quote stroke */
+  line-height: 1;
+  text-decoration: none;
+  display: inline-flex;
+  border: none;
+  cursor: pointer;
+  align-items: center;
+  gap: 0.75rem;
+  background-color: var(--clr);
+  color: #1A2B3C;
+  border-radius: 10rem;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  padding-left: 20px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: background-color 0.3s, color 0.3s;
+  font-size: 1rem;
+  
+}
+
+.learnmore__icon-wrapper {
+  flex-shrink: 0;
+  width: 1.5rem;
+  height: 1.5rem;
+  position: relative;
+  color: var(--clr);
+  background-color: #1A2B3C; /* Matches your site buttons */
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.learnmore:hover {
+  background-color: #1A2B3C; /* Darker mint/green-blue */
+  color: #E0E7E9; /* Light text */
+}
+
+.learnmore:hover .learnmore__icon-wrapper {
+  color: #1A2B3C; /* dark text/icon on mint background */
+  background-color: #9AE6B4; /* mint color on hover */
+}
+.learnmore__icon-svg--copy {
+  position: absolute;
+  transform: translate(-150%, 150%);
+}
+
+.learnmore:hover .learnmore__icon-svg:first-child {
+  transition: transform 0.3s ease-in-out;
+  transform: translate(150%, -150%);
+}
+
+.learnmore:hover .learnmore__icon-svg--copy {
+  transition: transform 0.3s ease-in-out 0.1s;
+  transform: translate(0);
+}
+
+
+
+/* CONTACT ME PAGE  */

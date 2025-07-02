@@ -1,0 +1,54 @@
+.teams-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.teams-modal-container {
+  position: relative;
+  width: 90%;
+  max-width: 900px;
+  height: 90%;
+  background-color: white;
+  border-radius: 1rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.teams-modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: #ff5f5f;
+  color: white;
+  border: none;
+  border-radius: 999px;
+  width: 32px;
+  height: 32px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.teams-modal-heading {
+  padding: 1rem 1.5rem 0.5rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1d4ed8;
+  text-align: center;
+}
+
+.iframe-wrapper {
+  flex: 1;
+  overflow: hidden;
+}
