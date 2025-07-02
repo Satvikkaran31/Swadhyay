@@ -22,25 +22,26 @@ const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const redisClient = createClient({
-  url: process.env.REDIS_URL,
-  legacyMode: true, 
-});
-redisClient.connect().catch(console.error);
+import session from 'express-session';
+import connectRedis from 'connect-redis';
+import Redis from 'ioredis';
 
-//Session with Redis
-app.use(session({
-  store: new RedisStore({ client: redisClient }),
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    secure: process.env.NODE_ENV === "production",
-    httpOnly: true,
-    sameSite: "lax",
-  },
-}));
+const RedisStore = connectRedis(session);
+const redisClient = new Redis(process.env.REDIS_URL);
 
+app.use(
+  session({
+    store: new RedisStore({ client: redisClient }),
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: process.env.NODE_ENV === 'production', 
+      httpOnly: true,
+      sameSite: 'lax',
+    }
+  })
+);
 
 app.use(cors({
   origin: ["http://localhost:3000", "https://swadhyay.onrender.com"],
