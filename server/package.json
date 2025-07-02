@@ -16,6 +16,7 @@
     "@microsoft/microsoft-graph-client": "^3.0.7",
     "body-parser": "^2.2.0",
     "connect-mongo": "^5.1.0",
+    "connect-pg-simple": "^10.0.0",
     "connect-redis": "^9.0.0",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
@@ -23,12 +24,12 @@
     "express": "^5.1.0",
     "express-session": "^1.18.1",
     "googleapis": "^150.0.1",
-    "ioredis": "^5.6.1",
     "isomorphic-fetch": "^3.0.0",
     "luxon": "^3.6.1",
     "nodemailer": "^7.0.3",
     "pg": "^8.16.3",
-    "razorpay": "^2.9.6"
+    "razorpay": "^2.9.6",
+    "redis": "^5.5.6"
   },
   "devDependencies": {
     "nodemon": "^3.1.10"
