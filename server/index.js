@@ -30,7 +30,7 @@ const { Pool } = pkg;
 const pgPool = new Pool({
   connectionString: process.env.POSTGRES_URL,
   ssl: {
-    rejectUnauthorized: false, // Render PostgreSQL requires SSL
+    rejectUnauthorized: false, // Render  SSL
   },
 });
 
@@ -39,13 +39,13 @@ app.use(
   session({
     store: new PGStore({
       pool: pgPool,
-      tableName: "user_sessions", // Optional: customize session table name
+      tableName: "user_sessions", 
     }),
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: process.env.NODE_ENV === "production", // true on Render
+      secure: process.env.NODE_ENV === "production", 
       httpOnly: true,
       sameSite: "lax",
     },
@@ -55,7 +55,7 @@ app.use(
 // CORS (Allow frontend)
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://swadhyay.onrender.com"],
+    origin: ["http://localhost:3000", "https://swadhyay-pa3f.onrender.com"],
     credentials: true,
   })
 );
