@@ -40,6 +40,7 @@ app.use(
     store: new PGStore({
       pool: pgPool,
       tableName: "user_sessions", 
+      createTableIfMissing: true, // Create table if it doesn't exist
     }),
     secret: process.env.SESSION_SECRET,
     resave: false,
@@ -80,5 +81,5 @@ app.get("/{*any}", (req, res) => {
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, "0.0.0.0", () => {
-  console.log(`🚀 Server running on http://0.0.0.0:${PORT}`);
+  console.log(`Server running on http://0.0.0.0:${PORT}`);
 });

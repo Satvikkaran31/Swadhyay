@@ -41,10 +41,11 @@ router.post('/logout', (req, res) => {
 
     // Clear the cookie in the browser
     res.clearCookie('connect.sid', {
-      path: '/',
-      httpOnly: true,
-      sameSite: 'lax'
-    });
+    path: '/',
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === "production", // Set secure flag in production
+  });
 
     res.json({ success: true });
   });
