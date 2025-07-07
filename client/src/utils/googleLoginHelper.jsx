@@ -4,7 +4,6 @@ import axios from 'axios';
 
 export function useTriggerGoogleLogin(setUser, navigateTo = "/") {
   return useGoogleLogin({
-    flow: 'auth-code',
     onSuccess: async (tokenResponse) => {
       try {
         // 1. Get user info from Google
