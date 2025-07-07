@@ -22,13 +22,16 @@ export function useTriggerGoogleLogin(setUser, navigateTo = "/") {
         localStorage.setItem("user", JSON.stringify(userWithToken));
         localStorage.setItem("auth_token", tokenResponse.access_token);
 
-        // ✅ 4. Send token to backend to establish session
-        await axios.post("http://localhost:5000/api/auth/google", {
-          token: tokenResponse.access_token
-        }, {
-          withCredentials: true // 🔐 important to send session cookie back
-        });
+        // 4. Send token to backend to establish session
+        const apiBase = import.meta.env.PROD
+        ? "https://swadhyay-pa3f.onrender.com"
+        : "http://localhost:5000";
 
+        await axios.post(`${apiBase}/api/auth/google`, {
+        token: tokenResponse.access_token
+        }, {
+        withCredentials: true
+        });
         // 5. Navigate after session is established
         window.location.href = navigateTo;
       } catch (err) {
