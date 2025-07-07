@@ -62,7 +62,7 @@ router.get('/availability', async (req, res) => {
       end: DateTime.fromISO(ev.end.dateTime, { zone: "Asia/Kolkata" })
     }));
 
-    // Step 3: Filter allowed slots against the busy time ranges
+    //  Filter allowed slots against the busy time ranges
     const availableSlots = allowedSlots.filter(timeStr => {
       const slotStart = date.set({
         hour: parseInt(timeStr.split(":")[0]),
