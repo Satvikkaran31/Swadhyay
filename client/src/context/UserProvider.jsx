@@ -1,25 +1,61 @@
-import React, { useState, useEffect } from "react";
-import { UserContext } from "./UserContext";
+  // context/UserProvider.jsx
+  import React, { createContext, useContext, useState, useEffect } from 'react';
+  import { authHelpers } from '../utils/googleLoginHelper';
 
-const UserProvider = ({ children }) => {
-  const [user, setUser] = useState(() => {
-    const stored = localStorage.getItem("user");
-    return stored ? JSON.parse(stored) : null;
-  });
+  export const UserContext = createContext();
 
-  useEffect(() => {
-    if (user) {
-      localStorage.setItem("user", JSON.stringify(user));
-    } else {
-      localStorage.removeItem("user");
+  export function UserProvider({ children }) {
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    // Check authentication status on app load
+    useEffect(() => {
+      checkAuthStatus();
+    }, []);
+
+    const checkAuthStatus = async () => {
+      try {
+        const userData = await authHelpers.checkAuth();
+        setUser(userData);
+      } catch (error) {
+        console.error('Auth check failed:', error);
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const logout = async () => {
+      try {
+        await authHelpers.logout();
+        setUser(null);
+        window.location.href = '/'; // Redirect to home
+      } catch (error) {
+        console.error('Logout failed:', error);
+      }
+    };
+
+    const value = {
+      user,
+      setUser,
+      loading,
+      logout,
+      checkAuthStatus
+    };
+
+    return (
+      <UserContext.Provider value={value}>
+        {children}
+      </UserContext.Provider>
+    );
+  }
+
+  export const useUser = () => {
+    const context = useContext(UserContext);
+    if (!context) {
+      throw new Error('useUser must be used within a UserProvider');
     }
-  }, [user]);
+    return context;
+  };
 
-  return (
-    <UserContext.Provider value={{ user, setUser }}>
-      {children}
-    </UserContext.Provider>
-  );
-};
-
-export default UserProvider;
+  export default UserProvider;

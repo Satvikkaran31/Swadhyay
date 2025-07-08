@@ -6,18 +6,16 @@ import LoginButton from "./LoginButton";
 import RazorpayButton from "./RazorpayButton";
 import { UserContext } from "../context/UserContext";
 import { useTriggerGoogleLogin } from "../utils/googleLoginHelper";
-import axios from "axios";
-
-// 🌐 Use environment-aware API base
-const apiBase = import.meta.env.PROD
-  ? "https://swadhyay-pa3f.onrender.com"
-  : "http://localhost:5000";
+import { useUser } from "../context/UserProvider"; // Use the new context hook
 
 export default function Navbar({ aboutRef }) {
   const [showModal, setShowModal] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [shrink, setShrink] = useState(false);
-  const { user, setUser } = useContext(UserContext);
+  
+  // Updated: Use the new context with logout function
+  const { user, setUser, logout } = useUser();
+  
   const dropdownRef = useRef(null);
   const location = useLocation();
   const observerRef = useRef(null);
@@ -62,19 +60,14 @@ export default function Navbar({ aboutRef }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Updated: Simplified logout using context method
   const handleLogout = async () => {
     try {
-      await axios.post(`${apiBase}/api/auth/logout`, {}, {
-        withCredentials: true,
-      });
+      await logout(); // This handles backend logout + local state clearing
+      setDropdownOpen(false);
     } catch (err) {
       console.error("Error during logout:", err);
     }
-
-    localStorage.removeItem("auth_token");
-    localStorage.removeItem("user");
-    setUser(null);
-    setDropdownOpen(false);
   };
 
   // Smooth scroll to section by ID

@@ -2,7 +2,7 @@
 import { useGoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
 import { useContext } from 'react';
-import { UserContext } from '../context/UserContext.jsx';
+import { UserContext } from '../context/UserProvider.jsx';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Navbar.css';
 import { useTriggerGoogleLogin } from '../utils/googleLoginHelper.jsx';
