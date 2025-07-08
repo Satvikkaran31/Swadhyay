@@ -33,6 +33,12 @@ const pgPool = new Pool({
     rejectUnauthorized: false, // Render  SSL
   },
 });
+app.use(
+  cors({
+    origin: [ "https://swadhyay-pa3f.onrender.com","http://localhost:3000",],
+    credentials: true,
+  })
+);
 
 // Session middleware
 app.use(
@@ -54,12 +60,6 @@ app.use(
 );
 
 // CORS (Allow frontend)
-app.use(
-  cors({
-    origin: ["http://localhost:3000", "https://swadhyay-pa3f.onrender.com"],
-    credentials: true,
-  })
-);
 
 // Body parser
 app.use(bodyParser.json());
