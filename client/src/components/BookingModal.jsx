@@ -1,11 +1,12 @@
 import { useContext, useEffect, useState } from "react";
-import { UserContext } from "../context/UserProvider";
+import { UserContext } from "../context/UserContext";
 import axios from "axios";
 import "../styles/BookingModal.css";
 import TeamsBookingModal from "./TeamsBookingModal";
 
 export default function BookingModal({ onClose }) {
   const { user } = useContext(UserContext);
+
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -14,14 +15,11 @@ export default function BookingModal({ onClose }) {
     sessionType: "one-on-one",
     meetingType: "google",
   });
+
   const [loading, setLoading] = useState(false);
   const [showTeamsModal, setShowTeamsModal] = useState(false);
   const [availableSlots, setAvailableSlots] = useState([]);
-
-  // Detect backend base URL
-  const apiBase = import.meta.env.PROD
-    ? "https://swadhyay-pa3f.onrender.com"
-    : "http://localhost:5000";
+  const [slotsError, setSlotsError] = useState(null);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -40,15 +38,17 @@ export default function BookingModal({ onClose }) {
   const handleDateChange = async (e) => {
     const selectedDate = e.target.value;
     setForm({ ...form, date: selectedDate });
+    setSlotsError(null);
+    setAvailableSlots([]);
 
     try {
-      const res = await axios.get(`${apiBase}/api/availability?date=${selectedDate}`, {
-        withCredentials: true,
-      });
-      setAvailableSlots(res.data.slots);
+      const res = await axios.get(
+        `${import.meta.env.PROD ? "https://swadhyay-pa3f.onrender.com" : "http://localhost:5000"}/api/availability?date=${selectedDate}`
+      );
+      setAvailableSlots(res.data.slots || []);
     } catch (err) {
       console.error("Failed to load slots:", err);
-      setAvailableSlots([]);
+      setSlotsError("Could not load available slots.");
     }
   };
 
@@ -69,13 +69,14 @@ export default function BookingModal({ onClose }) {
     }
 
     try {
-      const res = await axios.post(`${apiBase}/api/book`, form, {
-        withCredentials: true,
-      });
+      const res = await axios.post(
+        `${import.meta.env.PROD ? "https://swadhyay-pa3f.onrender.com" : "http://localhost:5000"}/api/book`,
+        form,
+        { withCredentials: true }
+      );
       alert("Session booked! Meeting link sent to your email.");
       onClose();
     } catch (err) {
-      console.error("Booking failed:", err);
       alert("Booking failed.");
     } finally {
       setLoading(false);
@@ -85,12 +86,27 @@ export default function BookingModal({ onClose }) {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-container" onClick={(e) => e.stopPropagation()}>
-        <button className="modal-close" onClick={onClose}>✖</button>
+        <button className="modal-close" onClick={onClose}>
+          ✖
+        </button>
         <h2>Book a Session</h2>
         <form onSubmit={handleSubmit}>
-          <input type="text" name="name" value={form.name} placeholder="Your Name" onChange={handleChange} required />
-          <input type="email" name="email" value={form.email} placeholder="Email" onChange={handleChange} required />
-
+          <input
+            type="text"
+            name="name"
+            value={form.name}
+            placeholder="Your Name"
+            onChange={handleChange}
+            required
+          />
+          <input
+            type="email"
+            name="email"
+            value={form.email}
+            placeholder="Email"
+            onChange={handleChange}
+            required
+          />
           <input
             type="date"
             name="date"
@@ -102,39 +118,52 @@ export default function BookingModal({ onClose }) {
 
           <select name="time" value={form.time} onChange={handleChange} required>
             <option value="">Select a time</option>
-            {availableSlots.map((slot) => (
-              <option key={slot} value={slot}>{slot}</option>
-            ))}
+            {Array.isArray(availableSlots) && availableSlots.length === 0 && (
+              <option disabled>— No slots available —</option>
+            )}
+            {Array.isArray(availableSlots) &&
+              availableSlots.map((slot) => (
+                <option key={slot} value={slot}>
+                  {slot}
+                </option>
+              ))}
           </select>
 
-          <select name="sessionType" value={form.sessionType} onChange={handleChange}>
+          <select
+            name="sessionType"
+            value={form.sessionType}
+            onChange={handleChange}
+          >
             <option value="one-on-one">One-on-One Coaching</option>
             <option value="eft">EFT Coaching</option>
           </select>
 
           <label>Meeting Platform:</label>
-          <select name="meetingType" value={form.meetingType} onChange={handleChange}>
+          <select
+            name="meetingType"
+            value={form.meetingType}
+            onChange={handleChange}
+          >
             <option value="google">Google Meet</option>
           </select>
 
           <button type="submit" disabled={loading}>
             {loading ? "Processing..." : "Book Now"}
           </button>
-
           <span>OR</span>
           <button
             className="Teams"
             type="button"
             onClick={() => setShowTeamsModal(true)}
           >
-            Book Teams
+             Book Teams
           </button>
 
           {showTeamsModal && (
             <TeamsBookingModal onClose={() => setShowTeamsModal(false)} />
           )}
-
           {loading && <div className="loader"></div>}
+          {slotsError && <p className="error">{slotsError}</p>}
         </form>
       </div>
     </div>
