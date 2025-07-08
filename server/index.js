@@ -55,7 +55,7 @@ app.use(
     cookie: {
       secure: process.env.NODE_ENV === "production" ? true : false, // Use secure cookies in production
       httpOnly: true,
-      sameSite: process.env.NODE_ENV === "production" ? "lax" : "false", //false works in dev mode :)
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "false", //false works in dev mode :)
     },
   })
 );
