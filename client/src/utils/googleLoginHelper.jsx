@@ -24,7 +24,6 @@ export function useTriggerGoogleLogin(setUser, navigateTo = "/", navigate) {
         setUser(userData);
 
         console.log('Login successful:', userData);
-        // Navigate after successful login
         navigate(navigateTo);
 
       } catch (err) {

@@ -70,7 +70,7 @@ export default function BookingModal({ onClose }) {
 
     try {
       const res = await axios.post(
-        `${import.meta.env.PROD ? "https://swadhyay-pa3f.onrender.com" : "http://localhost:5000"}/api/book`,
+        `${import.meta.env.PROD ? "https://swadhyay-pa3f.onrender.com" : "http://localhost:5000"}/api/calendar/book`,
         form,
         { withCredentials: true }
       );
@@ -116,7 +116,7 @@ export default function BookingModal({ onClose }) {
             required
           />
 
-          <select name="time" value={form.time} onChange={handleChange} required>
+          <select name="time" value={form.time} onChange={handleChange} >
             <option value="">Select a time</option>
             {Array.isArray(availableSlots) && availableSlots.length === 0 && (
               <option disabled>— No slots available —</option>

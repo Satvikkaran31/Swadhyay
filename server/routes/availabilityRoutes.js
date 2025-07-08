@@ -4,7 +4,7 @@ import { DateTime } from 'luxon';
 
 const router = express.Router();
 
-router.get('/availability', async (req, res) => {
+router.get('/', async (req, res) => {
   const dateStr = req.query.date;
   if (!dateStr) {
     return res.status(400).json({ error: "Missing 'date' query parameter." });
@@ -46,16 +46,16 @@ router.get('/availability', async (req, res) => {
   const endOfDay = encodeURIComponent(endOfDayISO);
 // --------------------------------------------------------
 
-// console.log("Encoded string being sent:", startOfDay);
   try {
+    console.log("Calling Graph for events for:", process.env.ADMIN_EMAIL);
     const events = await graphClient
       .api(`/users/${process.env.ADMIN_EMAIL}/calendarView`)
-      .header("Prefer", 'outlook.timezone="Asia/Kolkata"') // Good practice: ensures start/end times are in your local timezone
+      .header("Prefer", 'outlook.timezone="Asia/Kolkata"') 
       .query({ startDateTime: startOfDay, endDateTime: endOfDay })
       .select("start,end")
       .orderby("start/dateTime")
       .get();
-      console.log("Events returned from Graph:", events);
+      console.log("Events returned from Graph:", events); 
     // Map busy events to Luxon DateTime ranges for easy comparison
     const busyRanges = events.value.map(ev => ({
       start: DateTime.fromISO(ev.start.dateTime, { zone: "Asia/Kolkata" }),
@@ -73,7 +73,7 @@ router.get('/availability', async (req, res) => {
       const slotEnd = slotStart.plus({ minutes: 30 });
 
       // A slot is unavailable if it overlaps with ANY busy event.
-      // The overlap logic (start < ev.end && end > ev.start) is correct.
+      
       const isOverlapping = busyRanges.some(busyEvent =>
         slotStart < busyEvent.end && slotEnd > busyEvent.start
       );
