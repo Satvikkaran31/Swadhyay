@@ -2,17 +2,18 @@ import { google } from "googleapis";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 import axios from "axios";
+import { DateTime } from "luxon";
 
 dotenv.config();
 
-// Setup Google OAuth client
+// Google OAuth setup
 const oauth2Client = new google.auth.OAuth2(
   process.env.GOOGLE_CLIENT_ID,
   process.env.GOOGLE_CLIENT_SECRET,
   process.env.REDIRECT_URI
 );
-
 oauth2Client.setCredentials({ refresh_token: process.env.REFRESH_TOKEN });
+
 const calendar = google.calendar({ version: "v3", auth: oauth2Client });
 
 // Nodemailer setup
@@ -32,18 +33,28 @@ export const bookSession = async (req, res) => {
   }
 
   try {
-    const dateTime = new Date(`${date}T${time}`);
-    const endTime = new Date(dateTime.getTime() + 60 * 60 * 1000); // 1 hour session
+    // ✅ Correct time construction in Asia/Kolkata
+    const dateTime = DateTime.fromISO(`${date}T${time}`, { zone: "Asia/Kolkata" });
+    const endTime = dateTime.plus({ hours: 1 });
     let meetLink;
 
-    // 1. ✅ Create Google Meet event
+    // ✅ 1. Create Google Calendar Event (Google Meet)
     if (meetingType === "google") {
       const event = {
         summary: `${sessionType} with ${name}`,
         description: `Platform: Google Meet\nType: ${sessionType}`,
-        start: { dateTime: dateTime.toISOString(), timeZone: "Asia/Kolkata" },
-        end: { dateTime: endTime.toISOString(), timeZone: "Asia/Kolkata" },
-        attendees: [{ email }, { email: process.env.ADMIN_EMAIL }],
+        start: {
+          dateTime: dateTime.toISO(),
+          timeZone: "Asia/Kolkata",
+        },
+        end: {
+          dateTime: endTime.toISO(),
+          timeZone: "Asia/Kolkata",
+        },
+        attendees: [
+          { email },
+          { email: process.env.ADMIN_EMAIL }
+        ],
         conferenceData: {
           createRequest: {
             requestId: `meet-${Date.now()}`,
@@ -59,15 +70,11 @@ export const bookSession = async (req, res) => {
       });
 
       meetLink = response?.data?.hangoutLink;
-
-      if (!meetLink) {
-        throw new Error("Google Meet link could not be created.");
-      }
-
+      if (!meetLink) throw new Error("Google Meet link could not be created.");
       console.log("✅ Google Meet link:", meetLink);
     }
 
-    // 2. ✅ Send email
+    // ✅ 2. Send confirmation email
     await transporter.sendMail({
       from: process.env.MAIL_USER,
       to: [email, process.env.ADMIN_EMAIL],
@@ -85,7 +92,7 @@ export const bookSession = async (req, res) => {
 
     console.log("✅ Confirmation email sent.");
 
-    // 3. ✅ Create Outlook calendar event (mirror event)
+    // ✅ 3. Mirror Event in Outlook
     try {
       const tokenRes = await axios.post(
         "https://login.microsoftonline.com/common/oauth2/v2.0/token",
@@ -107,11 +114,11 @@ export const bookSession = async (req, res) => {
         {
           subject: `${sessionType} with ${name}`,
           start: {
-            dateTime: dateTime.toISOString(),
+            dateTime: dateTime.toISO(),
             timeZone: "Asia/Kolkata",
           },
           end: {
-            dateTime: endTime.toISOString(),
+            dateTime: endTime.toISO(),
             timeZone: "Asia/Kolkata",
           },
           attendees: [
@@ -148,7 +155,7 @@ export const bookSession = async (req, res) => {
       console.error("❌ Outlook calendar error:", msError.response?.data || msError.message);
     }
 
-    // 4. ✅ Final response
+    // ✅ 4. Final response
     res.status(200).json({ success: true, meetLink });
   } catch (err) {
     console.error("❌ Booking Error:", {
