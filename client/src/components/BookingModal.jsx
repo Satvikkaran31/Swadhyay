@@ -148,7 +148,7 @@ export default function BookingModal({ onClose }) {
           </select>
 
           <button type="submit" disabled={loading}>
-            {loading ? "Processing..." : "Book Now"}
+            {loading ? "Processing..." : "Book "}
           </button>
           <span>OR</span>
           <button

@@ -47,18 +47,19 @@ router.post('/google', async (req, res) => {
       verified: payload.email_verified,
     };
 
-    // Store user in session
-    req.session.user = user;
-    
-    // Optionally store tokens in session for API calls
-    req.session.tokens = tokens;
+  req.session.user = user;
+  req.session.tokens = tokens;
 
-    console.log('Session user set:', req.session.user);
+// Ensure session is saved before sending response
+  req.session.save((err) => {
+  if (err) {
+    console.error('Failed to save session:', err);
+    return res.status(500).json({ error: 'Session not saved' });
+  }
 
-    res.json({ 
-      success: true, 
-      user: req.session.user 
-    });
+  console.log('Session saved:', req.session.user);
+  res.json({ success: true, user: req.session.user });
+});
 
   } catch (error) {
     console.error('Google auth error:', error);

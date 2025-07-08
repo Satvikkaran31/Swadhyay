@@ -225,7 +225,7 @@ useEffect(() => {
       </div>
       </div>
       <div className="right-text" id="right-text">
-         <h1>About Neha Sharma</h1>
+         <h1>About Neha </h1>
       
       <p>
         Neha has built strong partnerships with executives, senior leadership teams, and organizations to drive impactful transformations in leadership, strategy, and sustainable growth. Through her work with Boards and senior teams, she has played a key role in guiding leadership transitions, executive development, and board effectiveness in complex and evolving business environments.

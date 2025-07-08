@@ -55,6 +55,7 @@
   padding: 0.8rem;
   border-radius: 8px;
   font-size: 1rem;
+  font-weight: 500;
   cursor: pointer;
   transition: background-color 0.2s ease;
   font-family: "Poppins",sans-serif;
@@ -63,7 +64,8 @@
 .modal-container button[type="submit"]:hover {
   background-color: #21867a;
   /* transform: scale(1.1); */
-  transform: scale(1.1)
+  transform: scale(1.1);
+  
 }
 
 .modal-close {
@@ -117,6 +119,8 @@
  border-radius: 6px;
  cursor: pointer;
  font-size: 1rem;
+ padding: 0.74rem 1rem;
+  
 }
 .Teams:hover{
   transform: scale(1.1);

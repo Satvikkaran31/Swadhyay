@@ -38,6 +38,9 @@ app.use(
   })
 );
 
+// Body parser
+app.use(bodyParser.json());
+
 // Session middleware
 app.use(
   session({
@@ -50,17 +53,15 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: process.env.NODE_ENV === "production", 
+      secure: process.env.NODE_ENV === "production" ? true : false, // Use secure cookies in production
       httpOnly: true,
-      sameSite: "none",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "false", //false works in dev mode :)
     },
   })
 );
 
-// CORS (Allow frontend)
 
-// Body parser
-app.use(bodyParser.json());
+
 
 // API Routes
 app.use("/api/auth", authRoutes);

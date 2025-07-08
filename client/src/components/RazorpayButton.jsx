@@ -33,7 +33,7 @@ export default function RazorpayButton() {
     try {
       // Step 1: Create Order on Backend
       console.log("User from context:", user);
-      const { data: order } = await axios.post("http://localhost:5000/api/payment/create-order",
+      const { data: order } = await axios.post(`${import.meta.env.PROD ? "https://swadhyay-pa3f.onrender.com" : "http://localhost:5000"}/api/payment/create-order`,
       {
         amount: parseInt(amount),
         currency: "INR",
@@ -46,14 +46,14 @@ export default function RazorpayButton() {
 
       // Step 2: Launch Razorpay Checkout
       const options = {
-        key: "rzp_test_xNknJHs70nXy23", // Replace with your test key
+        key: "rzp_test_xNknJHs70nXy23",
         amount: order.amount,
         currency: order.currency,
         name: "Swadhyaya",
         description: "Session Booking",
         order_id: order.id,
         handler: async function (response) {
-          const verifyRes = await axios.post("http://localhost:5000/api/payment/verify",
+          const verifyRes = await axios.post(`${import.meta.env.PROD ? "https://swadhyay-pa3f.onrender.com" : "http://localhost:5000"}/api/payment/verify`,
           {
             razorpay_order_id: response.razorpay_order_id,
             razorpay_payment_id: response.razorpay_payment_id,
