@@ -40,7 +40,7 @@ app.use(
 
 // Body parser
 app.use(bodyParser.json());
-
+app.set('trust proxy', 1);
 // Session middleware
 app.use(
   session({
