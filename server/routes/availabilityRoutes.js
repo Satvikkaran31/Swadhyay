@@ -55,7 +55,7 @@ router.get('/availability', async (req, res) => {
       .select("start,end")
       .orderby("start/dateTime")
       .get();
-
+      console.log("Events returned from Graph:", events);
     // Map busy events to Luxon DateTime ranges for easy comparison
     const busyRanges = events.value.map(ev => ({
       start: DateTime.fromISO(ev.start.dateTime, { zone: "Asia/Kolkata" }),

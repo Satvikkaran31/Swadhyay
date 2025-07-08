@@ -1,5 +1,5 @@
 import React from "react";
-import "../styles/TeamsBookingModal.css"; // optional if not using Tailwind
+import "../styles/TeamsBookingModal.css"; 
 
 export default function TeamsBookingModal({ onClose }) {
   const bookingLink = import.meta.env.VITE_BOOKING_LINK;
