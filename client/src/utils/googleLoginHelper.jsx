@@ -33,7 +33,7 @@ export function useTriggerGoogleLogin(setUser, navigateTo = "/") {
         console.log('Login successful:', userData);
         
         // Navigate after successful login
-        window.location.href = navigateTo;
+        navigate(navigateTo); 
         
       } catch (err) {
         console.error("Login error:", err);
