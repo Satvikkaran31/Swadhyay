@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { UserContext } from "../context/UserContext";
+import { UserContext } from "../context/UserProvider";
 import axios from "axios";
 import "../styles/BookingModal.css";
 import TeamsBookingModal from "./TeamsBookingModal";

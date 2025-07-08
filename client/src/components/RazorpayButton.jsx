@@ -3,7 +3,7 @@ import React, { useState,useContext } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../styles/RazorpayButton.css"
-import { UserContext } from "../context/UserContext";
+import { UserContext } from "../context/UserProvider";
 export default function RazorpayButton() {
   const { user } = useContext(UserContext);
   const navigate = useNavigate();

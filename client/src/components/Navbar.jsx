@@ -4,7 +4,7 @@ import "../styles/Navbar.css";
 import BookingModal from "./BookingModal";
 import LoginButton from "./LoginButton";
 import RazorpayButton from "./RazorpayButton";
-import { UserContext } from "../context/UserContext";
+import { UserContext } from "../context/UserProvider";
 import { useTriggerGoogleLogin } from "../utils/googleLoginHelper";
 import { useUser } from "../context/UserProvider"; // Use the new context hook
 
