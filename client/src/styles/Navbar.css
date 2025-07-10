@@ -42,13 +42,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
+  gap: 2rem;
 }
 
 .nav-links a,
 .nav-link-btn {
   text-decoration: none;
-  font-weight: 600;
+  font-weight: 400;
   font-size: 1.5rem;
   color: #E0E7E9; 
   background: none;

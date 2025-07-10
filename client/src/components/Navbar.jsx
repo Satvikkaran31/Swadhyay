@@ -7,6 +7,7 @@ import RazorpayButton from "./RazorpayButton";
 import { UserContext } from "../context/UserProvider";
 import { useTriggerGoogleLogin } from "../utils/googleLoginHelper";
 import { useUser } from "../context/UserProvider"; // Use the new context hook
+import { useNavigate } from "react-router-dom";
 
 export default function Navbar({ aboutRef }) {
   const [showModal, setShowModal] = useState(false);
@@ -15,12 +16,25 @@ export default function Navbar({ aboutRef }) {
   
   // Updated: Use the new context with logout function
   const { user, setUser, logout } = useUser();
-  
+  const navigate = useNavigate();
+
   const dropdownRef = useRef(null);
   const location = useLocation();
   const observerRef = useRef(null);
   const login = useTriggerGoogleLogin(setUser);
 
+  const scrollToSection = (id) => {
+    if (location.pathname === "/") {
+      // We're on home page, scroll directly
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+      }
+    } else {
+      // We're on a different page, navigate to home with hash
+      navigate(`/#${id}`);
+    }
+  };
   const handleProtectedClick = (action) => {
     if (!user) {
       login();
@@ -71,10 +85,15 @@ export default function Navbar({ aboutRef }) {
   };
 
   // Smooth scroll to section by ID
-  const scrollTo = (id) => {
-    const target = document.getElementById(id);
-    if (target) target.scrollIntoView({ behavior: "smooth" });
-  };
+  useEffect(() => {
+    const hash = location.hash;
+    if (hash) {
+      const el = document.querySelector(hash);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  }, [location]);
 
   return (
     <>
@@ -83,12 +102,22 @@ export default function Navbar({ aboutRef }) {
           {!shrink && <h1 className="nav-logo">Swadhyaya</h1>}
 
           <div className="nav-links">
-            <button className="nav-link-btn" onClick={() => scrollTo("main")}>
+           <button className="nav-link-btn" onClick={() => scrollToSection("main")}>
               Home
+           </button>
+
+          <button className="nav-link-btn" onClick={() => scrollToSection("right-text")}>
+            About
+          </button>
+
+            
+
+            <button className="nav-link-btn" onClick={handleProtectedClick}>
+              Schedule
             </button>
 
-            <button className="nav-link-btn" onClick={() => scrollTo("right-text")}>
-              About
+            <button className="nav-link-btn" onClick={handleProtectedClick}>
+              Learning
             </button>
 
             <Link
@@ -100,12 +129,8 @@ export default function Navbar({ aboutRef }) {
                 }
               }}
             >
-              Payment
-            </Link>
-
-            <button className="nav-link-btn" onClick={handleProtectedClick}>
-              Book
-            </button>
+              Payments
+            </Link> 
 
             {user && user.picture ? (
               <div className="profile-wrapper" ref={dropdownRef}>

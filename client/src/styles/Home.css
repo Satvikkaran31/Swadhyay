@@ -12,8 +12,8 @@
   background: linear-gradient(135deg, #2A1A40, #1A2A40, #101525);
   background: linear-gradient(135deg, #251845, #182845, #103030);
   background: linear-gradient(135deg, #101F2B, #1A1A3A, #153030); */
-  /* background: linear-gradient(135deg, #0D1C1F, #122A2D, #0C2427);
-  background: linear-gradient(135deg, #142225, #1A3033, #132C2F); */
+  /* background: linear-gradient(135deg, #0D1C1F, #122A2D, #0C2427);*/
+  /* background: linear-gradient(135deg, #142225, #1A3033, #132C2F);  */
   background: linear-gradient(135deg, #1D2A2D, #22383B, #1C3437);
   border-bottom-left-radius: 40px;
   border-bottom-right-radius: 40px;
@@ -21,7 +21,7 @@
 
 .home-section {
   font-family: "Segoe UI", sans-serif;
-  padding: 0rem 1rem 1rem;
+  padding: 0rem 1rem 0rem;
   /* background-color: #121212; */
 
   border-bottom-left-radius: 40px;
@@ -46,9 +46,10 @@
 .hero h1 {
   font-family: 'Poppins';
   font-size: 3rem;
-  font-weight:bold;
+  font-weight:500;
   margin-top: 0rem;
   color: #E0E7E9;
+  
 }
 
 /* HERO QUOTE */

@@ -4,6 +4,7 @@ import BookingModal from "../components/BookingModal";
 import profileimage from "../assets/profilepicture.png";
 import Navbar from "../components/Navbar";
 import TeamsBookingModal from "../components/TeamsBookingModal";
+import { useLocation,useNavigate } from "react-router-dom";
 import image_1 from "../assets/image_1.png"
 import image_2 from "../assets/image_2.png"
 import "../styles/learnMoreButton.css"
@@ -21,7 +22,23 @@ export default function Home({aboutRef}) {
   const [showModal, setShowModal] = useState(false);
   const [index, setIndex] = useState(0);
   const [fadeIn, setFadeIn] = useState(true);
+  const location = useLocation();
+  const navigate = useNavigate();
   
+ useEffect(() => {
+    // Only process hash if it exists AND we're coming from a different page or initial load
+    if (location.hash && location.state?.fromNavigation !== true) {
+      const id = location.hash.substring(1);
+      const el = document.getElementById(id);
+      if (el) {
+        setTimeout(() => {
+          el.scrollIntoView({ behavior: "smooth" });
+          // Clean up the hash without affecting history
+          window.history.replaceState(null, "", location.pathname);
+        }, 100);
+      }
+    }
+  }, [location]);
 
 
   // Loop suffix phrases with fade
