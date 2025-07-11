@@ -95,69 +95,69 @@ export default function Navbar({ aboutRef }) {
     }
   }, [location]);
 
-  return (
-    <>
-      <nav className={`navbar ${shrink ? "shrink" : "expand"}`}>
-        <div className="nav-container">
-          {!shrink && <h1 className="nav-logo">Swadhyaya</h1>}
+    return (
+      <>
+        <nav className={`navbar ${shrink ? "shrink" : "expand"}`}>
+          <div className="nav-container">
+            {!shrink && <button className="nav-logo" onClick={()=> scrollToSection("main")}>Swadhyay</button>}
 
-          <div className="nav-links">
-           <button className="nav-link-btn" onClick={() => scrollToSection("main")}>
-              Home
-           </button>
-
-          <button className="nav-link-btn" onClick={() => scrollToSection("right-text")}>
-            About
-          </button>
-
-            
-
-            <button className="nav-link-btn" onClick={handleProtectedClick}>
-              Schedule
+            <div className="nav-links">
+            <button className="nav-link-btn" onClick={() => scrollToSection("main")}>
+                Home
             </button>
 
-            <button className="nav-link-btn" onClick={handleProtectedClick}>
-              Learning
+            <button className="nav-link-btn" onClick={() => scrollToSection("right-text")}>
+              About
             </button>
 
-            <Link
-              to="/booking"
-              onClick={(e) => {
-                if (!user) {
-                  e.preventDefault();
-                  login();
-                }
-              }}
-            >
-              Payments
-            </Link> 
+              
 
-            {user && user.picture ? (
-              <div className="profile-wrapper" ref={dropdownRef}>
-                <img
-                  src={user.picture}
-                  alt="Profile"
-                  className="profile-pic"
-                  onClick={() => setDropdownOpen(!dropdownOpen)}
-                  referrerPolicy="no-referrer"
-                />
-                {dropdownOpen && (
-                  <div className="dropdown-menu">
-                    <p className="user-name">{user.name}</p>
-                    <button onClick={handleLogout} className="logout-btn">
-                      Logout
-                    </button>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <LoginButton />
-            )}
+              <button className="nav-link-btn" onClick={handleProtectedClick}>
+                Schedule
+              </button>
+
+              <button className="nav-link-btn" onClick={handleProtectedClick}>
+                Learning
+              </button>
+
+              <Link className="nav-link-btn"
+                to="/booking"
+                onClick={(e) => {
+                  if (!user) {
+                    e.preventDefault();
+                    login();
+                  }
+                }}
+              >
+                Pricing   
+              </Link> 
+
+              {user && user.picture ? (
+                <div className="profile-wrapper" ref={dropdownRef}>
+                  <img
+                    src={user.picture}
+                    alt="Profile"
+                    className="profile-pic"
+                    onClick={() => setDropdownOpen(!dropdownOpen)}
+                    referrerPolicy="no-referrer"
+                  />
+                  {dropdownOpen && (
+                    <div className="dropdown-menu">
+                      <p className="user-name">{user.name}</p>
+                      <button onClick={handleLogout} className="logout-btn">
+                        Logout
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <LoginButton />
+              )}
+            </div>
           </div>
-        </div>
-      </nav>
+        </nav>
 
-      {showModal && <BookingModal onClose={() => setShowModal(false)} />}
-    </>
-  );
-}
+        {showModal && <BookingModal onClose={() => setShowModal(false)} />}
+      </>
+    );
+  }

@@ -46,7 +46,7 @@
 .hero h1 {
   font-family: 'Poppins';
   font-size: 3rem;
-  font-weight:500;
+  font-weight:550;
   margin-top: 0rem;
   color: #E0E7E9;
   
@@ -178,6 +178,7 @@
   transition: transform 0.3s ease;
   /* border: 3px solid  #2a9d8f  ; */
   font-size: 1.1rem;
+  font-weight: 350;
 }
 
 .info-box:hover, .book-now-box:hover {
@@ -188,6 +189,7 @@
   font-family: 'Poppins',roboto;
   color: #E0E7E9;
   margin-bottom: 0.5rem;
+  font-weight: 500;
 }
 .info-box, .book-now-box p{
   font-family: 'Poppins',roboto;
