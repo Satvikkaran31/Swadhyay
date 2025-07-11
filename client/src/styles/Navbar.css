@@ -48,7 +48,7 @@
 }
 
 .nav-links a,
-.nav-link-btn {
+.nav-link-btn,.login-button {
   text-decoration: none;
   font-weight: 400;
   font-size: 1.5rem;
@@ -167,42 +167,36 @@
   font-weight: 450;
   gap: 0rem;
 }
-.navbar.shrink .profile-wrapper,.login-button{
+.navbar.shrink .profile-wrapper,.navbar.shrink .login-button{
   display: none;
 }
 
 /* ------------------------------------------- */
 /* LOGIN BUTTON */
 .login-button {
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 1.5rem;
   color: #FF6B6B; 
-  background: none;
-  border: none;
-  cursor: pointer;
-  transition: color 0.1s ease, transform 0.2s ease;
-  font-family:'Poppins', sans-serif; /* Default font */
-  padding: 0; 
-  line-height: normal; 
-  -webkit-appearance: none; /* For WebKit/Safari default button styles */
-  -moz-appearance: none;    /* For Firefox default button styles */
-  appearance: none;         /* Standard property */
-  
+
 }
 .login-button:hover{
   transform: translateY(-2px);
 }
 
 /* -------------------------------------------- */
-
+/* IPAD AIR */
+@media (max-height: 1180px) and (min-width: 820px) {
+  .nav-links>.nav-link-btn:nth-child(1) {
+    display: none;
+  }
+}
 /* Mobile friendly */
 @media (max-width: 768px) {
   .nav-container {
     flex-direction: row;
     flex-wrap: wrap;
-    align-items: flex-start;
+    align-items:center;
     justify-content: center;
+    gap: 1rem;
+    
   }
   .nav-links{
     gap: 0.5rem;
