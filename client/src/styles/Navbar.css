@@ -190,13 +190,17 @@
 }
 /* Mobile friendly */
 @media (max-width: 768px) {
+   .navbar{
+    padding: 0.5rem 1.5rem;
+  }
+  
   .nav-container {
     flex-direction: row;
     flex-wrap: wrap;
     align-items:center;
     justify-content: center;
-    gap: 0.5rem;
-    
+    gap: 0.2rem;
+    padding: 0.4rem 1rem;
   }
   .nav-links{
     gap: 0.5rem;
@@ -206,11 +210,21 @@
     display: none;
   }
    .navbar.shrink{
-    max-width: 95%;
+    max-width: 90%;
     padding: 0.6rem 1rem;
   }
+  .profile-pic {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+  .profile-wrapper{
+    display: flex;
+    border: 2px solid red;
+    align-items: center;
+
+  }
   .navbar.shrink  .nav-links{
-  gap: 1rem;
+  gap: 0.75rem;
 }
   .navbar.shrink .nav-links> .nav-link-btn:nth-of-type(1){
     display: inline-block;
@@ -224,18 +238,22 @@
     font-size: 1.1rem;
     font-weight: 600;
   }
-  .navbar{
-    padding: 0.5rem 1.5rem;
-  }
-  
+ 
   .nav-links a,
   .nav-link-btn,.login-button {
     font-size: 1rem;         /* Standard property */
   }
 }
-@media (max-width:370px){
+@media (max-width:360px){
   .profile-pic{
     width: 1rem;
     height: 1rem; 
   }
+    .navbar.shrink .nav-links a,
+  .navbar.shrink .nav-link-btn {
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+ 
+
 }
