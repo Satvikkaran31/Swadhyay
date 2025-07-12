@@ -171,6 +171,16 @@
   display: none;
 }
 
+/* hides home button in expanded navbar */
+.nav-links>.nav-link-btn:nth-child(1) {  
+    display: none;
+}
+/* brings back home button in shrunk navbar */
+.navbar.shrink .nav-links> .nav-link-btn:nth-of-type(1){
+    display: inline-block;
+}
+/* hides about in shrunk navbar */
+
 /* ------------------------------------------- */
 /* LOGIN BUTTON */
 .login-button {
@@ -182,18 +192,16 @@
 }
 
 /* -------------------------------------------- */
-/* IPAD AIR */
-@media (max-height: 1180px) and (min-width: 820px) {
-  .nav-links>.nav-link-btn:nth-child(1) {
-    display: none;
-  }
-}
+/* Media Queries */
+
 /* Mobile friendly */
 @media (max-width: 768px) {
    .navbar{
     padding: 0.5rem 1.5rem;
   }
-  
+  .navbar.shrink .nav-links > .nav-link-btn:nth-of-type(2) {
+    display: none;
+}
   .nav-container {
     flex-direction: row;
     flex-wrap: wrap;
@@ -224,13 +232,8 @@
   }
   .navbar.shrink  .nav-links{
   gap: 0.5rem;
-}
-  .navbar.shrink .nav-links> .nav-link-btn:nth-of-type(1){
-    display: inline-block;
   }
-  .navbar.shrink .nav-links > .nav-link-btn:nth-of-type(2) {
-    display: none;
-  }
+
   
   .navbar.shrink .nav-links a,
   .navbar.shrink .nav-link-btn {
