@@ -42,8 +42,10 @@ export default function BookingModal({ onClose }) {
     setAvailableSlots([]);
 
     try {
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
       const res = await axios.get(
-        `${import.meta.env.PROD ? "https://swadhyay-pa3f.onrender.com" : "http://localhost:5000"}/api/availability?date=${selectedDate}`
+     `${API_BASE_URL}/api/availability?date=${selectedDate}`,
+      { withCredentials: true }
       );
       setAvailableSlots(res.data.slots || []);
     } catch (err) {
@@ -69,8 +71,9 @@ export default function BookingModal({ onClose }) {
     }
 
     try {
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
       const res = await axios.post(
-        `${import.meta.env.PROD ? "https://swadhyay-pa3f.onrender.com" : "http://localhost:5000"}/api/calendar/book`,
+        `${API_BASE_URL}/api/calendar/book`,
         form,
         { withCredentials: true }
       );

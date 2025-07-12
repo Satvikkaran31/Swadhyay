@@ -31,9 +31,14 @@ const pgPool = new Pool({
   connectionString: process.env.POSTGRES_URL,
   ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false,
 });
+const allowed_origins = [
+  "https://swadhyay-pa3f.onrender.com",
+  "http://localhost:3000",
+  "https://swadhyay.co",
+];
 app.use(
   cors({
-    origin: [ "https://swadhyay-pa3f.onrender.com","http://localhost:3000",],
+    origin: allowed_origins,
     credentials: true,
   })
 );

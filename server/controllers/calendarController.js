@@ -33,12 +33,12 @@ export const bookSession = async (req, res) => {
   }
 
   try {
-    // ✅ Correct time construction in Asia/Kolkata
+    // Correct time construction in Asia/Kolkata
     const dateTime = DateTime.fromISO(`${date}T${time}`, { zone: "Asia/Kolkata" });
     const endTime = dateTime.plus({ hours: 1 });
     let meetLink;
 
-    // ✅ 1. Create Google Calendar Event (Google Meet)
+    // 1. Create Google Calendar Event (Google Meet)
     if (meetingType === "google") {
       const event = {
         summary: `${sessionType} with ${name}`,
@@ -71,10 +71,10 @@ export const bookSession = async (req, res) => {
 
       meetLink = response?.data?.hangoutLink;
       if (!meetLink) throw new Error("Google Meet link could not be created.");
-      console.log("✅ Google Meet link:", meetLink);
+      console.log("Google Meet link:", meetLink);
     }
 
-    // ✅ 2. Send confirmation email
+    // 2. Send confirmation email
     await transporter.sendMail({
       from: process.env.MAIL_USER,
       to: [email, process.env.ADMIN_EMAIL],
@@ -90,9 +90,9 @@ export const bookSession = async (req, res) => {
       `,
     });
 
-    console.log("✅ Confirmation email sent.");
+    console.log(" Confirmation email sent.");
 
-    // ✅ 3. Mirror Event in Outlook
+    // 3. Mirror Event in Outlook
     try {
       const tokenRes = await axios.post(
         "https://login.microsoftonline.com/common/oauth2/v2.0/token",
@@ -150,15 +150,15 @@ export const bookSession = async (req, res) => {
         }
       );
 
-      console.log("✅ Outlook calendar event created.");
+      console.log(" Outlook calendar event created.");
     } catch (msError) {
-      console.error("❌ Outlook calendar error:", msError.response?.data || msError.message);
+      console.error(" Outlook calendar error:", msError.response?.data || msError.message);
     }
 
-    // ✅ 4. Final response
+    //  4. Final response
     res.status(200).json({ success: true, meetLink });
   } catch (err) {
-    console.error("❌ Booking Error:", {
+    console.error(" Booking Error:", {
       message: err.message,
       stack: err.stack,
       response: err.response?.data,

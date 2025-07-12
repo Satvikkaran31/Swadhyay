@@ -8,10 +8,7 @@ export function useTriggerGoogleLogin(setUser, navigateTo = "/", navigate) {
     onSuccess: async (codeResponse) => {
       try {
         console.log('Authorization code received:', codeResponse.code);
-        
-        const apiBase = import.meta.env.PROD
-          ? "https://swadhyay-pa3f.onrender.com"
-          : "http://localhost:5000";
+        const apiBase = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
 
         const response = await axios.post(`${apiBase}/api/auth/google`, {
           code: codeResponse.code,
@@ -44,9 +41,7 @@ export const authHelpers = {
   // Check if user is authenticated (by checking with backend)
   checkAuth: async () => {
     try {
-      const apiBase = import.meta.env.PROD
-        ? "https://swadhyay-pa3f.onrender.com"
-        : "http://localhost:5000";
+      const apiBase = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
         
       const response = await axios.get(`${apiBase}/api/auth/me`, {
         withCredentials: true
@@ -61,9 +56,7 @@ export const authHelpers = {
   // Logout function
   logout: async () => {
     try {
-      const apiBase = import.meta.env.PROD
-        ? "https://swadhyay-pa3f.onrender.com"
-        : "http://localhost:5000";
+      const apiBase = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
         
       await axios.post(`${apiBase}/api/auth/logout`, {}, {
         withCredentials: true
