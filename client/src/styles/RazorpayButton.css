@@ -98,11 +98,19 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
-
+    .payment-button{
+  max-width: 90%;
+}
 }
 
 @media (max-width: 480px) {
   .payment-button{
-  max-width: 220px;
+  max-width: 90%;
 }
+}
+
+@media (max-width: 330px) {
+  .payment-button {
+    max-width: 85%;
+  }
 }
