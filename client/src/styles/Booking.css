@@ -1,0 +1,314 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap');
+
+/* Using the same CSS variables from your theme */
+:root {
+  --primary-bg: #ECF5EE;
+  --gradient-start: #1D2A2D;
+  --gradient-mid: #22383B;
+  --gradient-end: #1C3437;
+  --text-primary: #E0E7E9;
+  --text-secondary: #1A2B3C;
+  --text-dark: #333;
+  --accent-green: #9AE6B4;
+  --accent-red: #FF6B6B;
+  --button-primary: #1A2B3C;
+  --shadow-color: #222;
+  --white: white;
+  --card-bg: #f1f5f9;
+  
+  --font-primary: 'Poppins', sans-serif;
+  --font-roboto: 'Poppins', roboto;
+  
+  --border-radius-sm: 20px;
+  --border-radius-md: 30px;
+  --border-radius-lg: 40px;
+  --shadow-default: 0 6px 12px -7px var(--shadow-color);
+  --shadow-card: -15px 15px 15px -2px rgba(0, 0, 0, 0.3);
+}
+
+.booking-container {
+  width: 100%;
+  background-color: var(--primary-bg);
+  padding: 2rem 1rem;
+  font-family: var(--font-primary);
+  overflow: hidden;
+}
+
+.booking-content {
+  
+  margin: 0 auto;
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+.booking-header {
+  text-align: center;
+  margin-bottom: 1rem;
+  padding: 2rem;
+}
+
+.booking-header h1 {
+  font-family: var(--font-primary);
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.booking-header p {
+  font-size: 1.5rem;
+  color: var(--text-secondary);
+  opacity: 0.9;
+}
+
+.booking-form-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
+
+.payment-form {
+  
+  background: var(--white);
+  padding: 2.5rem;
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-card);
+  animation: slideInLeft 0.6s ease-out;
+}
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+.form-group {
+ margin-bottom: 2rem;
+}
+
+.form-label {
+  display: block;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 0.8rem;
+  font-family: var(--font-roboto);
+  
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: var(--card-bg);
+  border: 2px solid transparent;
+  border-radius: var(--border-radius-sm);
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+
+
+.currency-symbol {
+  padding: 1rem 0.5rem 1rem 1.5rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: var(--accent-green);
+  border-top-left-radius: var(--border-radius-sm);
+  border-bottom-left-radius: var(--border-radius-sm);
+}
+
+.amount-input {
+  flex: 1;
+  padding: 1rem 1.5rem;
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: var(--font-roboto);
+}
+
+.amount-input::placeholder {
+  color: #9ca3af;
+}
+
+.amount-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid transparent;
+  border-top: 2px solid var(--white);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.security-info {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.security-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(154, 230, 180, 0.1);
+  border: 1px solid var(--accent-green);
+  border-radius: var(--border-radius-sm);
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.shield-icon {
+  width: 16px;
+  height: 16px;
+  stroke-width: 2;
+  stroke: var(--accent-green);
+}
+
+.animation-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: slideInRight 0.6s ease-out;
+}
+
+.card-animation {
+  width: 100%;
+  height: auto;
+ 
+  transform: scale(1.7);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .booking-form-section {
+    flex-direction: column;
+    padding: 1.5rem 1rem;
+  }
+
+  .payment-form {
+    width: 100%;
+    padding: 1.5rem;
+    box-sizing: border-box;
+  }
+
+  .booking-header h1 {
+    font-size: 2rem;
+  }
+
+  .booking-header p {
+    font-size: 1rem;
+  }
+
+  .amount-input,
+  .currency-symbol {
+    font-size: 1rem;
+  }
+
+  .payment-button {
+    font-size: 1rem;
+    padding: 0.9rem 1.2rem;
+  }
+
+  .security-badge {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.8rem;
+  }
+
+  .spinner {
+    width: 1rem;
+    height: 1rem;
+  }
+ 
+}
+
+@media (max-width: 480px) {
+  .booking-header h1 {
+    font-size: 1.6rem;
+  }
+
+  .payment-form {
+    padding: 1rem;
+  }
+
+  .card-animation {
+    transform: scale(1);
+    max-width: 90%;
+  }
+  /* .booking-container{
+    overflow: hidden;
+  } */
+
+  .amount-input {
+    padding: 0.7rem 1rem;
+  }
+
+  .payment-button {
+    padding: 0.8rem 1rem;
+  }
+
+  .currency-symbol {
+    font-size: 0.9rem;
+  }
+
+  .form-label {
+    font-size: 0.9rem;
+  }
+   .input-wrapper {
+    max-width: 220px;
+    padding: 0;
+  }
+  .currency-symbol{
+    border-bottom-left-radius: 12px;
+    border-top-left-radius: 12px;
+  }
+}

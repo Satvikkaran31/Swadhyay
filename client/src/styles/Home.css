@@ -341,7 +341,7 @@
   padding: 3rem 3rem;
   background-color: var(--primary-bg);
   color: var(--text-dark);
-  font-family: var(--font-secondary);
+ 
 }
 
 .about-goal {
@@ -353,7 +353,7 @@
   flex-direction: row;
   padding: 1rem;
   font-family: var(--font-primary);
-  margin-bottom: 2rem;
+  margin-bottom: 2rem;  
 }
 
 .about-goal-left-text{
@@ -361,7 +361,11 @@
   flex-direction: column;
   justify-content: start;
 }
+.tracking-in-contract-bck {
+	animation: tracking-in-contract-bck 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
+}
 
+/* our mission heading in about section */
 .about-goal-left-text-heading {
   position: relative;
   display: inline-block;
@@ -372,6 +376,7 @@
   margin-bottom: 2rem;
 }
 
+/* custom underline for the text "our mission" */
 .about-goal-left-text-heading::after {
   content: '';
   position: absolute;

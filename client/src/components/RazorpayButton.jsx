@@ -1,13 +1,12 @@
-import React, { useState,useContext } from "react";
-
+import React, { useContext } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import "../styles/RazorpayButton.css"
+import "../styles/RazorpayButton.css";
 import { UserContext } from "../context/UserProvider";
-export default function RazorpayButton() {
+
+export default function RazorpayButton({ amount, isProcessing, setIsProcessing }) {
   const { user } = useContext(UserContext);
   const navigate = useNavigate();
-  const [amount, setAmount] = useState("");
 
   const loadRazorpay = () =>
     new Promise((resolve) => {
@@ -30,22 +29,22 @@ export default function RazorpayButton() {
       return;
     }
 
-    try {
-      // Step 1: Create Order on Backend
-      console.log("User from context:", user);
-      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
-      const { data: order } = await axios.post(`${API_BASE_URL}/api/payment/create-order`,
-      {
-        amount: parseInt(amount),
-        currency: "INR",
-        receipt: "receipt#" + Math.floor(Math.random() * 1000000),
-      },
-      {
-          withCredentials: true, // make sure user is logged in
-      } 
-    );
+    setIsProcessing(true);
 
-      // Step 2: Launch Razorpay Checkout
+    try {
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+      const { data: order } = await axios.post(
+        `${API_BASE_URL}/api/payment/create-order`,
+        {
+          amount: parseInt(amount),
+          currency: "INR",
+          receipt: "receipt#" + Math.floor(Math.random() * 1000000),
+        },
+        {
+          withCredentials: true,
+        }
+      );
+
       const options = {
         key: "rzp_test_xNknJHs70nXy23",
         amount: order.amount,
@@ -54,16 +53,16 @@ export default function RazorpayButton() {
         description: "Session Booking",
         order_id: order.id,
         handler: async function (response) {
-          const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-          const verifyRes = await axios.post(`${API_BASE_URL}/api/payment/verify`,
-          {
-            razorpay_order_id: response.razorpay_order_id,
-            razorpay_payment_id: response.razorpay_payment_id,
-            razorpay_signature: response.razorpay_signature,
-          },
-          {
-            withCredentials: true,
-          }
+          const verifyRes = await axios.post(
+            `${API_BASE_URL}/api/payment/verify`,
+            {
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+            },
+            {
+              withCredentials: true,
+            }
           );
 
           if (verifyRes.data.success) {
@@ -73,8 +72,8 @@ export default function RazorpayButton() {
           }
         },
         prefill: {
-          name: "Customer",
-          email: "customer@example.com",
+          name: user?.name || "Customer",
+          email: user?.email || "customer@example.com",
         },
         theme: {
           color: "#2a9d8f",
@@ -86,23 +85,31 @@ export default function RazorpayButton() {
     } catch (err) {
       console.error(err);
       alert("Payment initiation failed");
+    } finally {
+      setIsProcessing(false);
     }
   };
 
   return (
-    <>
-    <div className="payment-section">
-    <input
-        type="number"
-        placeholder="Enter amount (INR)"
-        value={amount}
-        onChange={(e) => setAmount(e.target.value)}
-        style={{ padding: "0.5rem", marginRight: "1rem" }}
-      />
-    <div className="container">
-      <button className="pay" onClick={handlePayment}>Pay Now</button>
-    </div>
-    </div>
-    </>
+    <button
+      onClick={handlePayment}
+      disabled={isProcessing || !amount || parseFloat(amount) <= 0}
+      className={`payment-button ${isProcessing ? "processing" : ""}`}
+    >
+      {isProcessing ? (
+        <>
+          <div className="spinner"></div>
+          <span>Processing...</span>
+        </>
+      ) : (
+        <>
+          <span>Complete Payment</span>
+          <svg className="payment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
+            <line x1="1" y1="10" x2="23" y2="10" />
+          </svg>
+        </>
+      )}
+    </button>
   );
 }

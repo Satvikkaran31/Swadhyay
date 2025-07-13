@@ -94,10 +94,12 @@ export default function Navbar({ aboutRef }) {
       }
     }
   }, [location]);
+   
+   const isBookingPage = location.pathname === "/booking";
 
     return (
       <>
-        <nav className={`navbar ${shrink ? "shrink" : "expand"}`}>
+        <nav className={`navbar ${shrink ? "shrink" : "expand"} ${isBookingPage ? "booking-bg" : ""}`}>
           <div className="nav-container">
             {!shrink && <button className="nav-logo" onClick={()=> scrollToSection("main")}>Swadhyay</button>}
 

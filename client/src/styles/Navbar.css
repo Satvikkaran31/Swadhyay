@@ -15,7 +15,10 @@
   transform-origin: top center;
   transition: all 0.4 ease;
 }
-
+.booking-bg {
+  background: linear-gradient(to right, #1D2A2D, #22383B);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
 .nav-container {
   display: flex;
   flex-direction: row;
