@@ -18,11 +18,9 @@ export default function Booking() {
 
   return (
     <>
-      <Navbar />
+      
       <div className="booking-container">
-        <div className="booking-content">
-          
-
+          <Navbar />
           <div className="booking-form-section">
             <div className="payment-form">
               <div className="booking-header">
@@ -81,7 +79,6 @@ export default function Booking() {
             
             </div>
           </div>
-        </div>
       </div>
     </>
   );
