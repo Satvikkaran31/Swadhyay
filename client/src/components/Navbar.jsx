@@ -12,6 +12,8 @@ import { useNavigate } from "react-router-dom";
 export default function Navbar({ aboutRef }) {
   const [showModal, setShowModal] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [aboutDropdownOpen, setAboutDropdownOpen] = useState(false);
+  const [learningDropdownOpen, setLearningDropdownOpen] = useState(false);
   const [shrink, setShrink] = useState(false);
   
   // Updated: Use the new context with logout function
@@ -19,6 +21,8 @@ export default function Navbar({ aboutRef }) {
   const navigate = useNavigate();
 
   const dropdownRef = useRef(null);
+  const aboutDropdownRef = useRef(null);
+  const learningDropdownRef = useRef(null);
   const location = useLocation();
   const observerRef = useRef(null);
   const login = useTriggerGoogleLogin(setUser);
@@ -35,6 +39,7 @@ export default function Navbar({ aboutRef }) {
       navigate(`/#${id}`);
     }
   };
+
   const handleProtectedClick = (action) => {
     if (!user) {
       login();
@@ -69,6 +74,12 @@ export default function Navbar({ aboutRef }) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setDropdownOpen(false);
       }
+      if (aboutDropdownRef.current && !aboutDropdownRef.current.contains(event.target)) {
+        setAboutDropdownOpen(false);
+      }
+      if (learningDropdownRef.current && !learningDropdownRef.current.contains(event.target)) {
+        setLearningDropdownOpen(false);
+      }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -94,72 +105,163 @@ export default function Navbar({ aboutRef }) {
       }
     }
   }, [location]);
-   
-   const isBookingPage = location.pathname === "/booking";
 
-    return (
-      <>
-        <nav className={`navbar ${shrink ? "shrink" : "expand"} ${isBookingPage ? "booking-bg" : ""}`}>
-          <div className="nav-container">
-            {!shrink && <button className="nav-logo" onClick={()=> scrollToSection("main")}>Swadhyay</button>}
+  const isBookingPage = location.pathname === "/booking";
 
-            <div className="nav-links">
+  // About dropdown items
+  const aboutDropdownItems = [
+    { label: "Our Mission", onClick: () => scrollToSection("right-text") },
+    { label: "About Us", onClick: () => scrollToSection("team") },
+    { label: "Contact", onClick: () => scrollToSection("contact") }
+  ];
+
+  // Learning dropdown items
+  const learningDropdownItems = [
+    { label: "Articles", onClick: () => console.log("Course Catalog") },
+    { label: "Courses", onClick: () => console.log("Study Materials") },
+    { label: "Who Am I?", onClick: () => console.log("Achievements") }
+  ];
+
+  const handleDropdownItemClick = (item) => {
+    item.onClick();
+    setAboutDropdownOpen(false);
+    setLearningDropdownOpen(false);
+  };
+
+  return (
+    <>
+      <nav className={`navbar ${shrink ? "shrink" : "expand"} ${isBookingPage ? "booking-bg" : ""}`}>
+        <div className="nav-container">
+          {!shrink && <button className="nav-logo" onClick={()=> scrollToSection("main")}>Swadhyay</button>}
+
+          <div className="nav-links">
             <button className="nav-link-btn" onClick={() => scrollToSection("main")}>
-                Home
+              Home
             </button>
 
-            <button className="nav-link-btn" onClick={() => scrollToSection("right-text")}>
-              About
-            </button>
-
+            {/* About Dropdown */}
+            <div className="nav-dropdown-wrapper" ref={aboutDropdownRef}>
+              <button 
+                className={`nav-link-btn dropdown-trigger ${aboutDropdownOpen ? 'active' : ''}`}
+                onClick={() => setAboutDropdownOpen(!aboutDropdownOpen)}
+              >
+                About
+                <svg 
+                  className={`dropdown-arrow ${aboutDropdownOpen ? 'rotated' : ''}`}
+                  width="12" 
+                  height="12" 
+                  viewBox="0 0 12 12"
+                  fill="none"
+                >
+                  <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
               
+              {aboutDropdownOpen && (
+                <div className="nav-dropdown-menu">
+                  {aboutDropdownItems.map((item, index) => (
+                    <button
+                      key={index}
+                      className="nav-dropdown-item"
+                      onClick={() => handleDropdownItemClick(item)}
+                    >
+                      {item.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
 
-              <button className="nav-link-btn" onClick={handleProtectedClick}>
-                Schedule
-              </button>
+            <button className="nav-link-btn" onClick={handleProtectedClick}>
+              Schedule
+            </button>
 
-              <button className="nav-link-btn" onClick={handleProtectedClick}>
-                Learning
-              </button>
-
-              <Link className="nav-link-btn"
-                to="/booking"
-                onClick={(e) => {
+            {/* Learning Dropdown */}
+            <div className="nav-dropdown-wrapper" ref={learningDropdownRef}>
+              <button 
+                className={`nav-link-btn dropdown-trigger ${learningDropdownOpen ? 'active' : ''}`}
+                onClick={() => {
                   if (!user) {
-                    e.preventDefault();
                     login();
+                  } else {
+                    setLearningDropdownOpen(!learningDropdownOpen);
                   }
                 }}
               >
-                Pricing   
-              </Link> 
-
-              {user && user.picture ? (
-                <div className="profile-wrapper" ref={dropdownRef}>
-                  <img
-                    src={user.picture}
-                    alt="Profile"
-                    className="profile-pic"
-                    onClick={() => setDropdownOpen(!dropdownOpen)}
-                    referrerPolicy="no-referrer"
-                  />
-                  {dropdownOpen && (
-                    <div className="dropdown-menu">
-                      <p className="user-name">{user.name}</p>
-                      <button onClick={handleLogout} className="logout-btn">
-                        Logout
-                      </button>
-                    </div>
-                  )}
+                Learning
+                <svg 
+                  className={`dropdown-arrow ${learningDropdownOpen ? 'rotated' : ''}`}
+                  width="12" 
+                  height="12" 
+                  viewBox="0 0 12 12"
+                  fill="none"
+                >
+                  <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+              
+              {learningDropdownOpen && user && (
+                <div className="nav-dropdown-menu">
+                  {learningDropdownItems.map((item, index) => (
+                    <button
+                      key={index}
+                      className="nav-dropdown-item"
+                      onClick={() => handleDropdownItemClick(item)}
+                    >
+                      {item.label}
+                    </button>
+                  ))}
                 </div>
-              ) : (
-                <LoginButton />
               )}
             </div>
-          </div>
-        </nav>
 
-        {showModal && <BookingModal onClose={() => setShowModal(false)} />}
-      </>
-    );
-  }
+            <Link className="nav-link-btn"
+              to="/booking"
+              onClick={(e) => {
+                if (!user) {
+                  e.preventDefault();
+                  login();
+                }
+              }}
+            >
+              Pricing   
+            </Link> 
+
+            {user && user.picture ? (
+  <div className="nav-dropdown-wrapper" ref={dropdownRef}>
+    <img
+      src={user.picture}
+      alt="Profile"
+      className="profile-pic"
+      onClick={() => setDropdownOpen(!dropdownOpen)}
+      referrerPolicy="no-referrer"
+    />
+              {dropdownOpen && (
+                <div className="nav-dropdown-menu">
+                  <button
+                    className="nav-dropdown-item"
+                    disabled
+                    style={{ fontWeight: "bold", cursor: "default" }}
+                  >
+                    {user.name}
+                  </button>
+                  <button
+                    className="nav-dropdown-item"
+                    onClick={handleLogout}
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+              <LoginButton />
+            )}
+          </div>
+        </div>
+      </nav>
+
+      {showModal && <BookingModal onClose={() => setShowModal(false)} />}
+    </>
+  );
+}
