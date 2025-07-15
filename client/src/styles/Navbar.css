@@ -385,7 +385,9 @@
     width: 10px;
     height: 10px;
   }
-  
+   .navbar.shrink .nav-links > .nav-dropdown-wrapper:nth-of-type(1),.nav-dropdown-wrapper:nth-of-type(3){
+    display: none;
+}
   .nav-dropdown-item {
     padding: 0.875rem 1.25rem;
     font-size: 0.9rem;
@@ -405,7 +407,7 @@
 
 /* Accessibility improvements */
 .nav-dropdown-item:focus {
-  
+
   background: rgba(154, 230, 180, 0.1);
 }
 
@@ -433,15 +435,6 @@
   top: calc(100% + 0.25rem);
 }
 
-/* Booking page adjustments */
-/* .navbar.booking-bg .nav-dropdown-menu {
-  background: var(--white);
-  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
-}
-
-.navbar.booking-bg .dropdown-trigger.active {
-  background: rgba(154, 230, 180, 0.15);
-} */
 
 /* Smooth transitions for all dropdown states */
 .nav-dropdown-wrapper * {
@@ -465,7 +458,7 @@
    .navbar{
     padding: 0.5rem 1.5rem;
   }
-  .navbar.shrink .nav-links > .nav-link-btn:nth-of-type(2) {
+  .navbar.shrink .nav-links > .nav-dropdown-wrapper:nth-of-type(1),.nav-dropdown-wrapper:nth-of-type(3){
     display: none;
 }
   .nav-container {
@@ -522,6 +515,8 @@
     font-size: 0.95rem;
     font-weight: 600;
   }
- 
+  .navbar.shrink .nav-links > .nav-dropdown-wrapper:nth-of-type(1),.nav-dropdown-wrapper:nth-of-type(3){
+    display: none;
+}
 
 }
