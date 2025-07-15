@@ -247,6 +247,9 @@
 }
 
 @media (max-width: 480px) {
+  .payment-form{
+    box-shadow: none;
+  }  
   .booking-header h1 {
     font-size: 1.6rem;
   }
@@ -256,7 +259,7 @@
   .payment-form {
     padding: 1rem;
   }
-
+  
   .card-animation {
     transform: scale(1);
     max-width: 90%;
@@ -297,4 +300,7 @@
   .animation-section {
     display: none;
   }
+   .payment-form{
+    box-shadow: none;
+  }  
 }

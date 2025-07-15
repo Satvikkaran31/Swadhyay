@@ -25,7 +25,7 @@ export default function Booking() {
             <div className="payment-form">
               <div className="booking-header">
             <h1>Complete Your Booking</h1>
-            <p>Enter the amount and proceed with secure payment.</p>
+            <p>Enter the quoted amount and proceed with secure payment.</p>
           </div>
               <div className="grid-container">
               <div className="left-grid">
