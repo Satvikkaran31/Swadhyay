@@ -250,7 +250,9 @@
   .booking-header h1 {
     font-size: 1.6rem;
   }
-
+  .animation-section {
+    display: none;
+  }
   .payment-form {
     padding: 1rem;
   }
@@ -291,5 +293,8 @@
   .input-wrapper {
     max-width: 85%;
     padding: 0;
+  }
+  .animation-section {
+    display: none;
   }
 }
