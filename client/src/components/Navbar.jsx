@@ -62,7 +62,7 @@ export default function Navbar({ aboutRef }) {
     if (observerRef.current) observerRef.current.disconnect();
 
     const screenWidth = window.innerWidth;
-    const threshold = screenWidth < 768 ? 0.1 : 0.2;
+    const threshold = screenWidth < 768 ? 0.1 : 0.32;
 
     if (location.pathname === "/" && aboutRef?.current) {
       observerRef.current = new IntersectionObserver(
@@ -195,10 +195,10 @@ export default function Navbar({ aboutRef }) {
             </button>
 
             {/* About Dropdown */}
-            <div className="nav-dropdown-wrapper" ref={aboutDropdownRef}>
+            <div className="nav-dropdown-wrapper" ref={aboutDropdownRef}   onMouseEnter={() => setAboutDropdownOpen(true)}
+          onMouseLeave={() => setAboutDropdownOpen(false)}>
               <button 
                 className={`nav-link-btn dropdown-trigger ${aboutDropdownOpen ? 'active' : ''}`}
-                onClick={() => setAboutDropdownOpen(!aboutDropdownOpen)}
               >
                 About
                 <svg 
@@ -232,16 +232,11 @@ export default function Navbar({ aboutRef }) {
             </button>
 
             {/* Learning Dropdown */}
-            <div className="nav-dropdown-wrapper" ref={learningDropdownRef}>
+            <div className="nav-dropdown-wrapper" ref={learningDropdownRef}   onMouseEnter={() => setLearningDropdownOpen(true)}
+            onMouseLeave={() => setLearningDropdownOpen(false)}>
               <button 
                 className={`nav-link-btn dropdown-trigger ${learningDropdownOpen ? 'active' : ''}`}
-                onClick={() => {
-                  if (!user) {
-                    login();
-                  } else {
-                    setLearningDropdownOpen(!learningDropdownOpen);
-                  }
-                }}
+               
               >
                 Learning
                 <svg 
@@ -284,7 +279,7 @@ export default function Navbar({ aboutRef }) {
 
             {/* User Profile or Login */}
             {user && user.picture ? (
-              <div className="nav-dropdown-wrapper" ref={dropdownRef}>
+              <div className="nav-dropdown-wrapper pp" ref={dropdownRef}  onMouseLeave={() => setDropdownOpen(false)}>
                 <img
                   src={user.picture}
                   alt="Profile"
@@ -295,7 +290,7 @@ export default function Navbar({ aboutRef }) {
                   decoding="sync"
                 />
                 {dropdownOpen && (
-                  <div className="nav-dropdown-menu">
+                  <div className="nav-dropdown-menu pp">
                     <button
                       className="nav-dropdown-item"
                       disabled

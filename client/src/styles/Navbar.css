@@ -1,6 +1,14 @@
+/* =================================================================
+   IMPORTS & FONTS
+   ================================================================= */
 @import url('https://fonts.googleapis.com/css2?family=Sacramento&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Sacramento&display=swap');
+
+/* =================================================================
+   CSS CUSTOM PROPERTIES (VARIABLES)
+   ================================================================= */
 :root {
+  /* Colors */
   --primary-bg: #ECF5EE;
   --gradient-start: #1D2A2D;
   --gradient-mid: #22383B;
@@ -15,128 +23,24 @@
   --white: white;
   --card-bg: #f1f5f9;
   
+  /* Typography */
   --font-primary: 'Poppins', sans-serif;
   --font-roboto: 'Poppins', roboto;
   
+  /* Border Radius */
   --border-radius-sm: 20px;
   --border-radius-md: 30px;
   --border-radius-lg: 40px;
+  
+  /* Shadows */
   --shadow-default: 0 6px 12px -7px var(--shadow-color);
   --shadow-card: -15px 15px 15px -2px rgba(0, 0, 0, 0.3);
 }
-.navbar {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  padding: 0.5rem 4rem 0.5rem;
 
-
-/* Light transparent background */
-  /* border: 2px solid aquamarine;  */
-  /* transition: all 0.3s ease-in-out , transform 0.3s ease-in-out; */
-  transform-origin: top center;
-  transition: all 0.4 ease;
-}
-.nav-logo {
-  font-weight: 700;
-  letter-spacing: 1px;
-  color:#E0E7E9 ;
-  font-family: 'Sacramento', cursive; /* Custom font */
-  font-style: normal;
-  font-size: 3rem;
-  transition: font-size 0.4s ease, transform 0.4s ease, opacity 0.4s ease;
-  opacity: 1;
-  transform: scale(1);
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
-
-.booking-bg .nav-links a,
-.booking-bg .nav-link-btn,
-.booking-bg .login-button{
-  color: var(--text-secondary);
-  font-weight: 500;
-}
-.navbar.booking-bg .nav-logo{
-  color: var(--text-secondary);
-
-}
-.nav-container {
-  display: flex;
-  flex-direction: row;
-  justify-content:space-between ;
-  align-items: center;
-  padding: 0;
-}
-
-
-.nav-links {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 2rem;
-}
-
-.nav-links a,
-.nav-link-btn,.login-button {
-  text-decoration: none;
-  font-weight: 400;
-  font-size: 1.5rem;
-  color: #E0E7E9; 
-  background: none;
-  border: none;
-  cursor: pointer;
-  transition: color 0.3s ease, transform 0.2s ease;
-  font-family:'Poppins', sans-serif; /* Default font */
-  line-height: normal; 
-  -webkit-appearance: none; /* For WebKit/Safari default button styles */
-  -moz-appearance: none;    /* For Firefox default button styles */
-  appearance: none;         /* Standard property */
- 
-}
-
-.nav-links a:hover,
-.nav-link-btn:hover {/* Indigo hover */
-  transform: translateY(-2px);
-}
-.profile-pic {
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #2a9d8f;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-  position: relative;
-
-}
-
-
-.user-name {
-  font-size: 1rem;
-  color: #f5f5f5;
-  margin-bottom: 0.5rem;
-}
-
-.logout-btn {
-  background: #e63946;
-  border: none;
-  padding: 0.5rem 1.25rem;
-  border-radius: 6px;
-  color: white;
-  cursor: pointer;
-  font-weight: 600;
-}
-
-.logout-btn:hover {
-  background: #c9182b;
-}
-/* shrink */
- @keyframes scale-down-center {
+/* =================================================================
+   KEYFRAME ANIMATIONS
+   ================================================================= */
+@keyframes scale-down-center {
   0% {
     transform: translateX(-50%) scale(0.1);
     opacity: 1;
@@ -146,6 +50,7 @@
     opacity: 1;
   }
 }
+
 @keyframes scale-up-center {
   0% {
     transform: translateX(0) scale(0.5);
@@ -156,71 +61,197 @@
     opacity: 1;
   }
 }
+
+/* =================================================================
+   BASE NAVBAR STYLES
+   ================================================================= */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  padding: 0.5rem 4rem 0.5rem;
+  transform-origin: top center;
+  transition: all 0.4 ease;
+}
+
+.nav-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0;
+}
+
+/* =================================================================
+   NAVBAR LOGO
+   ================================================================= */
+.nav-logo {
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #E0E7E9;
+  font-family: 'Sacramento', cursive;
+  font-style: normal;
+  font-size: 3rem;
+  transition: font-size 0.4s ease, transform 0.4s ease, opacity 0.4s ease;
+  opacity: 1;
+  transform: scale(1);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* =================================================================
+   NAVBAR LINKS
+   ================================================================= */
+.nav-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3rem;
+}
+
+.nav-links a,
+.nav-link-btn,
+.login-button {
+  text-decoration: none;
+  font-weight: 400;
+  font-size: 1.5rem;
+  color: #E0E7E9;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.3s ease, transform 0.2s ease;
+  font-family: 'Poppins', sans-serif;
+  line-height: normal;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.nav-links a:hover,
+.nav-link-btn:hover {
+  transform: translateY(-2px);
+}
+
+/* Hide home button in expanded navbar */
+.nav-links > .nav-link-btn:nth-child(1) {
+  display: none;
+}
+
+/* =================================================================
+   LOGIN BUTTON
+   ================================================================= */
+.login-button {
+  color: #FF6B6B;
+}
+
+.login-button:hover {
+  transform: translateY(-2px);
+}
+
+/* =================================================================
+   PROFILE PICTURE & USER
+   ================================================================= */
+.profile-pic {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #2a9d8f;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  position: relative;
+}
+
+
+/* =================================================================
+   NAVBAR SHRINK/EXPAND STATES
+   ================================================================= */
 .navbar.shrink {
   position: fixed;
   top: 1rem;
   left: 50%;
-  transform: translateX(-50%) scale(0.5);
-  transform-origin: center  ;
+  transform: translateX(-50%);
+  transform-origin: center;
   border-radius: 30px;
-  padding: 0.6rem 1.5rem;
+  padding: 0rem 1.5rem;
   box-shadow: 0 10px 27px rgba(0, 0, 0, 0.3);
-  background: rgba(18, 53, 36, 0.4); /* Green tint + transparency */
-  backdrop-filter: blur(10px);      /* Blur effect */
+  background: rgba(18, 53, 36, 0.4);
+  backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   animation: scale-down-center 0.4s cubic-bezier(.25,.46,.45,.94) forwards;
+  pointer-events: auto;
 }
 
-
-.navbar.expand{
+.navbar.expand {
   position: sticky;
   top: 0;
   left: 0;
   animation: scale-up-center 0.3s cubic-bezier(.25,.46,.45,.94) forwards;
 }
 
-.navbar.shrink  .nav-links{
+/* Shrink state adjustments */
+.navbar.shrink .nav-links {
   gap: 1.5rem;
 }
-.navbar.shrink  .nav-links a,
+
+.navbar.shrink .nav-links a,
 .navbar.shrink .nav-link-btn {
-  font-size: 1.5rem;
-  color:white ; /* Deep gray */
+  font-size: 1.4rem;
+  color: white;
   transition: font-size 0.8s ease, color 0.8s ease;
   font-weight: 450;
-  gap: 0rem;
+  padding: 0.75rem 0rem;
 }
 
-/* hides home button in expanded navbar */
-.nav-links>.nav-link-btn:nth-child(1) {  
-    display: none;
+/* Show home button in shrunk navbar */
+.navbar.shrink .nav-links > .nav-link-btn:nth-of-type(1) {
+  display: inline-block;
 }
-/* brings back home button in shrunk navbar */
-.navbar.shrink .nav-links> .nav-link-btn:nth-of-type(1){
-    display: inline-block;
+.navbar.shrink .nav-dropdown-wrapper.pp {
+  display: none;
 }
-/* hides about in shrunk navbar */
 
-/* ------------------------------------------- */
-/* LOGIN BUTTON */
-.login-button {
-  color: #FF6B6B; 
-
-}
-.login-button:hover{
+/* =================================================================
+   SHRUNK NAVBAR HOVER FIXES
+   ================================================================= */
+.navbar.shrink .nav-links a:hover,
+.navbar.shrink .nav-link-btn:hover {
   transform: translateY(-2px);
+  color: var(--accent-green);
 }
 
-/* -------------------------------------------- */
+.navbar.shrink .login-button:hover {
+  transform: translateY(-2px);
+  color: #FF8A8A;
+}
 
-/* DROP DOWN */
+/* =================================================================
+   BOOKING BACKGROUND STYLES
+   ================================================================= */
+.booking-bg .nav-links a,
+.booking-bg .nav-link-btn,
+.booking-bg .login-button {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.navbar.booking-bg .nav-logo {
+  color: var(--text-secondary);
+}
+
+/* =================================================================
+   DROPDOWN MENU STYLES
+   ================================================================= */
 .nav-dropdown-wrapper {
   position: relative;
   display: inline-block;
-  
+  gap: 2rem;
 }
 
-/* Dropdown Trigger Button */
+/* Dropdown Trigger */
 .dropdown-trigger {
   display: flex;
   align-items: center;
@@ -239,27 +270,26 @@
   transform: rotate(180deg);
 }
 
-/* BASE DROPDOWN MENU - DESKTOP */
+/* Base Dropdown Menu */
 .nav-dropdown-menu {
+  pointer-events: auto;
   position: absolute;
-  top: calc(100% + 0.5rem);
   left: 50%;
-  transform: translateX(-50%);
-   /* translucent green */
+  transform: translateX(-15%);
   border-radius: var(--border-radius-sm);
-   /* green-tinted shadow */
-  border: 1px solid rgba(0, 128, 0, 0.3);       /* subtle green border */
-  min-width: 140px;
+  border: 1px solid rgba(0, 128, 0, 0.3);
   overflow: hidden;
-  z-index: 1000;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  z-index: 9999;
   color: var(--text-dark);
-
   visibility: visible;
+  background-color: var(--accent-green);
 }
 
-/* Dropdown Arrow/Pointer - Desktop */
+.nav-dropdown-menu.pp {
+  min-width: 100px;
+}
+
+/* Dropdown Arrow Pointer */
 .nav-dropdown-menu::before {
   content: '';
   position: absolute;
@@ -289,9 +319,11 @@
   cursor: pointer;
   transition: all 0.2s ease;
   border-bottom: 1px solid rgba(26, 43, 60, 0.08);
+  border-bottom-color: var(--text-secondary);
 }
 
-.nav-dropdown-item:last-child {
+.nav-dropdown-item:last-child,
+.navbar.shrink .nav-dropdown-item:last-child {
   border-bottom: none;
 }
 
@@ -299,108 +331,15 @@
   background: linear-gradient(135deg, 
     rgba(154, 230, 180, 0.1) 0%, 
     rgba(154, 230, 180, 0.05) 100%);
-  color: var(--accent-green);
+  transform: scale(1.1);
 }
-
-
-
-
-
-
-/* MOBILE STYLES - SIMPLIFIED */
-@media (max-width: 768px) {
-  .nav-dropdown-menu {
-    position: absolute;
-    top: calc(100% + 0.5rem);
-    left: 50%;
-    transform: translateX(-50%);
-    
-    /* Mobile-specific styling */
-    min-width: 180px;
-    max-width: 90vw;
-    background: var(--white);
-    border-radius: var(--border-radius-sm);
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
-    border: 1px solid rgba(154, 230, 180, 0.2);
-    
-    /* Ensure visibility */
-    opacity: 1;
-    visibility: visible;
-    z-index: 1001;
-  }
-
-  .nav-dropdown-menu::before {
-    border-bottom-color: var(--white);
-  }
-
-  .nav-dropdown-item {
-    padding: 1rem 1.5rem;
-    font-size: 1rem;
-    border-bottom: 1px solid rgba(26, 43, 60, 0.1);
-  }
-
-  .nav-dropdown-item:hover {
-    background: rgba(154, 230, 180, 0.1);
-  }
-}
-
-
-
-/* VERY SMALL MOBILE SCREENS */
-@media (max-width: 480px) {
-  .nav-dropdown-menu {
-    /* Position closer to trigger */
-   
-    min-width: 140px;
-    top: calc(100% + 0.25rem);
-  }
-  
-  .dropdown-trigger {
-    gap: 0.25rem;
-  }
-
-  .dropdown-arrow {
-    width: 10px;
-    height: 10px;
-  }
-
-  .nav-dropdown-item {
-    padding: 0.875rem 1.25rem;
-    font-size: 0.9rem;
-  }
-  
-
- 
-}
-
-/* DARK MODE SUPPORT */
-@media (prefers-color-scheme: dark) {
-  .nav-dropdown-menu, .booking-bg .nav-dropdown-menu {
-    background: var(--gradient-start);
-    border-color: rgba(154, 230, 180, 0.3);
-  }
-  
-  .nav-dropdown-menu::before, .booking-bg .nav-dropdown-menu::before {
-    border-bottom-color: var(--gradient-start);
-  }
-  
-  .nav-dropdown-item, .booking-bg .nav-dropdown-item {
-    color: var(--text-primary);
-    border-bottom-color: rgba(224, 231, 233, 0.1);
-  }
-}
-
-.navbar.shrink .nav-dropdown-menu {
-  top: calc(100% + 0.25rem);
-}
-
 
 .nav-dropdown-item:focus {
   background: rgba(154, 230, 180, 0.1);
   transform: scale(1.1);
 }
 
-/* LOADING STATE */
+/* Loading State */
 .nav-dropdown-item.loading {
   opacity: 0.6;
   cursor: not-allowed;
@@ -411,101 +350,329 @@
   background: transparent;
 }
 
-/* ENHANCED HOVER EFFECTS FOR DESKTOP */
+
+/* =================================================================
+   SHRUNK NAVBAR DROPDOWN STYLES
+   ================================================================= */
+.navbar.shrink .nav-dropdown-menu {
+  top: calc(100% );
+  background-color: var(--white);
+  border: 1px solid rgba(154, 230, 180, 0.3);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+  z-index: 10000;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 130px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  border-bottom-left-radius: var(--border-radius-sm);
+  border-bottom-right-radius: var(--border-radius-sm);
+  overflow: hidden;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.navbar.shrink .nav-dropdown-menu::before {
+  border-bottom-color: var(--white);
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 8px solid var(--white);
+  filter: drop-shadow(0 -2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.navbar.shrink .nav-dropdown-item {
+  color: var(--text-secondary);
+  border-bottom-color: rgba(26, 43, 60, 0.1);
+  display: block;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  text-align: left;
+  background: transparent;
+  border: none;
+  font-family: var(--font-primary);
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-bottom: 1px solid rgba(26, 43, 60, 0.08);
+}
+
+.navbar.shrink .nav-dropdown-item:hover {
+  background: rgba(154, 230, 180, 0.15);
+  transform: scale(1.02);
+  color: var(--text-dark);
+}
+
+.navbar.shrink .nav-dropdown-item:focus {
+  background: rgba(154, 230, 180, 0.15);
+  transform: scale(1.02);
+  outline: none;
+}
+
+/* =================================================================
+   ENHANCED DROPDOWN TRIGGER HOVER FOR SHRUNK STATE
+   ================================================================= */
+.navbar.shrink .nav-dropdown-wrapper {
+  position: relative;
+}
+
+.navbar.shrink .dropdown-trigger {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  position: relative;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.navbar.shrink .dropdown-trigger:hover .dropdown-arrow {
+  opacity: 1;
+  color: var(--accent-green);
+  transform: scale(1.1);
+}
+
+.navbar.shrink .dropdown-trigger:hover {
+  color: var(--accent-green);
+}
+
+.navbar.shrink .dropdown-arrow {
+  transition: transform 0.3s ease, color 0.3s ease;
+  opacity: 0.7;
+}
+
+.navbar.shrink .dropdown-arrow.rotated {
+  transform: rotate(180deg);
+}
+
+/* Smooth Transitions */
+.nav-dropdown-wrapper * {
+  transition: all 0.2s ease;
+}
+
+/* =================================================================
+   MEDIA QUERIES - TABLET & MOBILE
+   ================================================================= */
+
+/* Tablet - 768px and below */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0.5rem 1.5rem;
+  }
+  
+  .navbar.shrink .nav-links > .nav-dropdown-wrapper:nth-of-type(1),
+  .navbar.shrink .nav-links > .nav-dropdown-wrapper:nth-of-type(3),
+  .navbar.shrink .nav-links > .login-button {
+    display: none;
+  }
+  
+  .nav-container {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.2rem;
+    
+  }
+  
+  .nav-links {
+    gap: 0.6rem;
+  }
+  
+  .nav-links > .nav-link-btn:nth-child(1) {
+    display: none;
+  }
+  
+  .navbar.shrink {
+    max-width: 90%;
+    padding:0;
+  }
+  
+  .profile-pic {
+    width: 2rem;
+    height: 2rem;
+  }
+  
+  .profile-wrapper {
+    display: flex;
+    align-items: center;
+  }
+  
+  .navbar.shrink .nav-links {
+    gap: 1rem;
+    padding: 0.3rem 1rem;
+  }
+  
+  .navbar.shrink .nav-links a,
+  .navbar.shrink .nav-link-btn {
+    font-size: 1.2rem;
+    font-weight: 600;
+  }
+  
+  .nav-links a,
+  .nav-link-btn,
+  .login-button {
+    font-size: 1rem;
+  }
+  
+  /* Mobile Dropdown Styles */
+  .nav-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    left: 50%;
+    transform: translateX(-10%);
+    width: fit-content;
+    min-width: 180px;
+    max-width: 90vw;
+    background: var(--white);
+    border-radius: var(--border-radius-sm);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(154, 230, 180, 0.2);
+    z-index: 1001;
+  }
+  
+  .nav-dropdown-menu::before {
+    border-bottom-color: var(--white);
+  }
+  
+  .nav-dropdown-item {
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
+    border-bottom: 1px solid rgba(26, 43, 60, 0.1);
+  }
+  
+  .nav-dropdown-item:hover {
+    background: rgba(154, 230, 180, 0.1);
+  }
+ 
+  
+}
+
+/* Small Mobile - 480px and below */
+@media (max-width: 480px) {
+  .nav-dropdown-menu {
+    min-width: 140px;
+    top: calc(100% + 0.25rem);
+  }
+  
+  .dropdown-trigger {
+    gap: 0.25rem;
+  }
+  
+  .dropdown-arrow {
+    width: 10px;
+    height: 10px;
+  }
+  
+  .nav-dropdown-item {
+    padding: 0.875rem 1.25rem;
+    font-size: 0.9rem;
+  }
+   .navbar.shrink .nav-links{
+    gap: 0.5rem;
+  }
+    .navbar.shrink .nav-links a,
+  .navbar.shrink .nav-link-btn {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+}
+
+/* Very Small Mobile - 360px and below */
+@media (max-width: 360px) {
+  .navbar.shrink .nav-links{
+    gap: 0.5rem;
+  }
+  .navbar.shrink .nav-links a,
+  .navbar.shrink .nav-link-btn {
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.5rem 0;
+  }
+  
+  .navbar.shrink .nav-links > .nav-dropdown-wrapper:nth-of-type(1),
+  .navbar.shrink .nav-links > .nav-dropdown-wrapper:nth-of-type(3) {
+    display: none;
+  }
+}
+
+/* =================================================================
+   ENHANCED EFFECTS FOR DESKTOP
+   ================================================================= */
 @media (min-width: 769px) {
   .dropdown-trigger:hover .dropdown-arrow {
     opacity: 1;
     color: var(--accent-green);
   }
-}
-
-/* SMOOTH TRANSITIONS */
-.nav-dropdown-wrapper * {
-  transition: all 0.2s ease;
-}
-
-
-
-/* ----------------------------------------------END DROPDOWN -------------------------------------------------------- */
-
-
-/* Mobile friendly */
-@media (max-width: 768px) {
-   .navbar{
-    padding: 0.5rem 1.5rem;
-  }
-  .navbar.shrink .nav-links > .nav-dropdown-wrapper:nth-of-type(1),.navbar.shrink .nav-links > .nav-dropdown-wrapper:nth-of-type(3),
-  .navbar.shrink .nav-links > .login-button{
-    display: none;
-}
-  .nav-container {
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items:center;
-    justify-content: center;
-    gap: 0.2rem;
-    padding: 0.4rem 1rem;
-  }
-  .nav-links{
-    gap: 0.6rem;
-
-  }
-  .nav-links>.nav-link-btn:nth-child(1) {
-    display: none;
-  }
-   .navbar.shrink{
-    max-width: 90%;
-    padding: 0.6rem 0.6rem;
-  }
-  .profile-pic {
-    width: 2rem;
-    height: 2rem;
-  }
-  .profile-wrapper{
-    display: flex;
-    align-items: center;
-
-  }
-  .navbar.shrink  .nav-links{
-  gap: 0.5rem;
-  }
-
   
-
-   .navbar.shrink .nav-links a,
-  .navbar.shrink .nav-link-btn {
-    font-size: 1rem;
-    font-weight: 600;
+  /* Enhanced shrunk navbar hover effects for desktop */
+  .navbar.shrink .dropdown-trigger:hover .dropdown-arrow {
+    opacity: 1;
+    color: var(--accent-green);
+    transform: scale(1.2);
   }
- 
-  .nav-links a,
-  .nav-link-btn,.login-button {
-    font-size: 1rem;         /* Standard property */
+  
+  .navbar.shrink .dropdown-trigger:hover {
+    color: var(--accent-green);
+    transform: translateY(-1px);
+  }
+  
+  /* Force hover states to work properly */
+  .navbar.shrink .nav-dropdown-wrapper:hover .nav-dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+  
+  .navbar.shrink .nav-dropdown-item:hover {
+    background: rgba(154, 230, 180, 0.2) !important;
+    transform: scale(1.02) !important;
+    color: var(--text-dark) !important;
   }
 }
-@media (max-width:360px){
 
-    .navbar.shrink .nav-links a,
-  .navbar.shrink .nav-link-btn {
-    font-size: 0.85rem;
-    font-weight: 600;
+/* =================================================================
+   DARK MODE SUPPORT
+   ================================================================= */
+@media (prefers-color-scheme: dark) {
+  .booking-bg .nav-dropdown-menu {
+    background: var(--gradient-start);
+    border-color: rgba(154, 230, 180, 0.3);
   }
-
-  .navbar.shrink .nav-links > .nav-dropdown-wrapper:nth-of-type(1),.navbar.shrink .nav-links >.nav-dropdown-wrapper:nth-of-type(3){
-    display: none;
+  
+  .booking-bg .nav-dropdown-menu::before {
+    border-bottom-color: var(--gradient-start);
+  }
+  
+  .booking-bg .nav-dropdown-item {
+    color: var(--text-primary);
+    border-bottom-color: rgba(224, 231, 233, 0.1);
+  }
+  
+  /* Dark mode shrunk navbar dropdown */
+  .navbar.shrink .nav-dropdown-menu {
+    background: var(--gradient-start);
+    border-color: rgba(154, 230, 180, 0.3);
+  }
+  
+  .navbar.shrink .nav-dropdown-menu::before {
+    border-bottom-color: var(--gradient-start);
+  }
+  
+  .navbar.shrink .nav-dropdown-item {
+    color: var(--text-primary);
+    border-bottom-color: rgba(224, 231, 233, 0.1);
+  }
+  
+  .navbar.shrink .nav-dropdown-item:hover {
+    background: rgba(154, 230, 180, 0.1);
+  }
 }
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
