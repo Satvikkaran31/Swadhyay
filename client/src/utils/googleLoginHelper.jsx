@@ -1,8 +1,10 @@
 // utils/googleLoginHelper.js
 import { useGoogleLogin } from '@react-oauth/google';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-export function useTriggerGoogleLogin(setUser, navigateTo = "/", navigate) {
+export function useTriggerGoogleLogin(setUser, navigateTo = "/") {
+  const navigate = useNavigate(); 
   return useGoogleLogin({
     flow: 'auth-code',
     onSuccess: async (codeResponse) => {

@@ -1,12 +1,13 @@
 import React, { useEffect, useRef, useState, useContext } from "react";
 import { Link, useLocation } from "react-router-dom";
 import "../styles/Navbar.css";
+import "../styles/NavbarHamburger.css";
 import BookingModal from "./BookingModal";
 import LoginButton from "./LoginButton";
 import RazorpayButton from "./RazorpayButton";
 import { UserContext } from "../context/UserProvider";
 import { useTriggerGoogleLogin } from "../utils/googleLoginHelper";
-import { useUser } from "../context/UserProvider"; // Use the new context hook
+import { useUser } from "../context/UserProvider";
 import { useNavigate } from "react-router-dom";
 
 export default function Navbar({ aboutRef }) {
@@ -14,30 +15,31 @@ export default function Navbar({ aboutRef }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [aboutDropdownOpen, setAboutDropdownOpen] = useState(false);
   const [learningDropdownOpen, setLearningDropdownOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [shrink, setShrink] = useState(false);
   
-  // Updated: Use the new context with logout function
   const { user, setUser, logout } = useUser();
   const navigate = useNavigate();
 
   const dropdownRef = useRef(null);
   const aboutDropdownRef = useRef(null);
   const learningDropdownRef = useRef(null);
+  const mobileMenuRef = useRef(null);
   const location = useLocation();
   const observerRef = useRef(null);
   const login = useTriggerGoogleLogin(setUser);
 
   const scrollToSection = (id) => {
     if (location.pathname === "/") {
-      // We're on home page, scroll directly
       const el = document.getElementById(id);
       if (el) {
         el.scrollIntoView({ behavior: "smooth" });
       }
     } else {
-      // We're on a different page, navigate to home with hash
       navigate(`/#${id}`);
     }
+    // Close mobile menu after navigation
+    setMobileMenuOpen(false);
   };
 
   const handleProtectedClick = (action) => {
@@ -46,6 +48,7 @@ export default function Navbar({ aboutRef }) {
     } else {
       setShowModal(true);
     }
+    setMobileMenuOpen(false);
   };
 
   // Navbar shrink effect on scroll to About
@@ -68,7 +71,7 @@ export default function Navbar({ aboutRef }) {
     return () => observerRef.current?.disconnect();
   }, [aboutRef, location]);
 
-  // Close dropdown on outside click
+  // Close dropdowns and mobile menu on outside click
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -80,16 +83,36 @@ export default function Navbar({ aboutRef }) {
       if (learningDropdownRef.current && !learningDropdownRef.current.contains(event.target)) {
         setLearningDropdownOpen(false);
       }
+      if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target)) {
+        setMobileMenuOpen(false);
+      }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Updated: Simplified logout using context method
+  // Close mobile menu on route change
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [location.pathname]);
+
+  // Prevent body scroll when mobile menu is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [mobileMenuOpen]);
+
   const handleLogout = async () => {
     try {
-      await logout(); // This handles backend logout + local state clearing
+      await logout();
       setDropdownOpen(false);
+      setMobileMenuOpen(false);
     } catch (err) {
       console.error("Error during logout:", err);
     }
@@ -128,19 +151,29 @@ export default function Navbar({ aboutRef }) {
     setLearningDropdownOpen(false);
   };
 
+  const handleMobileItemClick = (action) => {
+    if (typeof action === 'function') {
+      action();
+    }
+    setMobileMenuOpen(false);
+  };
+
   return (
     <>
       <nav className={`navbar ${shrink ? "shrink" : "expand"} ${isBookingPage ? "booking-bg" : ""}`}>
         <div className="nav-container">
-          {!shrink && <button className="nav-logo" onClick={()=> scrollToSection("main")}>Swadhyay</button>}
+          {!shrink && (
+            <button className="nav-logo" onClick={() => scrollToSection("main")}>
+              Swadhyay
+            </button>
+          )}
 
-          <div className="nav-links">
+          {/* Desktop Navigation */}
+          <div className="nav-links desktop-nav">
             <button className="nav-link-btn" onClick={() => scrollToSection("main")}>
               Home
             </button>
-            <button className="nav-link-btn" onClick={handleProtectedClick}>
-              Session
-            </button>
+
             {/* About Dropdown */}
             <div className="nav-dropdown-wrapper" ref={aboutDropdownRef}>
               <button 
@@ -174,7 +207,9 @@ export default function Navbar({ aboutRef }) {
               )}
             </div>
 
-            
+            <button className="nav-link-btn" onClick={handleProtectedClick}>
+              Schedule
+            </button>
 
             {/* Learning Dropdown */}
             <div className="nav-dropdown-wrapper" ref={learningDropdownRef}>
@@ -228,37 +263,146 @@ export default function Navbar({ aboutRef }) {
             </Link> 
 
             {user && user.picture ? (
-  <div className="nav-dropdown-wrapper" ref={dropdownRef}>
-    <img
-      src={user.picture}
-      alt="Profile"
-      className="profile-pic"
-      onClick={() => setDropdownOpen(!dropdownOpen)}
-      referrerPolicy="no-referrer"
-    />
-              {dropdownOpen && (
-                <div className="nav-dropdown-menu">
-                  <button
-                    className="nav-dropdown-item"
-                    disabled
-                    style={{ fontWeight: "bold", cursor: "default" }}
-                  >
-                    {user.name}
-                  </button>
-                  <button
-                    className="nav-dropdown-item"
-                    onClick={handleLogout}
-                  >
-                    Logout
-                  </button>
-                </div>
-              )}
-            </div>
-          ) : (
+              <div className="nav-dropdown-wrapper" ref={dropdownRef}>
+                <img
+                  src={user.picture}
+                  alt="Profile"
+                  className="profile-pic"
+                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                  referrerPolicy="no-referrer"
+                />
+                {dropdownOpen && (
+                  <div className="nav-dropdown-menu">
+                    <button
+                      className="nav-dropdown-item"
+                      disabled
+                      style={{ fontWeight: "bold", cursor: "default" }}
+                    >
+                      {user.name}
+                    </button>
+                    <button
+                      className="nav-dropdown-item"
+                      onClick={handleLogout}
+                    >
+                      Logout
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
               <LoginButton />
             )}
           </div>
+
+          {/* Mobile Hamburger Button */}
+          <button 
+            className="hamburger-btn mobile-nav"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label="Toggle mobile menu"
+          >
+            <span className={`hamburger-line ${mobileMenuOpen ? 'open' : ''}`}></span>
+            <span className={`hamburger-line ${mobileMenuOpen ? 'open' : ''}`}></span>
+            <span className={`hamburger-line ${mobileMenuOpen ? 'open' : ''}`}></span>
+          </button>
         </div>
+
+        {/* Mobile Menu Overlay */}
+        {mobileMenuOpen && (
+          <div className="mobile-menu-overlay" ref={mobileMenuRef}>
+            <div className="mobile-menu">
+              <div className="mobile-menu-header">
+                <button className="nav-logo mobile-logo" onClick={() => scrollToSection("main")}>
+                  Swadhyay
+                </button>
+                <button 
+                  className="mobile-close-btn"
+                  onClick={() => setMobileMenuOpen(false)}
+                  aria-label="Close mobile menu"
+                >
+                  ×
+                </button>
+              </div>
+
+              <div className="mobile-menu-content">
+                <button className="mobile-menu-item" onClick={() => scrollToSection("main")}>
+                  Home
+                </button>
+
+                {/* About Section */}
+                <div className="mobile-menu-section">
+                  <div className="mobile-menu-section-title">About</div>
+                  {aboutDropdownItems.map((item, index) => (
+                    <button
+                      key={index}
+                      className="mobile-menu-subitem"
+                      onClick={() => handleMobileItemClick(item.onClick)}
+                    >
+                      {item.label}
+                    </button>
+                  ))}
+                </div>
+
+                <button className="mobile-menu-item" onClick={() => handleMobileItemClick(handleProtectedClick)}>
+                  Schedule
+                </button>
+
+                {/* Learning Section */}
+                {user && (
+                  <div className="mobile-menu-section">
+                    <div className="mobile-menu-section-title">Learning</div>
+                    {learningDropdownItems.map((item, index) => (
+                      <button
+                        key={index}
+                        className="mobile-menu-subitem"
+                        onClick={() => handleMobileItemClick(item.onClick)}
+                      >
+                        {item.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                <Link 
+                  className="mobile-menu-item"
+                  to="/booking"
+                  onClick={(e) => {
+                    if (!user) {
+                      e.preventDefault();
+                      login();
+                    }
+                    setMobileMenuOpen(false);
+                  }}
+                >
+                  Pricing
+                </Link>
+
+                {/* User Section */}
+                {user && user.picture ? (
+                  <div className="mobile-menu-user">
+                    <div className="mobile-user-info">
+                      <img
+                        src={user.picture}
+                        alt="Profile"
+                        className="mobile-profile-pic"
+                        referrerPolicy="no-referrer"
+                      />
+                      <span className="mobile-user-name">{user.name}</span>
+                    </div>
+                    <button className="mobile-menu-item logout-item" onClick={handleLogout}>
+                      Logout
+                    </button>
+                  </div>
+                ) : (
+                  <div className="mobile-menu-auth">
+                    <button className="mobile-login-btn" onClick={() => handleMobileItemClick(login)}>
+                      Login
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </nav>
 
       {showModal && <BookingModal onClose={() => setShowModal(false)} />}

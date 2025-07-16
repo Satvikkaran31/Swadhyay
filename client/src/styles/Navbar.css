@@ -255,15 +255,17 @@
   top: calc(100% + 0.5rem);
   left: 50%;
   transform: translateX(-50%);
-  background: var(--white);
+  background: rgba(255, 255, 255, 0.15); /* translucent white */
   border-radius: var(--border-radius-sm);
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-  border: 1px solid rgba(154, 230, 180, 0.2);
-  min-width: 150px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  min-width: 140px;
   overflow: hidden;
   z-index: 1000;
-  
-  /* Always visible when rendered */
+  backdrop-filter: blur(12px);         /* GLASS EFFECT */
+  -webkit-backdrop-filter: blur(12px); /* Safari support */
+  color: var(--text-dark);             /* dark text on light glass */
+
   opacity: 1;
   visibility: visible;
 }
@@ -311,6 +313,11 @@
   color: var(--accent-green);
 }
 
+
+
+
+
+
 /* MOBILE STYLES - SIMPLIFIED */
 @media (max-width: 768px) {
   .nav-dropdown-menu {
@@ -348,20 +355,21 @@
   }
 }
 
+
+
 /* VERY SMALL MOBILE SCREENS */
 @media (max-width: 480px) {
   .nav-dropdown-menu {
-    min-width: 160px;
-    max-width: 85vw;
-    
     /* Position closer to trigger */
+   
+    min-width: 10px;
     top: calc(100% + 0.25rem);
   }
-
+  
   .dropdown-trigger {
     gap: 0.25rem;
   }
-  
+
   .dropdown-arrow {
     width: 10px;
     height: 10px;
@@ -372,7 +380,7 @@
     font-size: 0.9rem;
   }
   
-  /* Hide specific dropdowns when navbar is shrunk */
+
  
 }
 
@@ -393,12 +401,11 @@
   }
 }
 
-/* SHRINK NAVBAR ADJUSTMENTS */
 .navbar.shrink .nav-dropdown-menu {
   top: calc(100% + 0.25rem);
 }
 
-/* ACCESSIBILITY */
+
 .nav-dropdown-item:focus {
   outline: 2px solid var(--accent-green);
   outline-offset: -2px;
@@ -428,6 +435,12 @@
 .nav-dropdown-wrapper * {
   transition: all 0.2s ease;
 }
+
+
+
+/* ----------------------------------------------END DROPDOWN -------------------------------------------------------- */
+
+
 /* Mobile friendly */
 @media (max-width: 768px) {
    .navbar{
@@ -470,9 +483,10 @@
 
   
 
+   .navbar.shrink .nav-links a,
   .navbar.shrink .nav-link-btn {
-    font-size: 1.15rem;
-    font-weight: 650;
+    font-size: 1rem;
+    font-weight: 600;
   }
  
   .nav-links a,
@@ -487,11 +501,11 @@
   }
     .navbar.shrink .nav-links a,
   .navbar.shrink .nav-link-btn {
-    font-size: 0.95rem;
+    font-size: 0.85rem;
     font-weight: 600;
   }
   .nav-link-btn , .nav-links a {
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     font-weight: 600;
   }
   .navbar.shrink .nav-links > .nav-dropdown-wrapper:nth-of-type(1),.navbar.shrink .nav-links >.nav-dropdown-wrapper:nth-of-type(3){
@@ -499,3 +513,16 @@
 }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
