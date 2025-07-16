@@ -115,17 +115,6 @@
 
 }
 
-.dropdown-menu {
-  position: absolute;
-  right: 0;
-  top: 45px;
-  background-color: #222;
-  padding: 1rem;
-  border-radius: 8px;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
-  z-index: 1000;
-  text-align: right;
-}
 
 .user-name {
   font-size: 1rem;
@@ -176,7 +165,7 @@
   border-radius: 30px;
   padding: 0.6rem 1.5rem;
   box-shadow: 0 10px 27px rgba(0, 0, 0, 0.3);
-  background: rgba(18, 53, 36, 0.4);; /* Green tint + transparency */
+  background: rgba(18, 53, 36, 0.4); /* Green tint + transparency */
   backdrop-filter: blur(10px);      /* Blur effect */
   -webkit-backdrop-filter: blur(10px);
   animation: scale-down-center 0.4s cubic-bezier(.25,.46,.45,.94) forwards;
@@ -228,6 +217,7 @@
 .nav-dropdown-wrapper {
   position: relative;
   display: inline-block;
+  
 }
 
 /* Dropdown Trigger Button */
@@ -255,18 +245,17 @@
   top: calc(100% + 0.5rem);
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(255, 255, 255, 0.15); /* translucent white */
+   /* translucent green */
   border-radius: var(--border-radius-sm);
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+   /* green-tinted shadow */
+  border: 1px solid rgba(0, 128, 0, 0.3);       /* subtle green border */
   min-width: 140px;
   overflow: hidden;
   z-index: 1000;
-  backdrop-filter: blur(12px);         /* GLASS EFFECT */
-  -webkit-backdrop-filter: blur(12px); /* Safari support */
-  color: var(--text-dark);             /* dark text on light glass */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: var(--text-dark);
 
-  opacity: 1;
   visibility: visible;
 }
 
@@ -289,7 +278,7 @@
 .nav-dropdown-item {
   display: block;
   width: 100%;
-  padding: 0.75rem 1.25rem;
+  padding: 0.75rem 1rem;
   text-align: left;
   background: transparent;
   border: none;
@@ -407,9 +396,8 @@
 
 
 .nav-dropdown-item:focus {
-  outline: 2px solid var(--accent-green);
-  outline-offset: -2px;
   background: rgba(154, 230, 180, 0.1);
+  transform: scale(1.1);
 }
 
 /* LOADING STATE */
@@ -446,7 +434,8 @@
    .navbar{
     padding: 0.5rem 1.5rem;
   }
-  .navbar.shrink .nav-links > .nav-dropdown-wrapper:nth-of-type(1),.navbar.shrink .nav-links > .nav-dropdown-wrapper:nth-of-type(3){
+  .navbar.shrink .nav-links > .nav-dropdown-wrapper:nth-of-type(1),.navbar.shrink .nav-links > .nav-dropdown-wrapper:nth-of-type(3),
+  .navbar.shrink .nav-links > .login-button{
     display: none;
 }
   .nav-container {
@@ -495,19 +484,13 @@
   }
 }
 @media (max-width:360px){
-  .profile-pic{
-    width: 1.5rem;
-    height: 1.5rem; 
-  }
+
     .navbar.shrink .nav-links a,
   .navbar.shrink .nav-link-btn {
     font-size: 0.85rem;
     font-weight: 600;
   }
-  .nav-link-btn , .nav-links a {
-    font-size: 0.9rem;
-    font-weight: 600;
-  }
+
   .navbar.shrink .nav-links > .nav-dropdown-wrapper:nth-of-type(1),.navbar.shrink .nav-links >.nav-dropdown-wrapper:nth-of-type(3){
     display: none;
 }

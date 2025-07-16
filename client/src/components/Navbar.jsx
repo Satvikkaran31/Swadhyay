@@ -290,21 +290,24 @@ export default function Navbar({ aboutRef }) {
                 )}
               </div>
             ) : (
-              <LoginButton />
+              <LoginButton className="loginbutton" />
             )}
           </div>
 
           {/* Mobile Hamburger Button */}
-          <button 
-            className="hamburger-btn mobile-nav"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label="Toggle mobile menu"
-          >
-            <span className={`hamburger-line ${mobileMenuOpen ? 'open' : ''}`}></span>
-            <span className={`hamburger-line ${mobileMenuOpen ? 'open' : ''}`}></span>
-            <span className={`hamburger-line ${mobileMenuOpen ? 'open' : ''}`}></span>
-          </button>
-        </div>
+          {!mobileMenuOpen && (
+            <button 
+              className="hamburger-btn mobile-nav"
+              onClick={() => setMobileMenuOpen(true)}
+              aria-label="Open mobile menu"
+            >
+              
+              <span className="hamburger-line"></span>
+              <span className="hamburger-line"></span>
+              <span className="hamburger-line"></span>
+            </button>
+          )}       
+           </div>
 
         {/* Mobile Menu Overlay */}
         {mobileMenuOpen && (
