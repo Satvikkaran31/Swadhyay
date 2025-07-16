@@ -588,12 +588,15 @@
 
 /* Very Small Mobile - 360px and below */
 @media (max-width: 360px) {
+  .navbar.shrink {
+    max-width: 97%;
+  }
   .navbar.shrink .nav-links{
     gap: 0.5rem;
   }
   .navbar.shrink .nav-links a,
   .navbar.shrink .nav-link-btn {
-    font-size: 0.85rem;
+    font-size: 0.95rem;
     font-weight: 600;
     padding: 0.5rem 0;
   }

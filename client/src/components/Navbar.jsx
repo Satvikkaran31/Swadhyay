@@ -48,6 +48,27 @@ export default function Navbar({ aboutRef }) {
     setMobileMenuOpen(false);
   };
 
+
+  useEffect(() => {
+  const handleTouchEnd = () => {
+    const active = document.activeElement;
+    if (active && (active.tagName === 'BUTTON' || active.tagName === 'A')) {
+      active.blur(); // Remove focus from button or link
+    }
+  };
+
+  document.addEventListener('touchend', handleTouchEnd);
+  return () => document.removeEventListener('touchend', handleTouchEnd);
+}, []);
+useEffect(() => {
+  const checkMobile = () => {
+    setIsMobile(window.innerWidth <= 768);
+  };
+  checkMobile();
+  window.addEventListener('resize', checkMobile);
+  return () => window.removeEventListener('resize', checkMobile);
+}, []);
+
   const handleProtectedClick = (action) => {
     if (!user) {
       login();
@@ -175,7 +196,8 @@ export default function Navbar({ aboutRef }) {
   };
 
   // Determine if we should show mobile or desktop nav
-  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
+  const [isMobile, setIsMobile] = useState(false);
+  
 
   return (
     <>
@@ -199,6 +221,7 @@ export default function Navbar({ aboutRef }) {
           onMouseLeave={() => setAboutDropdownOpen(false)}>
               <button 
                 className={`nav-link-btn dropdown-trigger ${aboutDropdownOpen ? 'active' : ''}`}
+                onClick={() => setAboutDropdownOpen(!aboutDropdownOpen)}
               >
                 About
                 <svg 
@@ -236,6 +259,7 @@ export default function Navbar({ aboutRef }) {
             onMouseLeave={() => setLearningDropdownOpen(false)}>
               <button 
                 className={`nav-link-btn dropdown-trigger ${learningDropdownOpen ? 'active' : ''}`}
+                onClick={() => setLearningDropdownOpen(!learningDropdownOpen)}
                
               >
                 Learning
