@@ -17,6 +17,7 @@ export default function Navbar({ aboutRef }) {
   const [learningDropdownOpen, setLearningDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [shrink, setShrink] = useState(false);
+  const [isClient, setIsClient] = useState(false);
   
   const { user, setUser, logout } = useUser();
   const navigate = useNavigate();
@@ -28,6 +29,11 @@ export default function Navbar({ aboutRef }) {
   const location = useLocation();
   const observerRef = useRef(null);
   const login = useTriggerGoogleLogin(setUser);
+
+  // Set client-side flag to prevent hydration issues
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const scrollToSection = (id) => {
     if (location.pathname === "/") {
@@ -60,7 +66,12 @@ export default function Navbar({ aboutRef }) {
 
     if (location.pathname === "/" && aboutRef?.current) {
       observerRef.current = new IntersectionObserver(
-        ([entry]) => setShrink(entry.isIntersecting),
+        ([entry]) => {
+          // Use requestAnimationFrame to batch DOM updates
+          requestAnimationFrame(() => {
+            setShrink(entry.isIntersecting);
+          });
+        },
         { threshold }
       );
       observerRef.current.observe(aboutRef.current);
@@ -98,13 +109,15 @@ export default function Navbar({ aboutRef }) {
 
   // Prevent body scroll when mobile menu is open
   useEffect(() => {
+    // Use class-based approach to prevent layout shift
     if (mobileMenuOpen) {
-      document.body.style.overflow = 'hidden';
+      document.body.classList.add('mobile-menu-open');
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.classList.remove('mobile-menu-open');
     }
+    
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.classList.remove('mobile-menu-open');
     };
   }, [mobileMenuOpen]);
 
@@ -122,10 +135,13 @@ export default function Navbar({ aboutRef }) {
   useEffect(() => {
     const hash = location.hash;
     if (hash) {
-      const el = document.querySelector(hash);
-      if (el) {
-        el.scrollIntoView({ behavior: "smooth" });
-      }
+      // Use setTimeout to ensure DOM is ready
+      setTimeout(() => {
+        const el = document.querySelector(hash);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 100);
     }
   }, [location]);
 
@@ -158,10 +174,14 @@ export default function Navbar({ aboutRef }) {
     setMobileMenuOpen(false);
   };
 
+  // Determine if we should show mobile or desktop nav
+  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
+
   return (
     <>
       <nav className={`navbar ${shrink ? "shrink" : "expand"} ${isBookingPage ? "booking-bg" : ""}`}>
         <div className="nav-container">
+          {/* Logo - always show when not shrunk */}
           {!shrink && (
             <button className="nav-logo" onClick={() => scrollToSection("main")}>
               Swadhyay
@@ -262,6 +282,7 @@ export default function Navbar({ aboutRef }) {
               Pricing   
             </Link> 
 
+            {/* User Profile or Login */}
             {user && user.picture ? (
               <div className="nav-dropdown-wrapper" ref={dropdownRef}>
                 <img
@@ -270,6 +291,8 @@ export default function Navbar({ aboutRef }) {
                   className="profile-pic"
                   onClick={() => setDropdownOpen(!dropdownOpen)}
                   referrerPolicy="no-referrer"
+                  loading="eager"
+                  decoding="sync"
                 />
                 {dropdownOpen && (
                   <div className="nav-dropdown-menu">
@@ -278,7 +301,7 @@ export default function Navbar({ aboutRef }) {
                       disabled
                       style={{ fontWeight: "bold", cursor: "default" }}
                     >
-                      {user.name}
+                      {user.name.split(" ")[0]}
                     </button>
                     <button
                       className="nav-dropdown-item"
@@ -294,20 +317,21 @@ export default function Navbar({ aboutRef }) {
             )}
           </div>
 
-          {/* Mobile Hamburger Button */}
-          {!mobileMenuOpen && (
-            <button 
-              className="hamburger-btn mobile-nav"
-              onClick={() => setMobileMenuOpen(true)}
-              aria-label="Open mobile menu"
-            >
-              
-              <span className="hamburger-line"></span>
-              <span className="hamburger-line"></span>
-              <span className="hamburger-line"></span>
-            </button>
-          )}       
-           </div>
+          {/* Mobile Hamburger Button - Always reserve space */}
+          <div className="mobile-nav">
+            {!mobileMenuOpen && (
+              <button 
+                className="hamburger-btn"
+                onClick={() => setMobileMenuOpen(true)}
+                aria-label="Open mobile menu"
+              >
+                <span className="hamburger-line"></span>
+                <span className="hamburger-line"></span>
+                <span className="hamburger-line"></span>
+              </button>
+            )}
+          </div>
+        </div>
 
         {/* Mobile Menu Overlay */}
         {mobileMenuOpen && (
@@ -388,8 +412,10 @@ export default function Navbar({ aboutRef }) {
                         alt="Profile"
                         className="mobile-profile-pic"
                         referrerPolicy="no-referrer"
+                        loading="eager"
+                        decoding="sync"
                       />
-                      <span className="mobile-user-name">{user.name}</span>
+                      <span className="mobile-user-name">{user.name.split(" ")[0]}</span>
                     </div>
                     <button className="mobile-menu-item logout-item" onClick={handleLogout}>
                       Logout

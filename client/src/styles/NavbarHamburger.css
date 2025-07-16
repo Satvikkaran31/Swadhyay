@@ -10,7 +10,7 @@
   display: flex;
 }
 
-/* Hamburger Button */
+/* Hamburger Button - Reserve space to prevent layout shift */
 .hamburger-btn {
   display: none;
   flex-direction: column;
@@ -22,6 +22,9 @@
   cursor: pointer;
   padding: 0;
   z-index: 1001;
+  /* Reserve space to prevent layout shift */
+  flex-shrink: 0;
+  min-width: 2rem;
 }
 
 .hamburger-line {
@@ -57,7 +60,7 @@
   top: 0;
   left: 0;
   width: 100%;
-  height: 100vh;
+  height: 100dvh;
   background: rgba(0, 0, 0, 0.5);
   z-index: 999;
   backdrop-filter: blur(5px);
@@ -69,8 +72,8 @@
   top: 0;
   right: 0;
   width: 300px;
-  max-width: 85vw;
-  height: 100vh;
+  max-width: 85dvw;
+  height: 100dvh;
   background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-mid) 50%, var(--gradient-end) 100%);
   padding: 0;
   overflow-y: auto;
@@ -269,13 +272,14 @@
 /* RESPONSIVE STYLES */
 @media (max-width: 768px) {
   /* Hide desktop nav */
-    .navbar:not(.shrink) .desktop-nav {
+  .navbar:not(.shrink) .desktop-nav {
     display: none;
   }
   .navbar.shrink .mobile-nav {
     display: none;
-  }
 
+  }
+  
   /* Show mobile nav */
   .mobile-nav {
     display: flex;
@@ -289,13 +293,32 @@
     display: block;
   }
 
-  /* Adjust navbar for mobile */
-  .navbar {
-    padding: 0.5rem 1.5rem;
-  }
+  /* Adjust navbar for mobile - reserve space to prevent layout shift */
+
 
   .nav-container {
     justify-content: space-between;
+    align-items: center;
+    height: 100%;
+  }
+
+  /* Ensure nav logo has consistent space */
+  .nav-logo {
+    flex-shrink: 0;
+    min-width: max-content;
+  }
+
+  /* Reserve space for hamburger button */
+  .nav-container::after {
+    content: '';    
+    visibility: hidden;
+  }
+
+  .hamburger-btn {
+    position: absolute;
+    right: 1.5rem;
+    top: 50%;
+    transform: translateY(-50%);
   }
 }
 
@@ -328,6 +351,10 @@
   .mobile-menu-auth {
     padding: 1.5rem;
   }
+
+  .hamburger-btn {
+    right: 1.5rem;
+  }
 }
 
 /* Prevent scrolling when mobile menu is open */
@@ -347,3 +374,33 @@ body.mobile-menu-open {
   outline-offset: -2px;
 }
 
+/* Additional CLS improvements */
+
+/* Preload space for dynamic content */
+.nav-container {
+  position: relative;
+}
+
+/* Ensure consistent spacing */
+.nav-links {
+  gap: 1rem;
+}
+
+/* Prevent profile pic from causing layout shift */
+.profile-pic {
+  width: 2.5rem;
+  height: 2.5rem;
+  flex-shrink: 0;
+}
+
+/* Reserve space for dropdowns */
+.nav-dropdown-wrapper {
+  position: relative;
+}
+
+.nav-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 150px;
+}
