@@ -495,7 +495,15 @@ export default function Navbar({ aboutRef }) {
             >
               <button 
                 className={`nav-link-btn dropdown-trigger ${learningDropdownOpen ? 'active' : ''}`}
-                onClick={handleLearningDropdown}
+                onClick={(e)=>{
+                  if(!user) {
+                    e.preventDefault();
+                    login();
+                  } else {
+                    handleLearningDropdown(e); 
+                  }
+                }
+                }
               >
                 Learning
                 <svg 
