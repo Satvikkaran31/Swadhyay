@@ -10,85 +10,181 @@ import { useTriggerGoogleLogin } from "../utils/googleLoginHelper";
 import { useUser } from "../context/UserProvider";
 import { useNavigate } from "react-router-dom";
 
+/**
+ * Navbar Component - Responsive navigation with dropdowns and mobile menu
+ * Features:
+ * - Responsive design with desktop/mobile views
+ * - Dropdown menus with hover (desktop) and click (mobile) support
+ * - Smooth scrolling to sections
+ * - User authentication integration
+ * - Navbar shrinking effect on scroll
+ * - Mobile-friendly touch handling
+ */
 export default function Navbar({ aboutRef }) {
-  const [showModal, setShowModal] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [aboutDropdownOpen, setAboutDropdownOpen] = useState(false);
-  const [learningDropdownOpen, setLearningDropdownOpen] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [shrink, setShrink] = useState(false);
-  const [isClient, setIsClient] = useState(false);
+  // =============================================================================
+  // STATE MANAGEMENT
+  // =============================================================================
   
+  // Modal and dropdown states
+  const [showModal, setShowModal] = useState(false); // Booking modal visibility
+  const [dropdownOpen, setDropdownOpen] = useState(false); // User profile dropdown
+  const [aboutDropdownOpen, setAboutDropdownOpen] = useState(false); // About dropdown
+  const [learningDropdownOpen, setLearningDropdownOpen] = useState(false); // Learning dropdown
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false); // Mobile hamburger menu
+  
+  // UI state
+  const [shrink, setShrink] = useState(false); // Navbar shrink effect
+  const [isClient, setIsClient] = useState(false); // Client-side rendering flag
+  const [isMobile, setIsMobile] = useState(false); // Mobile device detection
+  
+  // =============================================================================
+  // HOOKS AND REFS
+  // =============================================================================
+  
+  // User context and navigation
   const { user, setUser, logout } = useUser();
   const navigate = useNavigate();
 
-  const dropdownRef = useRef(null);
-  const aboutDropdownRef = useRef(null);
-  const learningDropdownRef = useRef(null);
-  const mobileMenuRef = useRef(null);
+  // Refs for dropdown click-outside detection
+  const dropdownRef = useRef(null); // User profile dropdown
+  const aboutDropdownRef = useRef(null); // About dropdown
+  const learningDropdownRef = useRef(null); // Learning dropdown
+  const mobileMenuRef = useRef(null); // Mobile menu
+  
+  // Navigation and scroll detection
   const location = useLocation();
-  const observerRef = useRef(null);
+  const observerRef = useRef(null); // Intersection observer for navbar shrink
   const login = useTriggerGoogleLogin(setUser);
 
-  // Set client-side flag to prevent hydration issues
+  // =============================================================================
+  // INITIALIZATION EFFECTS
+  // =============================================================================
+  
+  /**
+   * Set client-side flag to prevent hydration issues
+   * This helps avoid SSR/CSR mismatches in Next.js applications
+   */
   useEffect(() => {
     setIsClient(true);
   }, []);
 
+  // =============================================================================
+  // NAVIGATION HANDLERS
+  // =============================================================================
+  
+  /**
+   * Smooth scroll to a section by ID
+   * Handles both same-page scrolling and cross-page navigation
+   * @param {string} id - The element ID to scroll to
+   */
   const scrollToSection = (id) => {
     if (location.pathname === "/") {
+      // Same page: scroll directly to element
       const el = document.getElementById(id);
       if (el) {
         el.scrollIntoView({ behavior: "smooth" });
       }
     } else {
+      // Different page: navigate with hash
       navigate(`/#${id}`);
     }
-    // Close mobile menu after navigation
+    // Always close mobile menu after navigation
     setMobileMenuOpen(false);
   };
 
-
+  // =============================================================================
+  // MOBILE TOUCH HANDLING
+  // =============================================================================
+  
+  /**
+   * Enhanced touch handling to prevent stuck button states on mobile
+   * This fixes the common issue where buttons remain in focus/active state
+   * after being tapped on mobile devices
+   */
   useEffect(() => {
-  const handleTouchEnd = () => {
-    const active = document.activeElement;
-    if (active && (active.tagName === 'BUTTON' || active.tagName === 'A')) {
-      active.blur(); // Remove focus from button or link
-    }
-  };
+    const handleTouchStart = (e) => {
+      // Remove any existing focus when touch starts
+      // This prevents focus conflicts between touch and click events
+      if (document.activeElement && document.activeElement.blur) {
+        document.activeElement.blur();
+      }
+    };
 
-  document.addEventListener('touchend', handleTouchEnd);
-  return () => document.removeEventListener('touchend', handleTouchEnd);
-}, []);
-useEffect(() => {
-  const checkMobile = () => {
-    setIsMobile(window.innerWidth <= 768);
-  };
-  checkMobile();
-  window.addEventListener('resize', checkMobile);
-  return () => window.removeEventListener('resize', checkMobile);
-}, []);
+    const handleTouchEnd = (e) => {
+      // Force blur on touch end to prevent stuck focus states
+      // Small timeout ensures the touch event completes before blur
+      setTimeout(() => {
+        const active = document.activeElement;
+        if (active && (active.tagName === 'BUTTON' || active.tagName === 'A')) {
+          active.blur();
+        }
+      }, 10);
+    };
 
+    // Add both touch events with passive flag for better performance
+    document.addEventListener('touchstart', handleTouchStart, { passive: true });
+    document.addEventListener('touchend', handleTouchEnd, { passive: true });
+    
+    return () => {
+      document.removeEventListener('touchstart', handleTouchStart);
+      document.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, []);
+
+  // =============================================================================
+  // DEVICE DETECTION
+  // =============================================================================
+  
+  /**
+   * Detect if device is mobile based on screen width
+   * Updates isMobile state on window resize
+   */
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    checkMobile(); // Initial check
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // =============================================================================
+  // PROTECTED ROUTE HANDLERS
+  // =============================================================================
+  
+  /**
+   * Handle actions that require authentication
+   * Shows login if user not authenticated, otherwise opens booking modal
+   */
   const handleProtectedClick = (action) => {
     if (!user) {
-      login();
+      login(); // Trigger Google login
     } else {
-      setShowModal(true);
+      setShowModal(true); // Show booking modal
     }
-    setMobileMenuOpen(false);
+    setMobileMenuOpen(false); // Close mobile menu
   };
 
-  // Navbar shrink effect on scroll to About
+  // =============================================================================
+  // NAVBAR SHRINK EFFECT
+  // =============================================================================
+  
+  /**
+   * Navbar shrink effect based on scroll position
+   * Uses Intersection Observer to detect when about section comes into view
+   * Adjusts threshold based on device type for better UX
+   */
   useEffect(() => {
     if (observerRef.current) observerRef.current.disconnect();
 
     const screenWidth = window.innerWidth;
-    const threshold = screenWidth < 768 ? 0.1 : 0.32;
+    const threshold = screenWidth < 768 ? 0.1 : 0.32; // Different thresholds for mobile/desktop
 
     if (location.pathname === "/" && aboutRef?.current) {
       observerRef.current = new IntersectionObserver(
         ([entry]) => {
-          // Use requestAnimationFrame to batch DOM updates
+          // Use requestAnimationFrame to batch DOM updates for better performance
           requestAnimationFrame(() => {
             setShrink(entry.isIntersecting);
           });
@@ -97,51 +193,102 @@ useEffect(() => {
       );
       observerRef.current.observe(aboutRef.current);
     } else {
-      setShrink(false);
+      setShrink(false); // Reset shrink state when not on home page
     }
 
     return () => observerRef.current?.disconnect();
   }, [aboutRef, location]);
 
-  // Close dropdowns and mobile menu on outside click
+  // =============================================================================
+  // CLICK OUTSIDE HANDLING
+  // =============================================================================
+  
+  /**
+   * Close dropdowns and mobile menu when clicking outside
+   * Handles multiple dropdown refs and mobile menu ref
+   */
   useEffect(() => {
     function handleClickOutside(event) {
+      // Close user profile dropdown
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setDropdownOpen(false);
       }
+      // Close about dropdown
       if (aboutDropdownRef.current && !aboutDropdownRef.current.contains(event.target)) {
         setAboutDropdownOpen(false);
       }
+      // Close learning dropdown
       if (learningDropdownRef.current && !learningDropdownRef.current.contains(event.target)) {
         setLearningDropdownOpen(false);
       }
+      // Close mobile menu
       if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target)) {
         setMobileMenuOpen(false);
       }
     }
+    
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Close mobile menu on route change
+  // =============================================================================
+  // ROUTE CHANGE EFFECTS
+  // =============================================================================
+  
+  /**
+   * Close mobile menu when route changes
+   * Prevents menu from staying open during navigation
+   */
   useEffect(() => {
     setMobileMenuOpen(false);
   }, [location.pathname]);
 
-  // Prevent body scroll when mobile menu is open
+  /**
+   * Handle hash-based navigation for smooth scrolling
+   * Useful for direct links to sections (e.g., website.com/#about)
+   */
   useEffect(() => {
-    // Use class-based approach to prevent layout shift
+    const hash = location.hash;
+    if (hash) {
+      // Use setTimeout to ensure DOM is ready after route change
+      setTimeout(() => {
+        const el = document.querySelector(hash);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 100);
+    }
+  }, [location]);
+
+  // =============================================================================
+  // BODY SCROLL MANAGEMENT
+  // =============================================================================
+  
+  /**
+   * Prevent body scroll when mobile menu is open
+   * Uses class-based approach to avoid layout shift
+   */
+  useEffect(() => {
     if (mobileMenuOpen) {
       document.body.classList.add('mobile-menu-open');
     } else {
       document.body.classList.remove('mobile-menu-open');
     }
     
+    // Cleanup on unmount
     return () => {
       document.body.classList.remove('mobile-menu-open');
     };
   }, [mobileMenuOpen]);
 
+  // =============================================================================
+  // AUTHENTICATION HANDLERS
+  // =============================================================================
+  
+  /**
+   * Handle user logout
+   * Closes all dropdowns and mobile menu after logout
+   */
   const handleLogout = async () => {
     try {
       await logout();
@@ -152,42 +299,44 @@ useEffect(() => {
     }
   };
 
-  // Smooth scroll to section by ID
-  useEffect(() => {
-    const hash = location.hash;
-    if (hash) {
-      // Use setTimeout to ensure DOM is ready
-      setTimeout(() => {
-        const el = document.querySelector(hash);
-        if (el) {
-          el.scrollIntoView({ behavior: "smooth" });
-        }
-      }, 100);
-    }
-  }, [location]);
-
+  // =============================================================================
+  // CONFIGURATION DATA
+  // =============================================================================
+  
   const isBookingPage = location.pathname === "/booking";
 
-  // About dropdown items
+  // About dropdown menu items configuration
   const aboutDropdownItems = [
     { label: "Our Mission", onClick: () => scrollToSection("right-text") },
     { label: "About Us", onClick: () => scrollToSection("team") },
     { label: "Contact", onClick: () => scrollToSection("contact") }
   ];
 
-  // Learning dropdown items
+  // Learning dropdown menu items configuration
   const learningDropdownItems = [
     { label: "Articles", onClick: () => console.log("Course Catalog") },
     { label: "Courses", onClick: () => console.log("Study Materials") },
     { label: "Who Am I?", onClick: () => console.log("Achievements") }
   ];
 
+  // =============================================================================
+  // DROPDOWN INTERACTION HANDLERS
+  // =============================================================================
+  
+  /**
+   * Handle dropdown item clicks
+   * Executes the item's onClick function and closes all dropdowns
+   */
   const handleDropdownItemClick = (item) => {
     item.onClick();
     setAboutDropdownOpen(false);
     setLearningDropdownOpen(false);
   };
 
+  /**
+   * Handle mobile menu item clicks
+   * Executes the action and closes mobile menu
+   */
   const handleMobileItemClick = (action) => {
     if (typeof action === 'function') {
       action();
@@ -195,9 +344,88 @@ useEffect(() => {
     setMobileMenuOpen(false);
   };
 
-  // Determine if we should show mobile or desktop nav
-  const [isMobile, setIsMobile] = useState(false);
+  // =============================================================================
+  // DESKTOP DROPDOWN HANDLERS (Click-based)
+  // =============================================================================
   
+  /**
+   * Handle About dropdown toggle
+   * Only responds to clicks, prevents conflicts with hover on mobile
+   */
+  const handleAboutDropdown = (e) => {
+    e.preventDefault();
+    setAboutDropdownOpen(!aboutDropdownOpen);
+    setLearningDropdownOpen(false); // Close other dropdown
+  };
+
+  /**
+   * Handle Learning dropdown toggle
+   * Only responds to clicks, prevents conflicts with hover on mobile
+   */
+  const handleLearningDropdown = (e) => {
+    e.preventDefault();
+    setLearningDropdownOpen(!learningDropdownOpen);
+    setAboutDropdownOpen(false); // Close other dropdown
+  };
+
+  /**
+   * Handle Profile dropdown toggle
+   * Only responds to clicks, prevents conflicts with hover on mobile
+   */
+  const handleProfileDropdown = (e) => {
+    e.preventDefault();
+    setDropdownOpen(!dropdownOpen);
+    setAboutDropdownOpen(false);
+    setLearningDropdownOpen(false);
+  };
+
+  // =============================================================================
+  // DESKTOP HOVER HANDLERS (Mouse-based)
+  // =============================================================================
+  
+  /**
+   * Handle mouse enter for desktop hover effects
+   * Only active on desktop devices to prevent conflicts with mobile touch
+   */
+  const handleMouseEnter = (dropdownType) => {
+    if (!isMobile) {
+      switch (dropdownType) {
+        case 'about':
+          setAboutDropdownOpen(true);
+          setLearningDropdownOpen(false);
+          break;
+        case 'learning':
+          setLearningDropdownOpen(true);
+          setAboutDropdownOpen(false);
+          break;
+        case 'profile':
+          setDropdownOpen(true);
+          setAboutDropdownOpen(false);
+          setLearningDropdownOpen(false);
+          break;
+      }
+    }
+  };
+
+  /**
+   * Handle mouse leave for desktop hover effects
+   * Only active on desktop devices to prevent conflicts with mobile touch
+   */
+  const handleMouseLeave = (dropdownType) => {
+    if (!isMobile) {
+      switch (dropdownType) {
+        case 'about':
+          setAboutDropdownOpen(false);
+          break;
+        case 'learning':
+          setLearningDropdownOpen(false);
+          break;
+        case 'profile':
+          setDropdownOpen(false);
+          break;
+      }
+    }
+  };
 
   return (
     <>
@@ -217,11 +445,15 @@ useEffect(() => {
             </button>
 
             {/* About Dropdown */}
-            <div className="nav-dropdown-wrapper" ref={aboutDropdownRef}   onMouseEnter={() => setAboutDropdownOpen(true)}
-          onMouseLeave={() => setAboutDropdownOpen(false)}>
+            <div 
+              className="nav-dropdown-wrapper" 
+              ref={aboutDropdownRef}
+              onMouseEnter={() => handleMouseEnter('about')}
+              onMouseLeave={() => handleMouseLeave('about')}
+            >
               <button 
                 className={`nav-link-btn dropdown-trigger ${aboutDropdownOpen ? 'active' : ''}`}
-                onClick={() => setAboutDropdownOpen(!aboutDropdownOpen)}
+                onClick={handleAboutDropdown}
               >
                 About
                 <svg 
@@ -255,12 +487,15 @@ useEffect(() => {
             </button>
 
             {/* Learning Dropdown */}
-            <div className="nav-dropdown-wrapper" ref={learningDropdownRef}   onMouseEnter={() => setLearningDropdownOpen(true)}
-            onMouseLeave={() => setLearningDropdownOpen(false)}>
+            <div 
+              className="nav-dropdown-wrapper" 
+              ref={learningDropdownRef}
+              onMouseEnter={() => handleMouseEnter('learning')}
+              onMouseLeave={() => handleMouseLeave('learning')}
+            >
               <button 
                 className={`nav-link-btn dropdown-trigger ${learningDropdownOpen ? 'active' : ''}`}
-                onClick={() => setLearningDropdownOpen(!learningDropdownOpen)}
-               
+                onClick={handleLearningDropdown}
               >
                 Learning
                 <svg 
@@ -303,12 +538,17 @@ useEffect(() => {
 
             {/* User Profile or Login */}
             {user && user.picture ? (
-              <div className="nav-dropdown-wrapper pp" ref={dropdownRef}  onMouseLeave={() => setDropdownOpen(false)}>
+              <div 
+                className="nav-dropdown-wrapper pp" 
+                ref={dropdownRef}
+                onMouseEnter={() => handleMouseEnter('profile')}
+                onMouseLeave={() => handleMouseLeave('profile')}
+              >
                 <img
                   src={user.picture}
                   alt="Profile"
                   className="profile-pic"
-                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                  onClick={handleProfileDropdown}
                   referrerPolicy="no-referrer"
                   loading="eager"
                   decoding="sync"

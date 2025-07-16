@@ -464,6 +464,20 @@
 
 /* Tablet - 768px and below */
 @media (max-width: 768px) {
+  .nav-link-btn:focus,
+  .nav-link-btn:active {
+    outline: none;
+    background: none;
+  }
+  
+  .nav-link-btn:focus-visible {
+    outline: none;
+  }
+/* Ensure smooth transitions */
+.nav-link-btn {
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
   .navbar {
     padding: 0.5rem 1.5rem;
   }
