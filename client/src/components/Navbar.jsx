@@ -138,7 +138,9 @@ export default function Navbar({ aboutRef }) {
             <button className="nav-link-btn" onClick={() => scrollToSection("main")}>
               Home
             </button>
-
+            <button className="nav-link-btn" onClick={handleProtectedClick}>
+              Session
+            </button>
             {/* About Dropdown */}
             <div className="nav-dropdown-wrapper" ref={aboutDropdownRef}>
               <button 
@@ -172,9 +174,7 @@ export default function Navbar({ aboutRef }) {
               )}
             </div>
 
-            <button className="nav-link-btn" onClick={handleProtectedClick}>
-              Schedule
-            </button>
+            
 
             {/* Learning Dropdown */}
             <div className="nav-dropdown-wrapper" ref={learningDropdownRef}>
