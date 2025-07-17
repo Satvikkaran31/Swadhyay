@@ -19,7 +19,7 @@
   --image-gradient-start: #E0D8D0;
   --image-gradient-mid: #C8C4BE;
   --image-gradient-end: #B0B5AD;
-  
+  --accent-dark-green:#8CCF9D;
   /* Font Variables */
   --font-primary: 'Poppins', sans-serif;
   --font-secondary: 'Segoe UI', sans-serif;
@@ -66,14 +66,14 @@
 
 .hero h1 {
   font-family: var(--font-primary);
-  font-size: 3rem;
+  font-size: 3.2rem;
   font-weight:550;
   margin-top: 0rem;
   color: var(--text-primary);
 }
 
 /* HERO QUOTE */
-.quote-svg-wrapper {
+/* .quote-svg-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -100,6 +100,67 @@
 @keyframes draw {
   to {
     stroke-dashoffset: 0;
+  }
+} */
+/* Carl Jung quote styling */
+.hero-quote {
+  text-align: center;
+  margin: 1.5rem 0 0 0;
+  padding: 0 1rem;
+}
+
+.quote-text {
+  font-family: var(--font-handwriting);
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: var(--accent-green);
+  font-style: italic;
+  opacity: 0;
+  animation: fadeInQuote 1s ease forwards;
+  animation-delay: 0.5s;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.5rem;
+}
+
+.quote-author {
+  font-family: var(--font-primary);
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  opacity: 0;
+  animation: fadeInQuote 1s ease forwards;
+  animation-delay: 1s;
+  margin-top: 0.5rem;
+}
+
+@keyframes fadeInQuote {
+  to {
+    opacity: 1;
+  }
+}
+
+/* Responsive adjustments for quote */
+@media (max-width: 768px) {
+  .quote-text {
+    font-size: 1.1rem;
+  }
+  
+  .quote-author {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .quote-text {
+    font-size: 1rem;
+  }
+  
+  .quote-author {
+    font-size: 0.85rem;
+  }
+  
+  .hero-quote {
+    padding: 0 0.5rem;
   }
 }
 
@@ -273,6 +334,9 @@
 @media (max-width: 768px) {
   .coaching-info {
     grid-template-columns: 1fr;
+  }
+  .hero h1{
+    font-size: 2rem;
   }
 }
 
@@ -465,35 +529,89 @@
 .right-text {
   font-family: var(--font-roboto);
   font-weight: 300;
+  padding: 0;
   max-height: 80vh; 
+  
+}
+/* Chrome, Safari */
+/* .about-neha-content::-webkit-scrollbar {
+  display: none; 
+} */
+
+.about-neha h1{
+  position: sticky;
+  font-family: var(--font-handwriting);
+  padding: 1rem 0 0 0;
+  font-size: 3.5rem;
+  z-index: 3;
+}
+.about-neha h1::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 3rem;
+  width: 45%; 
+  height: 6px; 
+  background-color: var(--text-dark-alt);
+  border-radius: var(--border-radius-sm); 
+  
+}
+.about-neha-content{
+  margin-top: 1rem;
   overflow-y: auto;
-  padding: 1rem 1rem 2rem 1rem;
+  max-height: 60dvh;
   scrollbar-width: thin;
-  scrollbar-width: none; /* Firefox */
+   
   -ms-overflow-style: none;
   scroll-behavior: smooth;
+  
+  padding: 1rem 0 0 0;
 }
-
-.right-text::-webkit-scrollbar {
-  display: none; /* Chrome, Safari */
-}
-
-.right-text h1{
-  font-family: var(--font-handwriting);
-  padding: 3rem 0 1rem 0;
-  font-size: 3.1rem;
-}
-
-.right-text h3{
+.about-neha-content  h3{
   font-family: var(--font-handwriting);
   padding: 0.5rem 0;
+
+}
+/* Custom Scrollbar for .about-neha-content */
+/* Custom Scrollbar for .about-neha-content */
+.about-neha-content::-webkit-scrollbar {
+  width: 12px;
 }
 
-@media (max-width: 768px) {
+.about-neha-content::-webkit-scrollbar-track {
+  background: var(--white); /* Changed from --primary-bg to --white */
+  border-radius: var(--border-radius-sm);
+}
+
+.about-neha-content::-webkit-scrollbar-thumb {
+  background-color: var(--text-secondary);
+  border-radius: var(--border-radius-sm);
+  border: 3px solid var(--white); /* Changed from --primary-bg to --white */
+}
+
+.about-neha-content::-webkit-scrollbar-thumb:hover {
+  background-color: var(--text-secondary);
+}
+
+/* For Firefox */
+.about-neha-content {
+  scrollbar-width: thin;
+  /* Changed the second color value to --white */
+  scrollbar-color: var(--text-secondary) var(--white);
+}
+@media (max-width: 767px) {
   .about-section{
     padding: 0.5rem;
   }
+  .about-neha h1{
+    font-size: 2.2rem;
+  }
+  .about-neha h1::after {
+  left: 3.5rem;
+  width: 60%; 
+  height: 4px; 
   
+  }
   .about-goal-left-text h3{
     font-size: 1.1rem;
     font-family: var(--font-handwriting);

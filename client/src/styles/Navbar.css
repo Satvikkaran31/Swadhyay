@@ -326,15 +326,15 @@
 .navbar.shrink .nav-dropdown-item:last-child {
   border-bottom: none;
 }
-
 .nav-dropdown-item:hover {
-  background: linear-gradient(135deg, 
-    rgba(154, 230, 180, 0.1) 0%, 
-    rgba(154, 230, 180, 0.05) 100%);
-  transform: scale(1.1);
+  background-color: var(--accent-dark-green);
+}
+.nav-dropdown-item:hover span{
+  display: inline-block;
+  transform: scale(1.05);
 }
 
-.nav-dropdown-item:focus {
+.nav-dropdown-item:focus span{
   background: rgba(154, 230, 180, 0.1);
   transform: scale(1.1);
 }

@@ -475,7 +475,7 @@ export default function Navbar({ aboutRef }) {
                       className="nav-dropdown-item"
                       onClick={() => handleDropdownItemClick(item)}
                     >
-                      {item.label}
+                      <span>{item.label}</span>
                     </button>
                   ))}
                 </div>
@@ -525,7 +525,7 @@ export default function Navbar({ aboutRef }) {
                       className="nav-dropdown-item"
                       onClick={() => handleDropdownItemClick(item)}
                     >
-                      {item.label}
+                      <span>{item.label}</span>
                     </button>
                   ))}
                 </div>
@@ -599,7 +599,7 @@ export default function Navbar({ aboutRef }) {
             )}
           </div>
         </div>
-
+{/* -----------------------------------------------MOBILE HAMBURGER MENU------------------------------------------------------------- */}
         {/* Mobile Menu Overlay */}
         {mobileMenuOpen && (
           <div className="mobile-menu-overlay" ref={mobileMenuRef}>
@@ -650,7 +650,7 @@ export default function Navbar({ aboutRef }) {
                         className="mobile-menu-subitem"
                         onClick={() => handleMobileItemClick(item.onClick)}
                       >
-                        {item.label}
+                      {item.label}
                       </button>
                     ))}
                   </div>
