@@ -8,6 +8,7 @@ import { useLocation,useNavigate } from "react-router-dom";
 import image_1 from "../assets/image_1.png"
 import image_2 from "../assets/image_2.png"
 import "../styles/learnMoreButton.css"
+import Footer from "../components/Footer";
 const suffixes = [
   <>has <span className="highlight">25+ years</span> in people engagement.</>,
   <>has <span className="highlight">700+ hours</span> of leadership coaching.</>,
@@ -57,10 +58,10 @@ useEffect(() => {
 
   return (
    <>
-    
+     <Navbar  />
     <div className="main" id="main">
       <div className="gradient-background">
-    <Navbar aboutRef={aboutRef} />
+   
     <div className="home-section">
       {showModal && <BookingModal onClose={() => setShowModal(false)} />}
      
@@ -162,9 +163,10 @@ useEffect(() => {
     </svg>
             </span>
           </button>
-        </div><div className="marker" id="marker"> </div>
+        </div>
+
       </section>
-      
+        
    </div>
    </div>
   <section className="about-section" id="about" ref={aboutRef} >
@@ -285,5 +287,6 @@ useEffect(() => {
 
  
    </div>
+   <Footer />
    </> 
   );}

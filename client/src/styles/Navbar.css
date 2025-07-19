@@ -105,11 +105,11 @@
 /* =================================================================
    NAVBAR LINKS
    ================================================================= */
-.nav-links {
+.nav-links.desktop-nav {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 3rem;
+  gap: 2.5rem;
 }
 
 .nav-links a,
@@ -170,7 +170,7 @@
    NAVBAR SHRINK/EXPAND STATES
    ================================================================= */
 .navbar.shrink {
-  position: fixed;
+  position: sticky;
   top: 1rem;
   left: 50%;
   transform: translateX(-50%);
@@ -183,6 +183,9 @@
   -webkit-backdrop-filter: blur(10px);
   animation: scale-down-center 0.4s cubic-bezier(.25,.46,.45,.94) forwards;
   pointer-events: auto;
+   margin-left: auto;
+  margin-right: auto;
+  width: fit-content;
 }
 
 .navbar.expand {
@@ -508,6 +511,7 @@
   .navbar.shrink {
     max-width: 90%;
     padding:0;
+    position: fixed;
   }
   
   .profile-pic {
@@ -604,6 +608,9 @@
 @media (max-width: 360px) {
   .navbar.shrink {
     max-width: 97%;
+     left: 50% !important;
+    transform: translateX(-50%) !important;
+    animation: scale-down-center 0.4s cubic-bezier(.25,.46,.45,.94) forwards ;
   }
   .navbar.shrink .nav-links{
     gap: 0.5rem;

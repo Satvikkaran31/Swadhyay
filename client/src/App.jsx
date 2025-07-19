@@ -10,7 +10,7 @@ export default function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Home aboutRef={aboutRef} />} />
+        <Route path="/" element={<Home />} />
         <Route path="/booking" element={<Booking />} />
         <Route path="/booking/success" element={<Success />} />
       </Routes>

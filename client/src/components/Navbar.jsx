@@ -10,6 +10,7 @@ import { useTriggerGoogleLogin } from "../utils/googleLoginHelper";
 import { useUser } from "../context/UserProvider";
 import { useNavigate } from "react-router-dom";
 
+
 /**
  * Navbar Component - Responsive navigation with dropdowns and mobile menu
  * Features:
@@ -36,7 +37,7 @@ export default function Navbar({ aboutRef }) {
   const [shrink, setShrink] = useState(false); // Navbar shrink effect
   const [isClient, setIsClient] = useState(false); // Client-side rendering flag
   const [isMobile, setIsMobile] = useState(false); // Mobile device detection
-  
+
   // =============================================================================
   // HOOKS AND REFS
   // =============================================================================
@@ -153,10 +154,7 @@ export default function Navbar({ aboutRef }) {
   // PROTECTED ROUTE HANDLERS
   // =============================================================================
   
-  /**
-   * Handle actions that require authentication
-   * Shows login if user not authenticated, otherwise opens booking modal
-   */
+  
   const handleProtectedClick = (action) => {
     if (!user) {
       login(); // Trigger Google login
@@ -175,30 +173,32 @@ export default function Navbar({ aboutRef }) {
    * Uses Intersection Observer to detect when about section comes into view
    * Adjusts threshold based on device type for better UX
    */
-  useEffect(() => {
-    if (observerRef.current) observerRef.current.disconnect();
+   useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      const shrinkThreshold = 150;
+      const expandThreshold = 100; // Lower threshold to prevent flicker
 
-    const screenWidth = window.innerWidth;
-    const threshold = screenWidth < 768 ? 0.1 : 0.32; // Different thresholds for mobile/desktop
+      if (shrink) {
+        // If it's already shrunk, we only check to see if we should expand it
+        if (currentScrollY < expandThreshold) {
+          setShrink(false);
+        }
+      } else {
+        // If it's expanded, we only check to see if we should shrink it
+        if (currentScrollY > shrinkThreshold) {
+          setShrink(true);
+        }
+      }
+    };
 
-    if (location.pathname === "/" && aboutRef?.current) {
-      observerRef.current = new IntersectionObserver(
-        ([entry]) => {
-          // Use requestAnimationFrame to batch DOM updates for better performance
-          requestAnimationFrame(() => {
-            setShrink(entry.isIntersecting);
-          });
-        },
-        { threshold }
-      );
-      observerRef.current.observe(aboutRef.current);
-    } else {
-      setShrink(false); // Reset shrink state when not on home page
-    }
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    
+    // Initial check
+    handleScroll();
 
-    return () => observerRef.current?.disconnect();
-  }, [aboutRef, location]);
-
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [shrink]); 
   // =============================================================================
   // CLICK OUTSIDE HANDLING
   // =============================================================================
@@ -309,7 +309,7 @@ export default function Navbar({ aboutRef }) {
   const aboutDropdownItems = [
     { label: "Our Mission", onClick: () => scrollToSection("right-text") },
     { label: "About Us", onClick: () => scrollToSection("team") },
-    { label: "Contact", onClick: () => scrollToSection("contact") }
+    { label: "Contact Us", onClick: () => scrollToSection("contact") }
   ];
 
   // Learning dropdown menu items configuration
@@ -496,12 +496,9 @@ export default function Navbar({ aboutRef }) {
               <button 
                 className={`nav-link-btn dropdown-trigger ${learningDropdownOpen ? 'active' : ''}`}
                 onClick={(e)=>{
-                  if(!user) {
-                    e.preventDefault();
-                    login();
-                  } else {
+                 
                     handleLearningDropdown(e); 
-                  }
+                  
                 }
                 }
               >
@@ -517,7 +514,7 @@ export default function Navbar({ aboutRef }) {
                 </svg>
               </button>
               
-              {learningDropdownOpen && user && (
+              {learningDropdownOpen && (
                 <div className="nav-dropdown-menu">
                   {learningDropdownItems.map((item, index) => (
                     <button

@@ -1,0 +1,95 @@
+    /* Ensure you have Font Awesome for the icons */
+    /* You can add this to your public/index.html */
+    /* <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> */
+
+    .footer-container {
+    color: var(--text-primary);
+    padding: 1rem 2rem 1rem;
+    font-family: var(--font-roboto);
+    margin-top: 1rem;
+    }
+
+    .footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 3rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0;
+  
+    }
+
+    .footer-section h3 {
+    font-family: var(--font-primary);
+    color: var(--white);
+    font-size: 1.5rem;
+    font-weight: 400;
+    margin-bottom: 0.5rem;
+   
+    }
+
+    .footer-section.about p {
+    line-height: 1.7;
+    color: #ccc;
+    padding: 0rem;
+    }
+
+    .footer-section.links ul,.footer-section.contact-info ul {
+    list-style: none;
+    }
+
+    .footer-section.links ul li,.footer-section.contact-info ul li {
+    margin-bottom: 0.5rem;
+    }
+
+    .footer-section.links a, .footer-section.contact-info i{
+    color: #ccc;
+    text-decoration: none;
+    transition: color 0.3s ease, padding-left 0.3s ease;
+    }
+
+    .footer-section.links a:hover {
+    color: var(--accent-green);
+    padding-left: 5px;
+    }
+
+    .footer-section.contact-info {
+        padding: 0;
+    }
+
+    .footer-section.contact-info li {
+    font-size: 1.1rem;
+    color: #ccc;
+    display: flex;
+    align-items: center;
+    font-family: var(--font-primary);
+    }
+
+    .footer-section.contact-info .fa {
+    color: var(--accent-green);
+    font-size: 1.2rem;
+    margin-right: 0.5rem;
+    padding: 0;
+    }
+
+
+
+    .socials a {
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    margin-right: 1rem;
+    transition: color 0.3s ease, transform 0.3s ease;
+    }
+
+    .socials a:hover {
+    color: var(--accent-green);
+    transform: translateY(-3px);
+    }
+
+    .footer-bottom {
+    text-align: center;
+    padding-top: 1rem;
+    border-top: 1px solid #444;
+    color: #aaa;
+    font-size: 0.9rem;
+    }
