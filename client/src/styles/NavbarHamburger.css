@@ -99,33 +99,25 @@
 /* Mobile Menu Header */
 .mobile-menu-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
-  padding: 1.5rem 2rem;
-  border-bottom: 1px solid rgba(224, 231, 233, 0.1);
-  background: rgba(0, 0, 0, 0.1);
+  padding: 2rem 2rem 0rem;
+  
+ 
 }
 
-.booking-bg .mobile-menu .mobile-logo {
-  font-size: 2rem;
-  color: white;
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-family: 'Sacramento', cursive;
-  font-weight: 700;
-}
+
 
 .mobile-close-btn {
   background: none;
   border: none;
   color: var(--text-primary);
-  font-size: 2rem;
+  font-size: 2.5rem;
   cursor: pointer;
   padding: 0;
   line-height: 1;
-  width: 2rem;
-  height: 2rem;
+  width: 1rem;
+  height: 0rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -138,7 +130,7 @@
 
 /* Mobile Menu Content */
 .mobile-menu-content {
-  padding: 2rem 0;
+  padding: 0rem 0rem 2rem 0rem;
 }
 
 .mobile-menu-item {
@@ -155,7 +147,7 @@
   cursor: pointer;
   transition: all 0.3s ease;
   text-decoration: none;
-  border-bottom: 1px solid rgba(224, 231, 233, 0.05);
+  
 }
 
 .mobile-menu-item:hover {
@@ -212,7 +204,7 @@
 .mobile-menu-user {
   margin-top: 2rem;
   padding-top: 2rem;
-  border-top: 1px solid rgba(224, 231, 233, 0.1);
+  
 }
 
 .mobile-user-info {

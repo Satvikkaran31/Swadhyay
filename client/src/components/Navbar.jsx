@@ -266,13 +266,17 @@ export default function Navbar({ aboutRef }) {
  
   return (
     <>
-      <nav className={`navbar ${shrink ? "shrink" : "expand"} ${isBookingPage ? "booking-bg" : ""}`}>
-        <div className="nav-container">
-          {!shrink && (
-            <button className="nav-logo" onClick={() => handleScrollToSection("main")}>
-              Swadhyay
-            </button>
-          )}
+       <nav className={`navbar ${shrink ? "shrink" : "expand"} ${isBookingPage ? "booking-bg" : ""}`}>
+    <div className="nav-container">
+     {!shrink && (
+            // --- MODIFIED: Added SVG to the logo button ---
+      <button className="nav-logo" onClick={() => handleScrollToSection("main")}>
+              <svg width="50" height="50" viewBox="0 0 80 75" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+                <path d="m31.83,52.51667l4.91,-3.63l0.87,1.13c2.22,2.87 4.64,5.02 7.26,6.44c2.59,1.4 5.41,2.1 8.45,2.1c2.82,0 5.44,-0.7 7.87,-2.08c2.49,-1.42 4.79,-3.57 6.92,-6.44l0.92,-1.24l12.76,10.64l-1.07,1.13c-3.49,3.67 -7.01,6.44 -10.56,8.29c-3.62,1.89 -7.28,2.83 -10.97,2.83c-5.51,0 -10.6,-1.45 -15.26,-4.36c-4.6,-2.87 -8.76,-7.15 -12.47,-12.84l-0.75,-1.15l1.12,-0.82l0,0zm24.21,-14.83l8.88,9.03l-9.95,9.75l-10.07,-10.34l10.15,-9.46l0.99,1.02l0,0z"/>
+              </svg>
+       <span className="logo-text">Swadhyay</span>
+      </button>
+     )}
 
           <div className="nav-links desktop-nav">
             <ScrollLink to="main" {...scrollLinkProps}>Home</ScrollLink>
@@ -343,11 +347,10 @@ export default function Navbar({ aboutRef }) {
           <div className="mobile-menu-overlay" ref={mobileMenuRef}>
             <div className="mobile-menu">
               <div className="mobile-menu-header">
-                <button className="nav-logo mobile-logo" onClick={() => handleScrollToSection("main")}>Swadhyay</button>
                 <button className="mobile-close-btn" onClick={() => setMobileMenuOpen(false)} aria-label="Close mobile menu">×</button>
               </div>
               <div className="mobile-menu-content">
-                <button className="mobile-menu-item" onClick={() => handleScrollToSection("main")}>Home</button>
+                <ScrollLink to="/" className="mobile-menu-item" onClick={() => handleScrollToSection("main")}>Home</ScrollLink>
                 <div className="mobile-menu-section">
                   <div className="mobile-menu-section-title">About</div>
                   {aboutDropdownItems.map((item, index) => (

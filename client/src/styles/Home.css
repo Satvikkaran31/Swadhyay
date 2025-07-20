@@ -75,8 +75,8 @@ background: linear-gradient(
 
 .hero h1 {
   font-family: var(--font-primary);
-  font-size: 3.2rem;
-  font-weight:550;
+  font-size: 3.3rem;
+  font-weight:530;
   margin-top: 0rem;
   color: var(--text-primary);
 }
