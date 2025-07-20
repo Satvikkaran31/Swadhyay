@@ -19,7 +19,6 @@ export default function App() {
         <Route path="/courses" element={<Courses />} />
         <Route path="/whoami" element={<WhoAmI />}></Route>
       </Routes>
-      
     </Router>
   );
 }

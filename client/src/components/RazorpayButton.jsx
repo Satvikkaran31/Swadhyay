@@ -11,7 +11,7 @@ export default function RazorpayButton({ amount, isProcessing, setIsProcessing }
   const loadRazorpay = () =>
     new Promise((resolve) => {
       const script = document.createElement("script");
-      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.src = "https://checkout.razorpay.com/v2/checkout.js";
       script.onload = () => resolve(true);
       script.onerror = () => resolve(false);
       document.body.appendChild(script);
@@ -49,7 +49,7 @@ export default function RazorpayButton({ amount, isProcessing, setIsProcessing }
         key: import.meta.env.VITE_RAZORPAY_KEY_ID ,
         amount: order.amount,
         currency: order.currency,
-        name: "Swadhyaya",
+        name: "Swadhyay",
         description: "Session Booking",
         order_id: order.id,
         handler: async function (response) {

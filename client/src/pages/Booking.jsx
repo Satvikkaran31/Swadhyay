@@ -3,6 +3,7 @@ import Navbar from "../components/Navbar";
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import cardSwipe from "../assets/card_swipe_animation.lottie";
 import RazorpayButton from "../components/RazorpayButton";
+
 import "../styles/Booking.css";
 
 export default function Booking() {
@@ -79,6 +80,7 @@ export default function Booking() {
             
             </div>
           </div>
+          
       </div>
     </>
   );
