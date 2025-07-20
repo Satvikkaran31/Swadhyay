@@ -3,10 +3,11 @@
     /* <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> */
 
     .footer-container {
-    color: var(--text-primary);
-    padding: 1rem 2rem 1rem;
+    background-color: var(--primary-bg);
+    color: var(--text-secondary);
+    padding: 1rem 4rem 1rem;
     font-family: var(--font-roboto);
-    margin-top: 1rem;
+   
     }
 
     .footer-content {
@@ -15,13 +16,13 @@
     gap: 3rem;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0;
-  
+    padding: 3rem 1rem 1rem 1rem ;
+     border-top: 1px solid var(--text-secondary);
     }
 
     .footer-section h3 {
     font-family: var(--font-primary);
-    color: var(--white);
+    color: var(--text-secondary);
     font-size: 1.5rem;
     font-weight: 400;
     margin-bottom: 0.5rem;
@@ -30,7 +31,7 @@
 
     .footer-section.about p {
     line-height: 1.7;
-    color: #ccc;
+    color: var(--text-secondary);
     padding: 0rem;
     }
 
@@ -43,7 +44,7 @@
     }
 
     .footer-section.links a, .footer-section.contact-info i{
-    color: #ccc;
+    color: var(--text-secondary);
     text-decoration: none;
     transition: color 0.3s ease, padding-left 0.3s ease;
     }
@@ -59,10 +60,10 @@
 
     .footer-section.contact-info li {
     font-size: 1.1rem;
-    color: #ccc;
     display: flex;
     align-items: center;
     font-family: var(--font-primary);
+    font-weight: 400;
     }
 
     .footer-section.contact-info .fa {
@@ -89,7 +90,7 @@
     .footer-bottom {
     text-align: center;
     padding-top: 1rem;
-    border-top: 1px solid #444;
+    border-top: 1px solid var(--text-secondary);
     color: #aaa;
     font-size: 0.9rem;
     }

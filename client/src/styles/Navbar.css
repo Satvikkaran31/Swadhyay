@@ -244,6 +244,20 @@
 .navbar.booking-bg .nav-logo {
   color: var(--text-secondary);
 }
+ .booking-bg .nav-dropdown-menu {
+    background: var(--gradient-start);
+    border-color: rgba(154, 230, 180, 0.3);
+  }
+  
+  .booking-bg .nav-dropdown-menu::before {
+    border-bottom-color: var(--gradient-start);
+  }
+  
+  .booking-bg .nav-dropdown-item {
+    color: var(--text-primary);
+    border-bottom-color: rgba(224, 231, 233, 0.1);
+  }
+  
 
 /* =================================================================
    DROPDOWN MENU STYLES
@@ -357,10 +371,10 @@
 /* =================================================================
    SHRUNK NAVBAR DROPDOWN STYLES
    ================================================================= */
-.navbar.shrink .nav-dropdown-menu {
+.navbar.shrink .nav-dropdown-menu, .booking-bg .navbar.shrink .nav-dropdown-menu {
   top: calc(100% );
-  background-color: var(--white);
-  border: 1px solid rgba(154, 230, 180, 0.3);
+  
+  border: 1px solid var(--gradient-start);
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
   z-index: 10000;
   position: absolute;
@@ -375,6 +389,7 @@
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
+  
 }
 
 .navbar.shrink .nav-dropdown-menu::before {
@@ -390,16 +405,17 @@
   border-right: 8px solid transparent;
   border-bottom: 8px solid var(--white);
   filter: drop-shadow(0 -2px 4px rgba(0, 0, 0, 0.1));
-}
-
-.navbar.shrink .nav-dropdown-item {
-  color: var(--text-secondary);
+}  
+.navbar.shrink .nav-dropdown-item, .booking-bg .navbar.shrink .nav-dropdown-item 
+ {
+   background: var(--gradient-start);
+  color: var(--text-primary);
   border-bottom-color: rgba(26, 43, 60, 0.1);
   display: block;
   width: 100%;
   padding: 0.75rem 1rem;
   text-align: left;
-  background: transparent;
+
   border: none;
   font-family: var(--font-primary);
   font-size: 0.95rem;
@@ -409,15 +425,9 @@
   border-bottom: 1px solid rgba(26, 43, 60, 0.08);
 }
 
-.navbar.shrink .nav-dropdown-item:hover {
-  background: rgba(154, 230, 180, 0.15);
-  transform: scale(1.02);
-  color: var(--text-dark);
-}
 
 .navbar.shrink .nav-dropdown-item:focus {
-  background: rgba(154, 230, 180, 0.15);
-  transform: scale(1.02);
+  transform: scale(1.1);
   outline: none;
 }
 
@@ -466,7 +476,7 @@
    ================================================================= */
 
 /* Tablet - 768px and below */
-@media (max-width: 768px) {
+@media (max-width: 850px) {
   .nav-link-btn:focus,
   .nav-link-btn:active {
     outline: none;
@@ -650,53 +660,22 @@
   }
   
   /* Force hover states to work properly */
-  .navbar.shrink .nav-dropdown-wrapper:hover .nav-dropdown-menu {
+  .navbar.shrink .nav-dropdown-wrapper:hover .nav-dropdown-menu,.booking-bg .navbar.shrink .nav-dropdown-wrapper:hover .nav-dropdown-menu {
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
   }
   
-  .navbar.shrink .nav-dropdown-item:hover {
-    background: rgba(154, 230, 180, 0.2) !important;
-    transform: scale(1.02) !important;
-    color: var(--text-dark) !important;
+  .navbar.shrink .nav-dropdown-item:hover,.booking-bg .navbar.shrink .nav-dropdown-item:hover {
+    background: var(--accent-green) ;
+    transform: scale(1.02) ;
+    color: var(--text-dark) ;
   }
 }
 
 /* =================================================================
    DARK MODE SUPPORT
    ================================================================= */
-@media (prefers-color-scheme: dark) {
-  .booking-bg .nav-dropdown-menu {
-    background: var(--gradient-start);
-    border-color: rgba(154, 230, 180, 0.3);
-  }
+
+
   
-  .booking-bg .nav-dropdown-menu::before {
-    border-bottom-color: var(--gradient-start);
-  }
-  
-  .booking-bg .nav-dropdown-item {
-    color: var(--text-primary);
-    border-bottom-color: rgba(224, 231, 233, 0.1);
-  }
-  
-  /* Dark mode shrunk navbar dropdown */
-  .navbar.shrink .nav-dropdown-menu {
-    background: var(--gradient-start);
-    border-color: rgba(154, 230, 180, 0.3);
-  }
-  
-  .navbar.shrink .nav-dropdown-menu::before {
-    border-bottom-color: var(--gradient-start);
-  }
-  
-  .navbar.shrink .nav-dropdown-item {
-    color: var(--text-primary);
-    border-bottom-color: rgba(224, 231, 233, 0.1);
-  }
-  
-  .navbar.shrink .nav-dropdown-item:hover {
-    background: rgba(154, 230, 180, 0.1);
-  }
-}
