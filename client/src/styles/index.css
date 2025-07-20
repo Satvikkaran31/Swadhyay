@@ -9,15 +9,10 @@ html, body {
   margin: 0;
   padding: 0;
   scroll-behavior: smooth;
-/* background: linear-gradient(
-  to bottom,
-  #2C3D3F,
-  #3E5254
-); */
-
 background: linear-gradient(
   to bottom,
   #223336,
   #253A3D
 );
+/* overflow-x: hidden; */
 }

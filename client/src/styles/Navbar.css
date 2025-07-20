@@ -169,6 +169,7 @@
 /* =================================================================
    NAVBAR SHRINK/EXPAND STATES
    ================================================================= */
+
 .navbar.shrink {
   position: sticky;
   top: 1rem;
@@ -183,8 +184,6 @@
   -webkit-backdrop-filter: blur(10px);
   animation: scale-down-center 0.4s cubic-bezier(.25,.46,.45,.94) forwards;
   pointer-events: auto;
-   margin-left: auto;
-  margin-right: auto;
   width: fit-content;
 }
 
@@ -474,8 +473,16 @@
 /* =================================================================
    MEDIA QUERIES - TABLET & MOBILE
    ================================================================= */
+@media (min-width: 850px) and (max-width: 1200px) {
+  .navbar.shrink {
+    left: 0;
+    transform: none;
+    margin: 0 auto;
+    animation: none;
+  }
 
-/* Tablet - 768px and below */
+}
+/* Tablet */
 @media (max-width: 850px) {
   .nav-link-btn:focus,
   .nav-link-btn:active {
@@ -487,7 +494,7 @@
     outline: none;
   }
 /* Ensure smooth transitions */
-.nav-link-btn {
+  .nav-link-btn {
   transition: all 0.2s ease;
   -webkit-tap-highlight-color: transparent;
 }
@@ -517,12 +524,36 @@
   .nav-links > .nav-link-btn:nth-child(1) {
     display: none;
   }
-  
-  .navbar.shrink {
-    max-width: 90%;
-    padding:0;
-    position: fixed;
+  @keyframes fade-scale-up {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
   }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fade-scale-down {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1);
+  }
+}
+/* MOBILE SHRINK */
+  .navbar.shrink {
+    left: auto; 
+    margin-left: auto;
+    margin-right: auto;
+    animation: fade-scale-up 0.5s ease forwards;
+    padding: 0;
+  }
+  
   
   .profile-pic {
     width: 2rem;
@@ -617,10 +648,7 @@
 /* Very Small Mobile - 360px and below */
 @media (max-width: 360px) {
   .navbar.shrink {
-    max-width: 97%;
-     left: 50% !important;
-    transform: translateX(-50%) !important;
-    animation: scale-down-center 0.4s cubic-bezier(.25,.46,.45,.94) forwards ;
+    max-width: 95%;
   }
   .navbar.shrink .nav-links{
     gap: 0.5rem;
@@ -639,15 +667,14 @@
 }
 
 /* =================================================================
-   ENHANCED EFFECTS FOR DESKTOP
+  EFFECTS FOR DESKTOP
    ================================================================= */
 @media (min-width: 769px) {
   .dropdown-trigger:hover .dropdown-arrow {
     opacity: 1;
     color: var(--accent-green);
   }
-  
-  /* Enhanced shrunk navbar hover effects for desktop */
+
   .navbar.shrink .dropdown-trigger:hover .dropdown-arrow {
     opacity: 1;
     color: var(--accent-green);

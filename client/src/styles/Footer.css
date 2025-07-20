@@ -94,3 +94,11 @@
     color: #aaa;
     font-size: 0.9rem;
     }
+    @media (max-width: 400px) {
+  .footer-container {
+    padding: 1rem; /* Further reduce padding on the smallest screens */
+  }
+  .footer-content {
+    gap: 2rem; /* Reduce gap between footer sections */
+  }
+}
