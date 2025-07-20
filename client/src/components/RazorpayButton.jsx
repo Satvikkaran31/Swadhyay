@@ -46,7 +46,7 @@ export default function RazorpayButton({ amount, isProcessing, setIsProcessing }
       );
 
       const options = {
-        key: "rzp_test_xNknJHs70nXy23",
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID ,
         amount: order.amount,
         currency: order.currency,
         name: "Swadhyaya",
