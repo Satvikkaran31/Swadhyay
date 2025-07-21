@@ -14,7 +14,6 @@ body.mobile-menu-open {
   position: fixed !important;
   top: 0;
   left: 0;
-  width: 100% !important;
   height: 100vh !important;
   height: 100svh !important;
   touch-action: none !important;
@@ -27,7 +26,7 @@ html.mobile-menu-open {
   overflow: hidden !important;
   touch-action: none !important;
 }
-/* Hamburger Button - Reserve space to prevent layout shift */
+
 .hamburger-btn {
   display: none;
   flex-direction: column;
