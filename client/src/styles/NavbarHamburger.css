@@ -9,7 +9,24 @@
 .desktop-nav {
   display: flex;
 }
+body.mobile-menu-open {
+  overflow: hidden !important;
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  width: 100% !important;
+  height: 100vh !important;
+  height: 100svh !important;
+  touch-action: none !important;
+  -webkit-overflow-scrolling: none !important;
+  overscroll-behavior: none !important;
+}
 
+/* Additional fixes for Android browsers */
+html.mobile-menu-open {
+  overflow: hidden !important;
+  touch-action: none !important;
+}
 /* Hamburger Button - Reserve space to prevent layout shift */
 .hamburger-btn {
   display: none;
@@ -56,18 +73,20 @@
 /* Mobile Menu Overlay */
 .mobile-menu-overlay {
   display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
- 
-  height: 100vh;
-  height: 100svh;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100svh !important;
   background: rgba(0, 0, 0, 0.5);
-  z-index: 10000;
+  z-index: 10000 !important;
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
+  touch-action: none !important;
+  overscroll-behavior: none !important;
 }
+
 
 .mobile-menu {
   position: absolute;
