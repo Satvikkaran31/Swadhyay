@@ -9,7 +9,7 @@ export function useTriggerGoogleLogin(setUser, navigateTo = "/") {
     flow: 'auth-code',
     onSuccess: async (codeResponse) => {
       try {
-        console.log('Authorization code received:', codeResponse.code);
+    
         const apiBase = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
 
         const response = await axios.post(`${apiBase}/api/auth/google`, {
@@ -22,7 +22,7 @@ export function useTriggerGoogleLogin(setUser, navigateTo = "/") {
         const userData = response.data.user;
         setUser(userData);
 
-        console.log('Login successful:', userData);
+        console.log('Login successful');
         navigate(navigateTo);
 
       } catch (err) {
@@ -38,7 +38,7 @@ export function useTriggerGoogleLogin(setUser, navigateTo = "/") {
   });
 }
 
-// utils/authHelpers.js - Helper functions for auth management
+
 export const authHelpers = {
   // Check if user is authenticated (by checking with backend)
   checkAuth: async () => {
