@@ -86,7 +86,7 @@ background-color: var(--primary-bg);
   align-items: center;
   text-align: center;
   padding: 1rem;
-
+  animation: fade-in 1.2s ease-out forwards;
 }
 
 .hero-left h1 {
@@ -153,7 +153,7 @@ background-color: var(--primary-bg);
   max-height: clamp(300px, 80dvh, 1000px);  
   border-radius: var(--border-radius-sm);
   width: 100%;
-  animation: fade-in 1.2s ease-out forwards;
+  
 }
 
 /* Carl Jung quote styling */
