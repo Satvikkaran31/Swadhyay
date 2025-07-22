@@ -106,7 +106,7 @@ background-color: var(--primary-bg);
   padding:0rem 2rem 1rem;
   aspect-ratio: 16 / 9;
   width: 100%;
-  min-height: 300px;
+  
 }
 /* hero text animation  */
 
@@ -147,7 +147,7 @@ background-color: var(--primary-bg);
 
 
 .hero-image-wrapper img{
-  
+  min-height: 300px;
   display: block;
   height: auto;
   max-height: clamp(300px, 80dvh, 1000px);  
