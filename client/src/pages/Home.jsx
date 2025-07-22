@@ -7,7 +7,7 @@ import TeamsBookingModal from "../components/TeamsBookingModal";
 import { useLocation,useNavigate } from "react-router-dom";
 import image_2 from "../assets/image_2.png"
 import image_1 from "../assets/image_3.png"
-import hero_image from "../assets/hero-page-5.png"
+import hero_image from "../assets/hero-page-5.webp"
 import "../styles/learnMoreButton.css"
 import Footer from "../components/Footer";
 import { Link as ScrollLink } from 'react-scroll';
