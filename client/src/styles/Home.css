@@ -1,4 +1,4 @@
-
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap');
 
 :root {
   /* Color Variables */
@@ -27,6 +27,7 @@
   --font-roboto: 'Poppins', roboto;
   
   /* Size Variables */
+  --border-radius-xsm:10px;
   --border-radius-sm: 20px;
   --border-radius-md: 30px;
   --border-radius-lg: 40px;
@@ -39,95 +40,135 @@ background-color: var(--primary-bg);
 }
 
 .gradient-background {
-  background: linear-gradient(135deg, #1D2A2D 0%, #22383B 50%, #1D2A2D 100%);
-
-  border-bottom-left-radius: var(--border-radius-lg);
-  border-bottom-right-radius: var(--border-radius-lg);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  background: 
+    /* Layer 1: Vertical grid lines */
+    repeating-linear-gradient(
+      to right,
+      rgba(0, 0, 0, 0.2),
+      rgba(0, 0, 0, 0.2) 1px,
+      transparent 1px,
+      transparent 3em
+    ),
+    
+    /* Layer 2: Horizontal grid lines */
+    repeating-linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.2),
+      rgba(0, 0, 0, 0.2) 1px,
+      transparent 1px,
+      transparent 3em
+    ),
+    
+    /* Layer 3: Your darker base gradient */
+    linear-gradient(
+      to bottom,
+      #1B2B2E,
+      #1E3134
+    );
+  
+  /* --- ADD THIS LINE --- */
+  
+  
+  border-bottom-left-radius: var(--border-radius-sm);
+  border-bottom-right-radius: var(--border-radius-sm);
+  padding: 0rem;
 }
 
-.home-section {
-/* background: linear-gradient(
-  to bottom,
-  #2C3D3F,
-  #3E5254
-); */
-background: linear-gradient(
-  to bottom,
-  #223336,
-  #253A3D
-);
-  font-family: var(--font-secondary);
-  padding: 0rem 1rem 0rem;
-  border-bottom-left-radius: var(--border-radius-lg);
-  border-bottom-right-radius: var(--border-radius-lg);
-  -webkit-box-shadow: 0 4px 6px -6px var(--shadow-color);
-  -moz-box-shadow: 0 4px 6px -6px var(--shadow-color);
-  box-shadow: var(--shadow-default);
-  animation: fadeIn 0.5s ease-in-out;
-}
 
 /* Hero */
-.hero {
-  text-align: center;
-  padding: 1rem 1rem 0rem 1rem ;
-  animation: fadeIn 1s ease-in-out;
-}
-
-.hero h1 {
-  font-family: var(--font-primary);
-  font-size: 3.3rem;
-  font-weight:530;
-  margin-top: 0rem;
-  color: var(--text-primary);
-}
-
-/* HERO QUOTE */
-/* .quote-svg-wrapper {
+.hero-left {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 0.5rem 0 0 0;  
-}
-
-.handwriting-svg {
-  height: auto;
-  max-width: 45%;
-  display: block;
-  flex-wrap: wrap;
-}
-
-.handwriting-svg path {
-  stroke: var(--accent-green);
-  fill: transparent;
-  stroke-width: 3;
-  stroke-dasharray: 1000;
-  stroke-dashoffset: 1000;
-  animation: draw 0.5s ease forwards;
-  animation-fill-mode: forwards;
-}
-
-@keyframes draw {
-  to {
-    stroke-dashoffset: 0;
-  }
-} */
-/* Carl Jung quote styling */
-.hero-quote {
   text-align: center;
-  margin: 1.5rem 0 0 0;
-  padding: 0 1rem;
+  padding: 1rem;
+
 }
+
+.hero-left h1 {
+  font-family: var(--font-primary);
+  font-size: 3.5rem;
+  font-weight:400;
+  margin-top: 0rem;
+  color: var(--text-primary);
+
+}
+.hero-right{
+  
+  display: flex;
+  justify-content: center;
+}
+.hero-image-wrapper{
+  padding:0rem 2rem 1rem;
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  
+}
+/* hero text animation  */
+
+
+
+/* image animation */
+@-webkit-keyframes fade-in-right {
+  0% {
+    -webkit-transform: translateX(50px);
+            transform: translateX(50px);
+    opacity: 0;
+  }
+  100% {
+    -webkit-transform: translateX(0);
+            transform: translateX(0);
+    opacity: 1;
+  }
+}
+@keyframes fade-in-right {
+  0% {
+    -webkit-transform: translateX(50px);
+            transform: translateX(50px);
+    opacity: 0;
+  }
+  100% {
+    -webkit-transform: translateX(0);
+            transform: translateX(0);
+    opacity: 1;
+  }
+}
+/* scrolling fade in animation */
+.fade-in-section {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 1.5s ease-out, transform 1.5s ease-out;
+}
+
+.fade-in-section.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+
+.hero-image-wrapper img{
+  
+  display: block;
+  height: auto;
+  max-height: clamp(300px, 80dvh, 1000px);
+  border-radius: var(--border-radius-sm);
+  width: 100%;
+  animation:  fade-in-right 0.6s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
+}
+
+/* Carl Jung quote styling */
+
 
 .quote-text {
   font-family: var(--font-handwriting);
-  font-size: 1.5rem;
-  font-weight: 400;
-  color: var(--accent-green);
+  font-weight: 600;
+  color: var(--text-dark-alt);
   font-style: italic;
-  opacity: 0;
-  animation: fadeInQuote 1s ease forwards;
-  animation-delay: 0.5s;
-  letter-spacing: 0.5px;
+  
   margin-bottom: 0.5rem;
 }
 
@@ -135,18 +176,11 @@ background: linear-gradient(
   font-family: var(--font-primary);
   font-size: 1.3rem;
   font-weight: 500;
-  color: var(--text-primary);
-  opacity: 0;
-  animation: fadeInQuote 1s ease forwards;
+  color: var(--text-dark-alt);
   animation-delay: 1s;
   margin-top: 0.5rem;
 }
 
-@keyframes fadeInQuote {
-  to {
-    opacity: 1;
-  }
-}
 
 /* Responsive adjustments for quote */
 @media (max-width: 768px) {
@@ -229,7 +263,8 @@ background: linear-gradient(
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 1rem 1rem 2rem 1rem;
+  padding: 1rem 1rem 1rem 1rem;
+ 
 }
 
 .home-about-me-button {
@@ -248,19 +283,24 @@ background: linear-gradient(
 .coaching-info {
   display: grid;
   gap: 2rem;
-  grid-template-columns: 1fr 1fr 1fr;
-  margin: 0rem 1rem 1rem;
-  padding: 2rem 0rem;
-  border-radius: var(--border-radius-lg);
+  grid-template-columns: repeat(3,1fr);
+  grid-template-rows: auto auto;
+  padding: 2rem 1rem;
+  margin: 3rem 0rem;
   animation: fadeIn 0.5s ease-in-out;
+  justify-content: center;
+  
 }
 
 .info-box, .book-now-box {
-  padding: 1.5rem;
-  border-radius: var(--border-radius-md);
+  padding: 1rem;
+  border-radius: var(--border-radius-xsm);
   transition: transform 0.3s ease;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-weight: 350;
+}
+.info-box{
+  border: 2px solid var(--text-dark-alt);
 }
 
 .info-box:hover, .book-now-box:hover {
@@ -269,14 +309,16 @@ background: linear-gradient(
 
 .info-box h2, .book-now-box h2 {
   font-family: var(--font-roboto);
-  color: var(--text-primary);
+  color: var(--text-dark-alt);
   margin-bottom: 0.5rem;
   font-weight: 500;
+  font-size: 1.4;
 }
 
 .info-box p, .book-now-box p{
   font-family: var(--font-roboto);
-  color: var(--text-primary);
+  /* color: var(--text-secondary); */
+  color: var(--text-dark-alt);
 }
 
 /* book now button */
@@ -285,9 +327,9 @@ background: linear-gradient(
   align-items: center;
   justify-content: center;
   padding: 0.5rem 1rem;
-  background-color: var(--accent-green);
+  background-color: var(--button-primary);
   border: 2px solid var(--button-primary);
-  color: var(--text-secondary);
+  color: var(--text-primary);
   gap: 0.5rem;
   border-radius: var(--border-radius-sm);
   cursor: pointer;
@@ -296,11 +338,7 @@ background: linear-gradient(
   font-family: var(--font-roboto);
 }
 
-.book-now-btn:hover {
-  background-color: var(--button-primary);
-  border-color: var(--button-primary);
-  color: var(--text-primary);
-}
+
 
 .book-now-btn .text {
   font-size: 1.1rem;
@@ -312,13 +350,13 @@ background: linear-gradient(
   padding-top: 0px;
   height: 100%;
   width: fit-content;
-  color: var(--text-secondary);
+  color: var(--text-primary);
 }
 
 .book-now-btn .svg svg {
   width: 50px;
   height: 30px;
-  stroke: var(--text-secondary); 
+  stroke: var(--text-primary); 
   stroke-width: 2.5;
 }
 
@@ -344,7 +382,7 @@ background: linear-gradient(
   .coaching-info {
     grid-template-columns: 1fr;
   }
-  .hero h1{
+  .hero-left h1{
     font-size: 2rem;
   }
 }
@@ -410,10 +448,10 @@ background: linear-gradient(
 
 /* about section */
 .about-section {
-  margin-top: 5rem;
+ 
   padding: 3rem 3rem 8rem;
   background-color: var(--primary-bg);
-  color: var(--text-dark);
+  color: var(--text-dark-alt);
  
 }
 
@@ -483,7 +521,7 @@ background: linear-gradient(
 /* ABOUT NEHA SHARMA */
 .about-content {
   display: grid;
-  grid-template-columns: 3fr 3fr; 
+  grid-template-columns: 1fr 1fr; 
   gap: 6rem;
   padding: 0 0 1rem 0;
   box-shadow: var(--shadow-card);

@@ -5,19 +5,21 @@ import profileimage from "../assets/profilepicture.png";
 import Navbar from "../components/Navbar";
 import TeamsBookingModal from "../components/TeamsBookingModal";
 import { useLocation,useNavigate } from "react-router-dom";
-import image_1 from "../assets/image_1.png"
 import image_2 from "../assets/image_2.png"
+import image_1 from "../assets/image_3.png"
+import hero_image from "../assets/hero-page-5.png"
 import "../styles/learnMoreButton.css"
 import Footer from "../components/Footer";
 import { Link as ScrollLink } from 'react-scroll';
+import FadeInSection from '../components/FadeInSection';
 const suffixes = [
-  <>has <span className="highlight">25+ years</span> in people engagement.</>,
-  <>has <span className="highlight">700+ hours</span> of leadership coaching.</>,
-  <>is an <span className="highlight">EFT</span> master practitioner.</>,
-  <>is an <span className="highlight">ICF Professional</span> certified executive.</>,
-  <>has recruited <span className="highlight">150+ CXOs, CEOs.</span></>,
-  <>is a <span className="highlight">Senior Mentor</span> at Jagriti Yatra.</>,
-  <>is an <span className="highlight">ICF team Coach.</span></>
+  <> <span className="highlight">25+ years</span> in people engagement</>,
+  <> <span className="highlight">700+ hours</span> of leadership coaching</>,
+  <> <span className="highlight">EFT</span> master practitioner</>,
+  <><span className="highlight">ICF Professional</span> certified exec</>,
+  <> Recruited <span className="highlight">150+ CXOs, CEOs</span></>,
+  <> <span className="highlight">Senior Mentor</span> at Jagriti Yatra</>,
+  <> <span className="highlight">ICF </span>team Coach</>
 ];
 
 export default function Home({aboutRef}) {
@@ -63,23 +65,18 @@ useEffect(() => {
     <div className="main" id="main">
       <div className="gradient-background">
    
-    <div className="home-section">
+  
       {showModal && <BookingModal onClose={() => setShowModal(false)} />}
      
-      <section className="hero">
+      <div className="hero-left">
         <h1>Empower Your Life with Expert Coaching.</h1>
        
       
-    <div className="hero-quote">
-    <p className="quote-text">
-      "Who looks outside, dreams. Who looks inside, awakens." <span className="quote-author">- Carl Jung</span>
-    </p>
    
-  </div>
 
 
      <div className="typewriter-wrapper">
-        <span className="typed-name">Neha Sharma</span>
+        {/* <span className="typed-name">Neha Sharma</span> */}
         <span className="suffix-container">
        
   <span className={`suffix ${fadeIn ? "fade-in" : "fade-out"}`}>
@@ -129,10 +126,20 @@ useEffect(() => {
 
     </div>    
           
-      </section>
+      </div>
       
-    
+      <div className="hero-right">
+        <div className="hero-image-wrapper">
+        <img src={hero_image} alt="hero_image" />
+        </div>
+      </div>
+  
+   </div>
+ 
+  <section className="about-section" id="about"  >
+     <FadeInSection>
       <section className="coaching-info" id="book-now">
+         
         <div className="info-box">
           <h2>One-on-One Coaching</h2>
           <p>
@@ -140,6 +147,8 @@ useEffect(() => {
             Designed for individuals seeking focused guidance on personal or professional goals.
           </p>
         </div>
+      
+         
         <div className="info-box">
           <h2>Emotional Freedom Technique</h2>
           <p>
@@ -147,7 +156,16 @@ useEffect(() => {
             mental calm and healing. Ideal for anxiety, self-sabotage, and emotional release.
           </p>
         </div>
-
+        
+       
+          <div className="info-box ">
+          <h2>Group Coaching</h2>
+          <p>
+            Collaborative coaching sessions that harness the power of shared experiences and collective wisdom.
+            Perfect for individuals seeking support, accountability, and growth in a dynamic group environment.
+          </p>
+        </div>
+        <FadeInSection>
         <div className="book-now-box" id="book-now-box">
           <h2>Ready to Transform?</h2>
           <p>Choose your session type and book instantly.</p>
@@ -167,21 +185,26 @@ useEffect(() => {
             </span>
           </button>
         </div>
-
+      </FadeInSection> 
       </section>
-        
-   </div>
-   </div>
-  <section className="about-section" id="about"  >
+      </FadeInSection>
+   <FadeInSection>
     <div className="about-goal" id="about-goal">
       <div className="about-goal-left-text">
             <span className="about-goal-left-text-heading">Our Mission</span>
+            
+    <h3 className="quote-text">
+      "Who looks outside, dreams. Who looks inside, awakens."<br /> <span className="quote-author">- Carl Jung</span>
+    </h3><br />
+   
+ 
         <p> "Swadhyay", a Sanskrit word for self-study or reflection, is about deeply understanding oneself—our thoughts, beliefs, desires, values, and behaviors. This leads to greater self-awareness, a key trait in top leaders, fostering compassion and empathy.</p>
         <br />
         <p>We feel coaching as a process is one of the finest methodologies available today for deepening our insight and awareness about ourselves and connecting within. I am passionate about working with leaders, working professionals, women, youngsters, or anyone who is ready to go through an inner process and discover their own selves. In other words, anyone who is ready for Swadhyay.</p>
 
         <h3>Let's begin this journey together!</h3>
   </div>
+  <FadeInSection>
   <div className="about-goal-right-column">
     {/* <div className="first-image">
       <img src={image_1} alt="image_1" />
@@ -190,8 +213,10 @@ useEffect(() => {
       <img src={image_2} alt="image_2" />
     </div>
   </div>
+  </FadeInSection>
     </div>
-  
+  </FadeInSection>
+      <FadeInSection>
     <div className="about-content" id="about-content">
       <div className="left-side">
       <div className="left-image">
@@ -286,9 +311,10 @@ useEffect(() => {
    
 
     </div>
+    </FadeInSection>
 </section>
 
- 
+
    </div>
    <Footer />
    </> 

@@ -94,7 +94,7 @@ export default function BookingModal({ onClose }) {
     <button className="modal-close" onClick={onClose}>
      ✖
     </button>
-    <h2>Book a Session</h2>
+    <h2>Schedule a Session</h2>
     <form onSubmit={handleSubmit}>
           {/* --- Grouped fields into rows for better layout --- */}
           <div className="form-row">
@@ -181,7 +181,7 @@ export default function BookingModal({ onClose }) {
      </select>
 
      <button type="submit" disabled={loading}>
-      {loading ? "Processing..." : "Book "}
+      {loading ? "Processing..." : "Schedule on Gmeet"}
      </button>
      <span>OR</span>
      <button
@@ -189,7 +189,7 @@ export default function BookingModal({ onClose }) {
       type="button"
       onClick={() => setShowTeamsModal(true)}
      >
-      Book Teams
+       Schedule on Teams
      </button>
 
      {showTeamsModal && (

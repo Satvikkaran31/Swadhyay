@@ -73,6 +73,7 @@
   padding: 0.5rem 4rem  0.5rem 1rem;
   transform-origin: top center;
   transition: all 0.4 ease;
+  
 }
 
 .nav-container {
@@ -170,7 +171,7 @@
    ================================================================= */
 
 .navbar.shrink {
-  position: sticky;
+  
   top: 1rem;
   left: 50%;
   transform: translateX(-50%);
@@ -187,7 +188,6 @@
 }
 
 .navbar.expand {
-  position: sticky;
   top: 0;
   left: 0;
   animation: scale-up-center 0.3s cubic-bezier(.25,.46,.45,.94) forwards;
