@@ -130,7 +130,10 @@ useEffect(() => {
       
       <div className="hero-right">
         <div className="hero-image-wrapper">
-        <img src={hero_image} alt="hero_image" />
+        <img src={hero_image} alt="hero_image" 
+        decoding="async" 
+        loading="eager" 
+        fetchpriority="high"/>
         </div>
       </div>
   
