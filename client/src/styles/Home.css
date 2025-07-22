@@ -113,27 +113,23 @@ background-color: var(--primary-bg);
 
 
 /* image animation */
-@-webkit-keyframes fade-in-right {
+@keyframes fade-in {
   0% {
-    -webkit-transform: translateX(50px);
-            transform: translateX(50px);
     opacity: 0;
+    transform: translateY(20px);
   }
   100% {
-    -webkit-transform: translateX(0);
-            transform: translateX(0);
     opacity: 1;
+    transform: translateY(0);
   }
 }
-@keyframes fade-in-right {
+
+/* Alternative fade-in without transform */
+@keyframes simple-fade-in {
   0% {
-    -webkit-transform: translateX(50px);
-            transform: translateX(50px);
     opacity: 0;
   }
   100% {
-    -webkit-transform: translateX(0);
-            transform: translateX(0);
     opacity: 1;
   }
 }
@@ -154,10 +150,10 @@ background-color: var(--primary-bg);
   
   display: block;
   height: auto;
-  max-height: clamp(300px, 80dvh, 1000px);
+  max-height: clamp(300px, 80dvh, 1000px);  
   border-radius: var(--border-radius-sm);
   width: 100%;
-  animation:  fade-in-right 0.6s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
+  animation: fade-in 1.2s ease-out forwards;
 }
 
 /* Carl Jung quote styling */
