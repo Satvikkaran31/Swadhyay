@@ -1,12 +1,11 @@
 import React, { useEffect, useState,useRef } from "react";
 import "../styles/Home.css";
 import BookingModal from "../components/BookingModal";
-import profileimage from "../assets/profilepicture.png";
 import Navbar from "../components/Navbar";
 import TeamsBookingModal from "../components/TeamsBookingModal";
 import { useLocation,useNavigate } from "react-router-dom";
-import image_2 from "../assets/image_2.png"
-import image_1 from "../assets/image_3.png"
+import image_2 from "../assets/image_2.webp"
+import profileimage from "../assets/profilepicture.webp";
 import hero_image from "../assets/hero-page-5.webp"
 import "../styles/learnMoreButton.css"
 import Footer from "../components/Footer";
@@ -154,7 +153,7 @@ useEffect(() => {
     alt="hero_image"
     decoding="async"
     loading="eager"
-    fetchpriority="high"
+    fetchPriority="high"
     width="1400"
     height="788"
   />
@@ -235,9 +234,6 @@ useEffect(() => {
   </div>
   <FadeInSection>
   <div className="about-goal-right-column">
-    {/* <div className="first-image">
-      <img src={image_1} alt="image_1" />
-    </div> */}
     <div className="second-image"> 
       <img src={image_2} alt="image_2" />
     </div>

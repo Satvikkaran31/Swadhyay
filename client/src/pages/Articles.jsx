@@ -1,8 +1,10 @@
-// File: client/src/pages/Articles.jsx
+
 import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import '../styles/Articles.css'; // Import the CSS styles
+import FadeInSection from '../components/FadeInSection';
+import '../styles/Articles.css'; 
+
 
 
 const articlesData = [
@@ -161,7 +163,9 @@ export default function Articles() {
   return (
     <div className="main">
       <Navbar  />
+      <FadeInSection>
       <ArticleList onReadMore={handleReadMore} />
+      </FadeInSection>
       <Modal article={selectedArticle} onClose={handleCloseModal} />
       <Footer />
     </div>
