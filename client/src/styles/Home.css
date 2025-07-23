@@ -149,8 +149,8 @@
 
 .hero-image-wrapper img {
   width: 100%;
-  height: 85dvh;
-  object-fit: contain;
+  max-height: 85dvh;
+  
   object-position: center;
   border-radius: var(--border-radius-sm);
   display: block;
