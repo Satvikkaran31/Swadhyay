@@ -180,7 +180,7 @@ export default function BookingModal({ onClose }) {
       <option value="google">Google Meet</option>
      </select>
 
-     <button type="submit" disabled={loading}>
+     <button type="submit" disabled={loading} className="gmeet">
       {loading ? "Processing..." : "Schedule on Gmeet"}
      </button>
      <span>OR</span>

@@ -152,9 +152,9 @@
     flex-direction: column;
   }
 }
-@media (max-width: 400px) {
+@media (max-width: 480px) {
   .modal-container {
-    padding: 1.5rem;
+    padding: 1rem;
   }
   .modal-container h2 {
     font-size: 1.3rem;
@@ -168,10 +168,28 @@
     font-size: 0.9rem;
     padding: 0.6rem;
   }
-  .modal-container button[type="submit"],
+  .gmeet,.teams{
+    background-color: orange;
+    font-size: 0.5rem;
+    padding: 0.7rem 0rem;
+  }
+
+}
+@media (max-width: 420px) {
+  .modal-container {
+    padding: 1rem 0.5rem 0.5rem; /* Further reduced padding */
+  }
+  .modal-container h2 {
+    font-size: 1.1rem; /* Smaller heading */
+  }
+  .modal-container input,
+  .modal-container select {
+    font-size: 0.85rem; /* Smaller font in inputs */
+    padding: 0.5rem;
+  }
+  .gmeet,
   .Teams {
-    font-size: 0.9rem;
-    padding: 0.7rem;
-    width: 30%;
+    font-size: 0.8rem; /* Matched button font size to inputs */
+    padding: 0.7rem 0;
   }
 }
