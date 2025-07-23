@@ -64,7 +64,7 @@
   box-sizing: border-box; /* Include padding and border in the element's total width and height */
 }
 
-.modal-container button[type="submit"] {
+.modal-container .gmeet {
  background-color: #21867a;
  color: white;
  border: none;
@@ -77,7 +77,7 @@
  font-family: "Poppins", sans-serif;
 }
 
-.modal-container button[type="submit"]:hover {
+.modal-container .gmeet:hover {
  background-color: #1a6b61;
  transform: scale(1.05);
 }
@@ -168,28 +168,45 @@
     font-size: 0.9rem;
     padding: 0.6rem;
   }
-  .gmeet,.teams{
-    background-color: orange;
-    font-size: 0.5rem;
+  .modal-container .gmeet,.Teams{
+
+    font-size: 1rem;
     padding: 0.7rem 0rem;
   }
 
 }
 @media (max-width: 420px) {
   .modal-container {
-    padding: 1rem 0.5rem 0.5rem; /* Further reduced padding */
+    padding: 1rem; /* Further reduced padding */
   }
   .modal-container h2 {
     font-size: 1.1rem; /* Smaller heading */
   }
   .modal-container input,
   .modal-container select {
-    font-size: 0.85rem; /* Smaller font in inputs */
-    padding: 0.5rem;
+    font-size: 0.9rem; /* Smaller font in inputs */
+    padding: 0.8rem;
   }
-  .gmeet,
+  .modal-container .gmeet,
   .Teams {
     font-size: 0.8rem; /* Matched button font size to inputs */
-    padding: 0.7rem 0;
+    padding: 0.5rem 0.5rem;
+  }
+}
+@media(max-width:360px){
+  .modal-container{
+    padding: 1rem 0.5rem;
+  }
+   .modal-container h2 {
+    font-size: 1rem; /* Smaller heading */
+    padding: 0;
+  }
+  .modal-container input,
+  .modal-container select {
+    font-size: 0.8rem; /* Smaller font in inputs */
+    padding: 0.5rem;
+  }
+  .modal-container .gmeet,.Teams{
+    font-size: 0.8rem;
   }
 }
