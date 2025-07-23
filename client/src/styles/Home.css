@@ -1,3 +1,7 @@
+/* ==========================================================================
+   IMPORTS & ROOT VARIABLES
+   ========================================================================== */
+
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap');
 
 :root {
@@ -12,6 +16,7 @@
   --text-dark-alt: #333333;
   --accent-green: #9AE6B4;
   --accent-red: #FF6B6B;
+  --accent-dark-green: #8CCF9D;
   --button-primary: #1A2B3C;
   --shadow-color: #222;
   --white: white;
@@ -19,7 +24,7 @@
   --image-gradient-start: #E0D8D0;
   --image-gradient-mid: #C8C4BE;
   --image-gradient-end: #B0B5AD;
-  --accent-dark-green:#8CCF9D;
+  
   /* Font Variables */
   --font-primary: 'Poppins', sans-serif;
   --font-secondary: 'Segoe UI', sans-serif;
@@ -27,7 +32,7 @@
   --font-roboto: 'Poppins', roboto;
   
   /* Size Variables */
-  --border-radius-xsm:10px;
+  --border-radius-xsm: 10px;
   --border-radius-sm: 20px;
   --border-radius-md: 30px;
   --border-radius-lg: 40px;
@@ -35,8 +40,46 @@
   --shadow-card: -15px 15px 15px -2px rgba(0, 0, 0, 0.3);
 }
 
-.main{
-background-color: var(--primary-bg);
+/* ==========================================================================
+   ANIMATIONS
+   ========================================================================== */
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes simple-fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes jello-vertical {
+  0% { transform: scale3d(1, 1, 1); }
+  30% { transform: scale3d(0.75, 1.25, 1); }
+  40% { transform: scale3d(1.25, 0.75, 1); }
+  50% { transform: scale3d(0.85, 1.15, 1); }
+  65% { transform: scale3d(1.05, 0.95, 1); }
+  75% { transform: scale3d(0.95, 1.05, 1); }
+  100% { transform: scale3d(1, 1, 1); }
+}
+
+/* ==========================================================================
+   LAYOUT & MAIN SECTIONS
+   ========================================================================== */
+
+.main {
+  background-color: var(--primary-bg);
 }
 
 .gradient-background {
@@ -52,7 +95,6 @@ background-color: var(--primary-bg);
       transparent 1px,
       transparent 3em
     ),
-    
     /* Layer 2: Horizontal grid lines */
     repeating-linear-gradient(
       to bottom,
@@ -61,24 +103,21 @@ background-color: var(--primary-bg);
       transparent 1px,
       transparent 3em
     ),
-    
-    /* Layer 3: Your darker base gradient */
+    /* Layer 3: Base gradient */
     linear-gradient(
       to bottom,
       #1B2B2E,
       #1E3134
     );
-  
-  /* --- ADD THIS LINE --- */
-  
-  
   border-bottom-left-radius: var(--border-radius-sm);
   border-bottom-right-radius: var(--border-radius-sm);
   padding: 0rem;
 }
 
+/* ==========================================================================
+   HERO SECTION
+   ========================================================================== */
 
-/* Hero */
 .hero-left {
   display: flex;
   flex-direction: column;
@@ -92,79 +131,40 @@ background-color: var(--primary-bg);
 .hero-left h1 {
   font-family: var(--font-primary);
   font-size: 3.5rem;
-  font-weight:400;
+  font-weight: 400;
   margin-top: 0rem;
   color: var(--text-primary);
-
 }
-.hero-right{
-  
+
+.hero-right {
   display: flex;
   justify-content: center;
 }
-.hero-image-wrapper{
-  padding:0rem 2rem 1rem;
+
+.hero-image-wrapper {
+  padding: 0rem 2rem 1rem;
   aspect-ratio: 16 / 9;
   width: 100%;
-  
-}
-/* hero text animation  */
-
-
-
-/* image animation */
-@keyframes fade-in {
-  0% {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
-/* Alternative fade-in without transform */
-@keyframes simple-fade-in {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-/* scrolling fade in animation */
-.fade-in-section {
-  opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 1.5s ease-out, transform 1.5s ease-out;
-}
-
-.fade-in-section.is-visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-
-.hero-image-wrapper img{
-  min-height: 300px;
-  display: block;
-  height: auto;
-  max-height: clamp(300px, 80dvh, 1000px);  
-  border-radius: var(--border-radius-sm);
+.hero-image-wrapper img {
   width: 100%;
-  
+  height: 85dvh;
+  object-fit: contain;
+  object-position: center;
+  border-radius: var(--border-radius-sm);
+  display: block;
 }
 
-/* Carl Jung quote styling */
-
+/* ==========================================================================
+   QUOTE STYLING
+   ========================================================================== */
 
 .quote-text {
   font-family: var(--font-handwriting);
   font-weight: 600;
   color: var(--text-dark-alt);
   font-style: italic;
-  
   margin-bottom: 0.5rem;
 }
 
@@ -177,38 +177,15 @@ background-color: var(--primary-bg);
   margin-top: 0.5rem;
 }
 
+/* ==========================================================================
+   TYPEWRITER EFFECT
+   ========================================================================== */
 
-/* Responsive adjustments for quote */
-@media (max-width: 768px) {
-  .quote-text {
-    font-size: 1.1rem;
-  }
-  
-  .quote-author {
-    font-size: 0.9rem;
-  }
-}
-
-@media (max-width: 600px) {
-  .quote-text {
-    font-size: 1rem;
-  }
-  
-  .quote-author {
-    font-size: 0.85rem;
-  }
-  
-  .hero-quote {
-    padding: 0 0.5rem;
-  }
-}
-
-/* NEHA SHARMA CREDS */
 .typewriter-wrapper {
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-wrap: wrap; 
+  flex-wrap: wrap;
   gap: 0.3rem;
   color: var(--text-primary);
   font-family: var(--font-primary);
@@ -223,12 +200,12 @@ background-color: var(--primary-bg);
   font-family: var(--font-roboto);
   font-weight: 500;
   color: var(--text-primary);
-  font-size: 1.3rem; 
+  font-size: 1.3rem;
 }
 
 .suffix-container {
   position: relative;
-  min-width: 240px; /* Prevent overlap shift */
+  min-width: 240px;
   height: 1.95rem;
 }
 
@@ -254,13 +231,15 @@ background-color: var(--primary-bg);
   opacity: 0;
 }
 
-/* about me button */
-.home-about-me{
+/* ==========================================================================
+   BUTTONS
+   ========================================================================== */
+
+.home-about-me {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 1rem 1rem 1rem 1rem;
- 
+  padding: 1rem;
 }
 
 .home-about-me-button {
@@ -275,49 +254,6 @@ background-color: var(--primary-bg);
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-/* Coaching Info Section */
-.coaching-info {
-  display: grid;
-  gap: 2rem;
-  grid-template-columns: repeat(3,1fr);
-  grid-template-rows: auto auto;
-  padding: 2rem 1rem;
-  margin: 3rem 0rem;
-  animation: fadeIn 0.5s ease-in-out;
-  justify-content: center;
-  
-}
-
-.info-box, .book-now-box {
-  padding: 1rem;
-  border-radius: var(--border-radius-xsm);
-  transition: transform 0.3s ease;
-  font-size: 1.2rem;
-  font-weight: 350;
-}
-.info-box{
-  border: 2px solid var(--text-dark-alt);
-}
-
-.info-box:hover, .book-now-box:hover {
-  transform: translateY(-5px);
-}
-
-.info-box h2, .book-now-box h2 {
-  font-family: var(--font-roboto);
-  color: var(--text-dark-alt);
-  margin-bottom: 0.5rem;
-  font-weight: 500;
-  font-size: 1.4;
-}
-
-.info-box p, .book-now-box p{
-  font-family: var(--font-roboto);
-  /* color: var(--text-secondary); */
-  color: var(--text-dark-alt);
-}
-
-/* book now button */
 .book-now-btn {
   display: flex;
   align-items: center;
@@ -333,8 +269,6 @@ background-color: var(--primary-bg);
   margin: 1rem 0 0 0rem;
   font-family: var(--font-roboto);
 }
-
-
 
 .book-now-btn .text {
   font-size: 1.1rem;
@@ -352,103 +286,69 @@ background-color: var(--primary-bg);
 .book-now-btn .svg svg {
   width: 50px;
   height: 30px;
-  stroke: var(--text-primary); 
+  stroke: var(--text-primary);
   stroke-width: 2.5;
 }
 
-.book-now-btn:hover .svg svg{
+.book-now-btn:hover .svg svg {
   stroke-width: 2.5;
   animation: jello-vertical 0.9s both;
-  transform-origin: left;  
-  stroke: var(--text-primary); 
+  transform-origin: left;
+  stroke: var(--text-primary);
 }
 
-@keyframes jello-vertical {
-  0% { transform: scale3d(1, 1, 1); }
-  30% { transform: scale3d(0.75, 1.25, 1); }
-  40% { transform: scale3d(1.25, 0.75, 1); }
-  50% { transform: scale3d(0.85, 1.15, 1); }
-  65% { transform: scale3d(1.05, 0.95, 1); }
-  75% { transform: scale3d(0.95, 1.05, 1); }
-  100% { transform: scale3d(1, 1, 1); }
+/* ==========================================================================
+   COACHING INFO SECTION
+   ========================================================================== */
+
+.coaching-info {
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: auto auto;
+  padding: 2rem 1rem;
+  margin: 3rem 0rem;
+  animation: fadeIn 0.5s ease-in-out;
+  justify-content: center;
 }
 
-/* Responsive layout for small screens */
-@media (max-width: 768px) {
-  .coaching-info {
-    grid-template-columns: 1fr;
-  }
-  .hero-left h1{
-    font-size: 2rem;
-  }
+.info-box, .book-now-box {
+  padding: 1rem;
+  border-radius: var(--border-radius-xsm);
+  transition: transform 0.3s ease;
+  font-size: 1.2rem;
+  font-weight: 350;
 }
 
-@media (max-width: 600px) {
-  .typewriter-wrapper {
-    flex-direction: column;
-    gap: 0.3rem;
-    text-align: center;
-    font-size: 1.1rem;
-  }
-
-  .typed-name {
-    font-size: 1.3rem;
-  }
-
-  .suffix-container {
-    min-width: auto;
-    height: 1.5em;
-  }
-
-  .suffix {
-    left: 50%;
-    transform: translateX(-50%);
-  } 
-  
-  .handwriting-svg {
-    max-width: 90vw;
-  }
-
-  .quote-svg-wrapper {
-    padding: 0.5rem;
-  }
+.info-box {
+  border: 2px solid var(--text-dark-alt);
 }
 
-/* Responsive font scaling */
-@media (max-width: 768px) {
-  .typed-name {
-    font-size: 1.2rem;
-  }
-
-  .suffix {
-    font-size: 0.95rem;
-    max-width: 90vw;
-  }
+.info-box:hover, .book-now-box:hover {
+  transform: translateY(-5px);
 }
 
-@media (max-width: 480px) {
-  .typed-name {
-    font-size: 1rem;
-  }
-
-  .suffix {
-    font-size: 0.9rem;
-    max-width: 90vw;
-  }
-
-  .typewriter-wrapper {
-    flex-direction: column;
-    gap: 0.25rem;
-  }
+.info-box h2, .book-now-box h2 {
+  font-family: var(--font-roboto);
+  color: var(--text-dark-alt);
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  font-size: 1.4;
 }
 
-/* about section */
+.info-box p, .book-now-box p {
+  font-family: var(--font-roboto);
+  color: var(--text-dark-alt);
+}
+
+/* ==========================================================================
+   ABOUT SECTION
+   ========================================================================== */
+
 .about-section {
- 
   padding: 3rem 3rem 8rem;
   background-color: var(--primary-bg);
   color: var(--text-dark-alt);
- 
 }
 
 .about-goal {
@@ -460,47 +360,42 @@ background-color: var(--primary-bg);
   flex-direction: row;
   padding: 1rem;
   font-family: var(--font-primary);
-  margin-bottom: 2rem;  
+  margin-bottom: 2rem;
 }
 
-.about-goal-left-text{
+.about-goal-left-text {
   display: flex;
   flex-direction: column;
   justify-content: start;
 }
-.tracking-in-contract-bck {
-	animation: tracking-in-contract-bck 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
-}
 
-/* our mission heading in about section */
 .about-goal-left-text-heading {
   position: relative;
   display: inline-block;
   padding-bottom: 3px;
-  font-family: var(--font-handwriting); 
+  font-family: var(--font-handwriting);
   font-size: 4rem;
   font-weight: 800;
   margin-bottom: 2rem;
 }
 
-/* custom underline for the text "our mission" */
 .about-goal-left-text-heading::after {
   content: '';
   position: absolute;
   bottom: 0;
   left: 3rem;
-  width: 40%; 
-  height: 6px; 
+  width: 40%;
+  height: 6px;
   background-color: var(--text-dark-alt);
-  border-radius: var(--border-radius-sm); 
+  border-radius: var(--border-radius-sm);
 }
 
-.about-goal-left-text p{
+.about-goal-left-text p {
   margin-top: 0;
   font-size: 1.2rem;
 }
 
-.about-goal-left-text h3{
+.about-goal-left-text h3 {
   font-family: var(--font-handwriting);
   font-size: 1.5rem;
   margin-top: 1rem;
@@ -514,10 +409,13 @@ background-color: var(--primary-bg);
   object-fit: cover;
 }
 
-/* ABOUT NEHA SHARMA */
+/* ==========================================================================
+   ABOUT CONTENT CARD
+   ========================================================================== */
+
 .about-content {
   display: grid;
-  grid-template-columns: 1fr 1fr; 
+  grid-template-columns: 1fr 1fr;
   gap: 6rem;
   padding: 0 0 1rem 0;
   box-shadow: var(--shadow-card);
@@ -551,19 +449,18 @@ background-color: var(--primary-bg);
   border-top-left-radius: var(--border-radius-sm);
 }
 
-.contact-info{
+.contact-info {
   display: flex;
   flex-direction: column;
   padding: 1rem;
   gap: 0.5rem;
   font-size: 1.5rem;
   font-family: var(--font-handwriting);
-  display: flex;
   align-self: center;
   font-weight: 600;
 }
 
-.contact-links{
+.contact-links {
   display: flex;
   gap: 1rem;
   justify-content: center;
@@ -573,89 +470,134 @@ background-color: var(--primary-bg);
   font-family: var(--font-roboto);
   font-weight: 300;
   padding: 0;
-  max-height: 80vh; 
-  
+  max-height: 80vh;
 }
-/* Chrome, Safari */
-/* .about-neha-content::-webkit-scrollbar {
-  display: none; 
-} */
 
-.about-neha h1{
+.about-neha h1 {
   position: sticky;
   font-family: var(--font-handwriting);
   padding: 1rem 0 0 0;
   font-size: 3.5rem;
   z-index: 3;
 }
+
 .about-neha h1::after {
   content: '';
   position: absolute;
   bottom: 0;
   left: 3rem;
-  width: 45%; 
-  height: 6px; 
+  width: 45%;
+  height: 6px;
   background-color: var(--text-dark-alt);
-  border-radius: var(--border-radius-sm); 
-  
+  border-radius: var(--border-radius-sm);
 }
-.about-neha-content{
+
+.about-neha-content {
   margin-top: 1rem;
   overflow-y: auto;
   max-height: 60dvh;
   scrollbar-width: thin;
-   
   -ms-overflow-style: none;
   scroll-behavior: smooth;
-  
   padding: 1rem 0 0 0;
 }
-.about-neha-content  h3{
+
+.about-neha-content h3 {
   font-family: var(--font-handwriting);
   padding: 0.5rem 0;
-
 }
-/* Custom Scrollbar for .about-neha-content */
-/* Custom Scrollbar for .about-neha-content */
+
+/* ==========================================================================
+   SCROLLBAR STYLING
+   ========================================================================== */
+
 .about-neha-content::-webkit-scrollbar {
   width: 12px;
 }
 
 .about-neha-content::-webkit-scrollbar-track {
-  background: var(--white); /* Changed from --primary-bg to --white */
+  background: var(--white);
   border-radius: var(--border-radius-sm);
 }
 
 .about-neha-content::-webkit-scrollbar-thumb {
   background-color: var(--text-secondary);
   border-radius: var(--border-radius-sm);
-  border: 3px solid var(--white); /* Changed from --primary-bg to --white */
+  border: 3px solid var(--white);
 }
 
 .about-neha-content::-webkit-scrollbar-thumb:hover {
   background-color: var(--text-secondary);
 }
 
-/* For Firefox */
 .about-neha-content {
-  scrollbar-width: thin;
-  /* Changed the second color value to --white */
   scrollbar-color: var(--text-secondary) var(--white);
 }
-@media (max-width: 767px) {
-  .about-section{
+
+/* ==========================================================================
+   UTILITY CLASSES
+   ========================================================================== */
+
+.fade-in-section {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 1.5s ease-out, transform 1.5s ease-out;
+}
+
+.fade-in-section.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.tracking-in-contract-bck {
+  animation: tracking-in-contract-bck 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
+}
+
+/* ==========================================================================
+   RESPONSIVE DESIGN - TABLET
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .coaching-info {
+    grid-template-columns: 1fr;
+  }
+  
+  .hero-left h1 {
+    font-size: 2rem;
+  }
+  
+  .quote-text {
+    font-size: 1.1rem;
+  }
+  
+  .quote-author {
+    font-size: 0.9rem;
+  }
+  
+  .typed-name {
+    font-size: 1.2rem;
+  }
+
+  .suffix {
+    font-size: 0.95rem;
+    max-width: 90vw;
+  }
+  
+  .about-section {
     padding: 0.5rem;
   }
-  .about-neha h1{
+  
+  .about-neha h1 {
     font-size: 2.2rem;
   }
-  .about-neha h1::after {
-  left: 3.5rem;
-  width: 60%; 
-  height: 4px; 
   
+  .about-neha h1::after {
+    left: 3.5rem;
+    width: 60%;
+    height: 4px;
   }
-  .about-goal-left-text h3{
+  
+  .about-goal-left-text h3 {
     font-size: 1.1rem;
     font-family: var(--font-handwriting);
     margin-top: 1rem;
@@ -696,19 +638,85 @@ background-color: var(--primary-bg);
     font-size: 1rem;
   }
 
-  .first-image{
+  .first-image {
     display: none;
   }
 }
 
+/* ==========================================================================
+   RESPONSIVE DESIGN - MOBILE
+   ========================================================================== */
+
 @media (max-width: 600px) {
+  .quote-text {
+    font-size: 1rem;
+  }
+  
+  .quote-author {
+    font-size: 0.85rem;
+  }
+  
+  .hero-quote {
+    padding: 0 0.5rem;
+  }
+  
+  .typewriter-wrapper {
+    flex-direction: column;
+    gap: 0.3rem;
+    text-align: center;
+    font-size: 1.1rem;
+  }
+
+  .typed-name {
+    font-size: 1.3rem;
+  }
+
+  .suffix-container {
+    min-width: auto;
+    height: 1.5em;
+  }
+
+  .suffix {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  .handwriting-svg {
+    max-width: 90vw;
+  }
+
+  .quote-svg-wrapper {
+    padding: 0.5rem;
+  }
+  
   .about-goal-left-text-heading::after {
     left: 0;
     width: 60%;
   }
-  .about-content{box-shadow: none;}
-}
-@media (max-width: 360px) {
   
-  .about-content{box-shadow: none;}
+  .about-content {
+    box-shadow: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .typed-name {
+    font-size: 1rem;
+  }
+
+  .suffix {
+    font-size: 0.9rem;
+    max-width: 90vw;
+  }
+
+  .typewriter-wrapper {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .about-content {
+    box-shadow: none;
+  }
 }
