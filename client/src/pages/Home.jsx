@@ -130,14 +130,24 @@ useEffect(() => {
       
       <div className="hero-right">
         <div className="hero-image-wrapper">
-        <picture>
+     <picture>
+  <source 
+    media="(max-width: 480px)" 
+    srcSet={hero_image}
+    width="480"
+    height="320"
+  />
   <source 
     media="(max-width: 768px)" 
     srcSet={hero_image}
+    width="768"
+    height="432"
   />
   <source 
     media="(max-width: 1200px)" 
     srcSet={hero_image}
+    width="1200"
+    height="675"
   />
   <img 
     src={hero_image} 
@@ -145,6 +155,8 @@ useEffect(() => {
     decoding="async"
     loading="eager"
     fetchpriority="high"
+    width="1400"
+    height="788"
   />
 </picture>
         </div>
@@ -172,8 +184,8 @@ useEffect(() => {
             mental calm and healing. Ideal for anxiety, self-sabotage, and emotional release.
           </p>
         </div>
-        </FadeInSection> 
-            <FadeInSection>
+        </FadeInSection>
+          <FadeInSection>
           <div className="info-box ">
           <h2>Group Coaching</h2>
           <p>
@@ -202,7 +214,7 @@ useEffect(() => {
             </span>
           </button>
         </div>
-      </FadeInSection> 
+      </FadeInSection>
       </section>
       
    <FadeInSection>
