@@ -153,9 +153,9 @@ useEffect(() => {
    </div>
  
   <section className="about-section" id="about"  >
-     <FadeInSection>
+     
       <section className="coaching-info" id="book-now">
-         
+         <FadeInSection>
         <div className="info-box">
           <h2>One-on-One Coaching</h2>
           <p>
@@ -163,8 +163,8 @@ useEffect(() => {
             Designed for individuals seeking focused guidance on personal or professional goals.
           </p>
         </div>
-      
-         
+        </FadeInSection>
+         <FadeInSection>
         <div className="info-box">
           <h2>Emotional Freedom Technique</h2>
           <p>
@@ -172,8 +172,8 @@ useEffect(() => {
             mental calm and healing. Ideal for anxiety, self-sabotage, and emotional release.
           </p>
         </div>
-        
-       
+        </FadeInSection> 
+            <FadeInSection>
           <div className="info-box ">
           <h2>Group Coaching</h2>
           <p>
@@ -181,6 +181,7 @@ useEffect(() => {
             Perfect for individuals seeking support, accountability, and growth in a dynamic group environment.
           </p>
         </div>
+        </FadeInSection>
         <FadeInSection>
         <div className="book-now-box" id="book-now-box">
           <h2>Ready to Transform?</h2>
@@ -203,7 +204,7 @@ useEffect(() => {
         </div>
       </FadeInSection> 
       </section>
-      </FadeInSection>
+      
    <FadeInSection>
     <div className="about-goal" id="about-goal">
       <div className="about-goal-left-text">
