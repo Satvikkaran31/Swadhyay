@@ -350,7 +350,10 @@ export default function Navbar({ aboutRef }) {
                 <button className="mobile-close-btn" onClick={() => setMobileMenuOpen(false)} aria-label="Close mobile menu">×</button>
               </div>
               <div className="mobile-menu-content">
-                <button to="/" className="mobile-menu-item" onClick={() => handleScrollToSection("main")}>Home</button>
+                 <button className="nav-link-btn" onClick={() => handleScrollToSection("main")}>
+                  Home
+                </button>
+            
                 <div className="mobile-menu-section">
                   <div className="mobile-menu-section-title">About</div>
                   {aboutDropdownItems.map((item, index) => (
@@ -358,14 +361,14 @@ export default function Navbar({ aboutRef }) {
                   ))}
                 </div>
                 <button className="mobile-menu-item" onClick={() => handleMobileItemClick(handleProtectedClick)}>Schedule</button>
-                {user && (
+                
                   <div className="mobile-menu-section">
                     <div className="mobile-menu-section-title">Learning</div>
                     {learningDropdownItems.map((item, index) => (
                       <button key={index} className="mobile-menu-subitem" onClick={() => navigate(item.path)}>{item.label}</button>
                     ))}
                   </div>
-                )}
+                
                 <Link className="mobile-menu-item" to="/booking" onClick={(e) => { if (!user) { e.preventDefault(); login(); } setMobileMenuOpen(false); }}>Pricing</Link>
                 {user && user.picture ? (
                   <div className="mobile-menu-user">
