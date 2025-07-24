@@ -159,6 +159,7 @@ export default function Inquiry() {
                 onChange={handleInputChange}
                 required
                 placeholder="Enter your email address"
+                maxLength={100}
                 disabled={isSubmitting}
               />
             </div>
@@ -166,13 +167,16 @@ export default function Inquiry() {
             <div className="form-group">
               <label htmlFor="phone">Phone Number</label>
               <input
-                type="tel"
-                id="phone"
-                name="phone"
-                value={formData.phone}
-                onChange={handleInputChange}
-                placeholder="Enter your phone number (optional)"
-                disabled={isSubmitting}
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                    placeholder="Enter your phone number (optional)"
+                    disabled={isSubmitting}
+                    maxLength="15"
+                    pattern="[0-9+ -]{7,15}"
+                    title="Phone number can include digits, spaces, dashes, or +"
               />
             </div>
 
@@ -186,6 +190,8 @@ export default function Inquiry() {
                 required
                 placeholder="Tell us how we can help you..."
                 rows="1"
+                minLength={10}
+                maxLength={1000}
                 disabled={isSubmitting}
               />
             </div>

@@ -5,7 +5,7 @@ import validator from 'validator';
 
 // Rate limiting middleware
 const inquiryLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
+  windowMs: 60 * 60 * 1000, // 60 minutes
   max: 3, // Limit each IP to 3 requests per windowMs
   
   message: {
@@ -44,6 +44,7 @@ const validateInquiryData = (data) => {
   
   if (!data.message || data.message.trim().length < 10) {
     errors.push('Message must be at least 10 characters long');
+    alert('Message must be at least 10 characters long')
   }
   
   return errors;
