@@ -1,4 +1,4 @@
-import React from "react";
+
 import "../styles/TeamsBookingModal.css"; 
 
 export default function TeamsBookingModal({ onClose }) {

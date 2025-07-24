@@ -1,9 +1,10 @@
+// called pricing in the website
 import React, { useState } from "react";
 import Navbar from "../components/Navbar";
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import cardSwipe from "../assets/card_swipe_animation.lottie";
 import RazorpayButton from "../components/RazorpayButton";
-
+import Footer from "../components/Footer";
 import "../styles/Booking.css";
 
 export default function Booking() {
@@ -82,6 +83,7 @@ export default function Booking() {
           </div>
           
       </div>
+      <Footer />
     </>
   );
 }

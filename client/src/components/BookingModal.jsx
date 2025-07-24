@@ -169,6 +169,7 @@ export default function BookingModal({ onClose }) {
      >
       <option value="one-on-one">One-on-One Coaching</option>
       <option value="eft">EFT Coaching</option>
+      <option value="group-coaching">Group Coaching</option>
      </select>
 
      <label>Meeting Platform:</label>

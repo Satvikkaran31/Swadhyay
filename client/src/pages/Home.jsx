@@ -2,7 +2,6 @@ import React, { useEffect, useState,useRef } from "react";
 import "../styles/Home.css";
 import BookingModal from "../components/BookingModal";
 import Navbar from "../components/Navbar";
-import TeamsBookingModal from "../components/TeamsBookingModal";
 import { useLocation,useNavigate } from "react-router-dom";
 import image_2 from "../assets/image_2.webp"
 import profileimage from "../assets/profilepicture.webp";
@@ -13,7 +12,7 @@ import { Link as ScrollLink } from 'react-scroll';
 import FadeInSection from '../components/FadeInSection';
 const suffixes = [
   <> <span className="highlight">25+ years</span> in people engagement</>,
-  <> <span className="highlight">700+ hours</span> of leadership coaching</>,
+  <> <span className="highlight">1000+ hours</span> of leadership coaching</>,
   <> <span className="highlight">EFT</span> master practitioner</>,
   <><span className="highlight">ICF Professional</span> certified exec</>,
   <> Recruited <span className="highlight">150+ CXOs, CEOs</span></>,
@@ -68,7 +67,7 @@ useEffect(() => {
       {showModal && <BookingModal onClose={() => setShowModal(false)} />}
      
       <div className="hero-left">
-        <h1>Empower Your Life with Expert Coaching.</h1>
+        <h1>Coaching for Self Mastery and elevated Leadership</h1>
        
       
    
@@ -170,8 +169,8 @@ useEffect(() => {
         <div className="info-box">
           <h2>One-on-One Coaching</h2>
           <p>
-            Personalized coaching focused on clarity, confidence, and mindset breakthroughs.
-            Designed for individuals seeking focused guidance on personal or professional goals.
+            Through guided reflection, emotional clarity, and self-mastery, 
+            discover the wisdom within to lead with presence, purpose, and empathy.
           </p>
         </div>
         </FadeInSection>
@@ -195,7 +194,7 @@ useEffect(() => {
         </FadeInSection>
         <FadeInSection>
         <div className="book-now-box" id="book-now-box">
-          <h2>Ready to Transform?</h2>
+          <h2>Start Your Journey</h2>
           <p>Choose your session type and book instantly.</p>
           <button className="book-now-btn" onClick={() => setShowModal(true)}>
             <span className="text">Book a Session</span>
@@ -289,6 +288,7 @@ useEffect(() => {
       d="M308 273c-3-2-6-3-9 1l-12 16c-3 2-5 3-9 1-15-8-36-17-54-47-1-4 1-6 3-8l9-14c2-2 1-4 0-6l-12-29c-3-8-6-7-9-7h-8c-2 0-6 1-10 5-22 22-13 53 3 73 3 4 23 40 66 59 32 14 39 12 48 10 11-1 22-10 27-19 1-3 6-16 2-18"
     />
   </svg></a>
+  
 </div>
        
       </div>
@@ -319,11 +319,6 @@ useEffect(() => {
       <h3>Academic & Mentorship Contributions</h3>
       <p>
         Neha has served as guest faculty in Organizational Development at a top business school in Delhi and actively mentors emerging leaders through Jagriti Yatra, an initiative focused on social entrepreneurship.
-      </p>
-
-      <h3>Current Portfolio</h3>
-      <p>
-        Neha has transitioned to a portfolio career, continuing Executive Search work with a focus on the impact and social sector at Executive Access. She also leads independent coaching engagements and serves as an Adjunct at Impactivate Solutions.
       </p>
 
       <h3>Academic and Professional Background</h3>

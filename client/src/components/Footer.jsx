@@ -1,5 +1,5 @@
-import React from 'react';
-import Link from 'react';
+import { Link } from 'react-router-dom';
+
 import '../styles/Footer.css'; // We will create this CSS file next
 
 const Footer = () => {
@@ -42,6 +42,7 @@ const Footer = () => {
  <li> nehasharma@swadhyay.com</li>
  <li><a href="https://www.linkedin.com/in/neha-sharma-00b69565?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" >Linkedin</a></li>
  <li> <a href="mailto:nehasharma@swadhyay.co" >Mail</a></li>
+  <li> <Link to="/contact-us" >Contact</Link></li>
  </ul>
   </div>
  </div>

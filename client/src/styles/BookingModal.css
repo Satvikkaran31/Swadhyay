@@ -23,8 +23,7 @@
  position: relative;
  text-align: center;
  animation: fadeIn 0.3s ease;
- font-family: "Poppins", sans-serif;
-}
+ font-family: "Poppins", sans-serif;}
 
 .modal-container h2 {
  margin-bottom: 1.5rem;
@@ -63,10 +62,10 @@
   box-sizing: border-box; /* Include padding and border in the element's total width and height */
 }
 
-.modal-container .gmeet {
+ .gmeet {
  background-color: #21867a;
  color: white;
- border: none;
+ border: 1px solid  rgb(16, 41, 16);
  padding: 0.8rem;
  border-radius: 8px;
  font-size: 1rem;
@@ -76,14 +75,14 @@
  font-family: "Poppins", sans-serif;
 }
 
-.modal-container .gmeet:hover {
+ .gmeet:hover {
  background-color: #1a6b61;
  transform: scale(1.05);
 }
 
 .modal-close {
  position: absolute;
- top: 0.75rem;
+ top: 0.5rem;
  right: 1rem;
  background: none;
  border: none;
@@ -126,10 +125,12 @@
  align-items: center;
  font-family: "Poppins", sans-serif; 
  border-radius: 6px;
+ border: 1px solid black;
  cursor: pointer;
  font-size: 1rem;
  padding: 0.74rem 1rem;
   transition: transform 0.2s ease;
+
 }
 
 .Teams:hover {

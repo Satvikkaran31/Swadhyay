@@ -1,12 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
+import  { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Link as ScrollLink, scroller } from "react-scroll";
 import "../styles/Navbar.css";
 import "../styles/NavbarHamburger.css";
 import BookingModal from "./BookingModal";
 import LoginButton from "./LoginButton";
-import RazorpayButton from "./RazorpayButton";
-import { UserContext } from "../context/UserProvider"; 
 import { useTriggerGoogleLogin } from "../utils/googleLoginHelper";
 import { useUser } from "../context/UserProvider";
 
@@ -86,7 +84,7 @@ export default function Navbar({ aboutRef }) {
   }, [location.pathname, location.hash]); // Depend on pathname as well
 
   // =============================================================================
-  // ALL OTHER EFFECTS AND HANDLERS (Unchanged from your original code)
+  // ALL OTHER EFFECTS AND HANDLERS 
   // =============================================================================
 
   useEffect(() => {
@@ -184,9 +182,9 @@ export default function Navbar({ aboutRef }) {
   const isBookingPage = location.pathname !== "/";
 
   const aboutDropdownItems = [
-    { label: "Our Mission", sectionId: "about" },
-    { label: "About Us", sectionId: "about-content" },
-    { label: "Contact Us", sectionId: "contact-info " }
+    { label: "Our Mission", sectionId: "about-goal" },
+    { label: "About Neha", sectionId: "about-content" },
+    { label: "Contact Us", path:"/contact-us" },
   ];
 
   const learningDropdownItems = [
@@ -279,7 +277,9 @@ export default function Navbar({ aboutRef }) {
      )}
 
           <div className="nav-links desktop-nav">
-            <ScrollLink to="main" {...scrollLinkProps}>Home</ScrollLink>
+             <button className="nav-link-btn" onClick={() => handleScrollToSection("main")}>
+            Home
+            </button>
             
             <div className="nav-dropdown-wrapper" ref={aboutDropdownRef} onMouseEnter={() => handleMouseEnter('about')} onMouseLeave={() => handleMouseLeave('about')}>
               <button className={`nav-link-btn dropdown-trigger ${aboutDropdownOpen ? 'active' : ''}`} onClick={handleAboutDropdown}>
@@ -289,7 +289,7 @@ export default function Navbar({ aboutRef }) {
               {aboutDropdownOpen && (
                 <div className="nav-dropdown-menu">
                   {aboutDropdownItems.map((item, index) => (
-                    <button key={index} className="nav-dropdown-item" onClick={() => handleDropdownItemClick({ sectionId: item.sectionId })}>
+                    <button key={index} className="nav-dropdown-item" onClick={() => handleDropdownItemClick(item)} >
                       <span>{item.label}</span>
                     </button>
                   ))}
@@ -350,7 +350,7 @@ export default function Navbar({ aboutRef }) {
                 <button className="mobile-close-btn" onClick={() => setMobileMenuOpen(false)} aria-label="Close mobile menu">×</button>
               </div>
               <div className="mobile-menu-content">
-                <ScrollLink to="/" className="mobile-menu-item" onClick={() => handleScrollToSection("main")}>Home</ScrollLink>
+                <button to="/" className="mobile-menu-item" onClick={() => handleScrollToSection("main")}>Home</button>
                 <div className="mobile-menu-section">
                   <div className="mobile-menu-section-title">About</div>
                   {aboutDropdownItems.map((item, index) => (

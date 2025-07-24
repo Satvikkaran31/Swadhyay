@@ -14,7 +14,7 @@ import paymentRoutes from "./routes/paymentRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import availabilityRoutes from "./routes/availabilityRoutes.js";
 import { ensureAuthenticated } from "./controllers/auth.js";
-
+import { handleInquiry,inquiryLimiter } from "./controllers/Inquiry.js";
 dotenv.config();
 
 // Fix __dirname in ES modules
@@ -65,15 +65,12 @@ app.use(
   })
 );
 
-
-
-
 // API Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/payment", ensureAuthenticated, paymentRoutes);
 app.use("/api/calendar", calendarRoutes);
 app.use("/api/availability", availabilityRoutes);
-
+app.post("/api/contact-us", inquiryLimiter, handleInquiry)
 // Serve frontend build (from Vite)
 app.use(express.static(path.join(__dirname, "../client/dist")));
 
