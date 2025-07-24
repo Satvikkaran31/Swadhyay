@@ -6,7 +6,7 @@ import validator from 'validator';
 // Rate limiting middleware
 const inquiryLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 50, // Limit each IP to 3 requests per windowMs
+  max: 3, // Limit each IP to 3 requests per windowMs
   
   message: {
     error: 'Too many inquiry requests from this IP, please try again later.'
@@ -42,7 +42,7 @@ const validateInquiryData = (data) => {
     errors.push('Please provide a valid phone number');
   }
   
-  if (!data.message || data.message.trim().length < 1) {
+  if (!data.message || data.message.trim().length < 10) {
     errors.push('Message must be at least 10 characters long');
   }
   
