@@ -18,7 +18,7 @@ export default function App() {
   return (
     <Router>
       <ScrollToTop />
-      <Navbar />
+      
       <Suspense fallback={<div>Loading...</div>}>
         <Routes>
           <Route path="/" element={<Home />} />
