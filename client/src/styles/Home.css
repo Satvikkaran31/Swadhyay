@@ -1,5 +1,5 @@
 /* ==========================================================================
-    ROOT VARIABLES
+   IMPORTS  ROOT VARIABLES
    ========================================================================== */
 
 :root {
@@ -28,7 +28,7 @@
   --font-secondary: 'Segoe UI', sans-serif;
   --font-handwriting: 'Playwrite HU', sans-serif;
   --font-roboto: 'Poppins', roboto;
-  
+  --font-hero-title:'Merriweather','poppins';
   /* Size Variables */
   --border-radius-xsm: 10px;
   --border-radius-sm: 20px;
@@ -120,18 +120,19 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding: 1rem;
+  align-items: flex-start;
+  
+  padding: 1rem 5rem;
   animation: fade-in 1.2s ease-out forwards;
 }
 
 .hero-left h1 {
-  font-family: var(--font-primary);
+  font-family: var(--font-hero-title);
   font-size: 3.5rem;
   font-weight: 400;
   margin-top: 0rem;
   color: var(--text-primary);
+
 }
 
 .hero-right {
@@ -198,7 +199,7 @@
 }
 
 .typed-name {
-  font-family: var(--font-roboto);
+  font-family: var(--font-primary);
   font-weight: 500;
   color: var(--text-primary);
   font-size: 1.3rem;
@@ -268,7 +269,7 @@
   cursor: pointer;
   transition: all 0.3s ease-in-out;
   margin: 1rem 0 0 0rem;
-  font-family: var(--font-roboto);
+  font-family: var(--font-primary);
  
 }
 
@@ -332,7 +333,7 @@
 }
 
 .info-box h2, .book-now-box h2 {
-  font-family: var(--font-roboto);
+  font-family: var(--font-primary);
   color: var(--text-dark-alt);
   margin-bottom: 0.5rem;
   font-weight: 500;
@@ -340,7 +341,7 @@
 }
 
 .info-box p, .book-now-box p {
-  font-family: var(--font-roboto);
+  font-family: var(--font-primary);
   color: var(--text-dark-alt);
 }
 
@@ -470,8 +471,9 @@
 }
 
 .right-text {
-  font-family: var(--font-roboto);
-  font-weight: 300;
+  font-family: var(--font-primary);
+  font-weight: 500;
+  font-size: 1.1rem;
   padding: 0;
   max-height: 80vh;
 }
@@ -508,6 +510,7 @@
 .about-neha-content h3 {
   font-family: var(--font-handwriting);
   padding: 0.5rem 0;
+  font-size: 1.5rem;
 }
 
 /* ==========================================================================
@@ -563,6 +566,12 @@
    RESPONSIVE DESIGN - TABLET
    ========================================================================== */
 @media (max-width: 1100px) {
+    .hero-left{
+    align-items: left;
+  }
+  .hero-left h1{
+    text-align: left;
+  }
   .hero-image-wrapper {
     height: 60vh;
     min-height: 220px;
@@ -579,6 +588,7 @@
 }
 
 @media (max-width: 768px) {
+
   .coaching-info {
     grid-template-columns: 1fr;
   }
@@ -588,6 +598,7 @@
   }
   .hero-left h1 {
     font-size: 2rem;
+    text-align: center;
   }
   
   .quote-text {
@@ -675,7 +686,9 @@
   .quote-text {
     font-size: 1rem;
   }
-  
+  .hero-left{
+    align-items: center;
+  }
   .quote-author {
     font-size: 0.85rem;
   }

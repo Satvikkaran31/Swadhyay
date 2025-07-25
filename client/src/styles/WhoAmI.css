@@ -73,7 +73,7 @@ body {
 }
 
 .wip-subtext {
-    font-family: var(--font-roboto);
+    font-family: var(--font-primary);
     font-size: 1.2rem;
     color: var(--text-dark-alt);
 }

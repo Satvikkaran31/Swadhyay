@@ -4,7 +4,7 @@
   padding: 1.2rem 2rem;
   font-size: 1.1rem;
   font-weight: 700;
-  font-family: var(--font-roboto);
+  font-family: var(--font-primary);
   color: var(--white);
   background: linear-gradient(135deg, var(--gradient-start), var(--gradient-mid));
   border: none;
