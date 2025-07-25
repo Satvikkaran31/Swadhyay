@@ -1,8 +1,6 @@
 // vite.config.js
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import { visualizer } from 'rollup-plugin-visualizer'; // optional
-import viteCompression from 'vite-plugin-compression';
 
 export default defineConfig({
   plugins: [
