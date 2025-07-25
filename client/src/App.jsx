@@ -2,9 +2,8 @@ import React, { useRef, Suspense, lazy } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import ScrollToTop from "./components/ScrollToTop";
-
+import Home from "./pages/Home";
 // Lazy-load pages
-const Home = lazy(() => import("./pages/Home"));
 const Booking = lazy(() => import("./pages/Booking"));
 const Success = lazy(() => import("./pages/Success"));
 const Articles = lazy(() => import("./pages/Articles"));
