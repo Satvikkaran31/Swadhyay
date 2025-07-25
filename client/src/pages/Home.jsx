@@ -74,7 +74,7 @@ useEffect(() => {
 
 
      <div className="typewriter-wrapper">
-        {/* <span className="typed-name">Neha Sharma</span> */}
+        
         <span className="suffix-container">
        
   <span className={`suffix ${fadeIn ? "fade-in" : "fade-out"}`}>
