@@ -7,8 +7,7 @@ import viteCompression from 'vite-plugin-compression';
 export default defineConfig({
   plugins: [
     react(),
-    viteCompression(), // compress assets with gzip
-    visualizer({ open: false }) // optional: analyze bundle sizes
+    
   ],
   build: {
     outDir: 'dist',
