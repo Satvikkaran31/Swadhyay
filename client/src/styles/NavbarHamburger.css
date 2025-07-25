@@ -114,7 +114,7 @@ body.mobile-menu-open {
 /* Mobile Menu Header */
 .mobile-menu-header {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   padding: 2rem 2rem 0rem;
   
@@ -145,7 +145,7 @@ body.mobile-menu-open {
 
 /* Mobile Menu Content */
 .mobile-menu-content {
-  padding: 0rem 0rem 2rem 0rem;
+  padding: 1rem
 }
 
 .mobile-menu-item {

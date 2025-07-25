@@ -347,13 +347,16 @@ export default function Navbar({ aboutRef }) {
           <div className="mobile-menu-overlay" ref={mobileMenuRef}>
             <div className="mobile-menu">
               <div className="mobile-menu-header">
-                <button className="mobile-close-btn" onClick={() => setMobileMenuOpen(false)} aria-label="Close mobile menu">×</button>
-              </div>
-              <div className="mobile-menu-content">
                  <button className="nav-link-btn" onClick={() => handleScrollToSection("main")}>
                   Home
                 </button>
             
+                <button className="mobile-close-btn" onClick={() => setMobileMenuOpen(false)} aria-label="Close mobile menu">×</button>
+                
+              </div>
+
+              <div className="mobile-menu-content">
+                
                 <div className="mobile-menu-section">
                   <div className="mobile-menu-section-title">About</div>
                   {aboutDropdownItems.map((item, index) => (
