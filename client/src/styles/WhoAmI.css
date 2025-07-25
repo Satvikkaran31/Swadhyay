@@ -1,40 +1,5 @@
 
 
-:root {
-  /* Color Variables */
-  --primary-bg: #ECF5EE;
-  --gradient-start: #1D2A2D;
-  --gradient-mid: #22383B;
-  --gradient-end: #1C3437;
-  --text-primary: #E0E7E9;
-  --text-secondary: #1A2B3C;
-  --text-dark: #333;
-  --text-dark-alt: #333333;
-  --accent-green: #9AE6B4;
-  --accent-red: #FF6B6B;
-  --button-primary: #1A2B3C;
-  --shadow-color: #222;
-  --white: white;
-  --card-bg: #f8fafc;
-  --image-gradient-start: #E0D8D0;
-  --image-gradient-mid: #C8C4BE;
-  --image-gradient-end: #B0B5AD;
-  --accent-dark-green:#8CCF9D;
-  
-  /* Font Variables */
-  --font-primary: 'Poppins', sans-serif;
-  --font-secondary: 'Segoe UI', sans-serif;
-  --font-handwriting: 'Playwrite HU', sans-serif;
-  --font-roboto: 'Poppins', roboto;
-  
-  /* Size Variables */
-  --border-radius-sm: 20px;
-  --border-radius-md: 30px;
-  --border-radius-lg: 40px;
-  --shadow-default: 0 6px 12px -7px var(--shadow-color);
-  --shadow-card: -15px 15px 15px -2px rgba(0, 0, 0, 0.3);
-}
-
 body {
     background-color: var(--primary-bg);
     font-family: var(--font-primary);
