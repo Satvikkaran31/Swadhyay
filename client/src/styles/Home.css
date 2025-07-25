@@ -337,12 +337,14 @@
   color: var(--text-dark-alt);
   margin-bottom: 0.5rem;
   font-weight: 500;
-  font-size: 1.4;
+  
 }
 
 .info-box p, .book-now-box p {
   font-family: var(--font-primary);
   color: var(--text-dark-alt);
+  font-weight: 400;
+  font-size: 1.3rem;
 }
 
 /* ==========================================================================
@@ -472,10 +474,10 @@
 
 .right-text {
   font-family: var(--font-primary);
-  font-weight: 500;
+  font-weight: 400;
   font-size: 1.1rem;
   padding: 0;
-  max-height: 80vh;
+
 }
 
 .about-neha h1 {

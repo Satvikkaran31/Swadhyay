@@ -12,6 +12,8 @@
   "dependencies": {
     "@lottiefiles/dotlottie-react": "^0.14.3",
     "@react-oauth/google": "^0.12.2",
+    "@unhead/dom": "^2.0.12",
+    "@unhead/vue": "^2.0.12",
     "axios": "^1.10.0",
     "lottie-react": "^2.4.1",
     "razorpay": "^2.9.6",

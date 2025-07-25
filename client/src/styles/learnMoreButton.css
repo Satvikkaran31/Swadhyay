@@ -18,7 +18,7 @@
   text-overflow: ellipsis;
   transition: background-color 0.3s, color 0.3s;
   font-size: 1rem;
-  
+  font-family: var(--font-primary);
 }
 
 .learnmore__icon-wrapper {
