@@ -157,6 +157,7 @@ export default function Inquiry() {
                 name="email"
                 value={formData.email}
                 onChange={handleInputChange}
+                pattern="^[\w\.-]+@[\w\.-]+\.\w{2,}$"
                 required
                 placeholder="Enter your email address"
                 maxLength={100}
