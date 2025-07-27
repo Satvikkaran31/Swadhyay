@@ -91,6 +91,8 @@ useEffect(() => {
                   offset={-70} // Adjust for sticky navbar height
                   duration={500}
                   className="learnmore"
+                  title="Scroll to about us"
+                  href="#about"
                 >
         <span className="learnmore__icon-wrapper">
             <svg
