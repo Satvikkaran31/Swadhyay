@@ -76,6 +76,12 @@
   border-bottom-left-radius: var(--border-radius-md);
   border-bottom-right-radius: var(--border-radius-md);
   padding: 0rem;
+  margin-bottom: 2rem;
+    box-shadow: 
+    0 8px 16px rgba(0, 0, 0, 0.5),
+    0 4px 16px rgba(0, 0, 0, 0.3),
+    0 2px 8px rgba(0, 0, 0, 0.2);
+
 }
 
 /* ==========================================================================
@@ -152,7 +158,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  
   color: var(--text-primary);
   font-family: var(--font-primary);
   font-size: 1.3rem;
@@ -180,7 +185,8 @@
 }
 
 .highlight {
-  color: var(--accent-red);
+  /* color: var(--accent-red); */
+  color:		#FFC857;
   font-weight: bold;
 }
 

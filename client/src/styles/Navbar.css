@@ -111,7 +111,7 @@
    LOGIN BUTTON
    ================================================================= */
 .login-button {
-  color: #FF6B6B;
+  color: 	#FFC857;
 }
 
 .login-button:hover {
@@ -192,10 +192,6 @@
   color: var(--accent-green);
 }
 
-.navbar.shrink .login-button:hover {
-  transform: translateY(-2px);
-  color: #FF8A8A;
-}
 
 /* =================================================================
    BOOKING BACKGROUND STYLES

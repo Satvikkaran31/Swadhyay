@@ -69,7 +69,7 @@
  padding-top: 2rem; /* Increased padding */
  margin-top: 2rem; /* Added margin */
  border-top: 1px solid var(--text-secondary);
- color: #aaa;
+ color: var(--text-secondary);
  font-size: 0.9rem;
 }
 

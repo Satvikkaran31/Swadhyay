@@ -62,11 +62,10 @@ router.post('/google', async (req, res) => {
 
 // Get current user session
 router.get('/me', (req, res) => {
-  if (req.session.user) {
-    res.json({ success: true, user: req.session.user });
-  } else {
-    res.status(401).json({ error: 'Not authenticated' });
+  if (req.session && req.session.user) {
+    return res.status(200).json({ success: true, user: req.session.user });
   }
+  return res.status(200).json({ success: true, user: null });
 });
 
 // Logout route
