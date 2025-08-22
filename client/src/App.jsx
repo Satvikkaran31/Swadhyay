@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from "react-route
 import Navbar from "./components/Navbar";
 import ScrollToTop from "./components/ScrollToTop";
 import Home from "./pages/Home";
-
+import ArticleDetail from './pages/ArticleDetail';
 // Lazy-load pages
 const Booking = lazy(() => import("./pages/Booking"));
 const Success = lazy(() => import("./pages/Success"));
@@ -129,7 +129,7 @@ export default function App() {
     <Router>
       <ScrollToTop />
         
-        <Suspense fallback={<LoadingFallback />}>
+        
           <Routes>
             <Route 
               path="/" 
@@ -169,7 +169,7 @@ export default function App() {
                 />
               } 
             />
-            
+            <Route path="/article/:slug" element={<ArticleDetail />} />
             <Route 
               path="/booking" 
               element={
@@ -224,7 +224,7 @@ export default function App() {
               } 
             />
           </Routes>
-        </Suspense>
+ 
       </Router>
  
   );

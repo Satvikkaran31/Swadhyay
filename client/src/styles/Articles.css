@@ -147,126 +147,7 @@ body {
     color: #666;
 }
 
-/* --- Modal Styles --- */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(26, 43, 60, 0.85);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    animation: fadeIn 0.3s ease;
-}
 
-.modal-content {
-    background: var(--primary-bg);
-    padding: 2rem;
-    border-radius: var(--border-radius-md);
-    width: 90%;
-    max-width: 800px;
-    max-height: 90vh;
-    overflow-y: auto;
-    position: relative;
-    animation: slideIn 0.4s ease;
-    color: var(--text-dark);
-    display: flex;
-    flex-direction: column;
-    align-self: center;
-    white-space: pre-line;
-}
-.modal-overlay::-webkit-scrollbar {
-  width: 12px;
-}
-
-.modal-overlay::-webkit-scrollbar-track {
-  background: var(--white); /* Changed from --primary-bg to --white */
-  border-radius: var(--border-radius-sm);
-}
-
-.modal-overlay::-webkit-scrollbar-thumb {
-  background-color: var(--text-secondary);
-  border-radius: var(--border-radius-sm);
-  border: 3px solid var(--white); /* Changed from --primary-bg to --white */
-}
-
-.modal-overlay::-webkit-scrollbar-thumb:hover {
-  background-color: var(--text-secondary);
-}
-
-/* For Firefox */
-.modal-content {
-  scrollbar-width: thin;
-  /* Changed the second color value to --white */
-  scrollbar-color: var(--text-secondary) var(--white);
-}
-
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    border-bottom: 1px solid #ddd;
-    padding-bottom: 1rem;
-    margin-bottom: 1rem;
-    flex-shrink: 0;
-}
-
-.modal-header h2 {
-    font-family: var(--font-handwriting);
-    font-size: 2.2rem;
-    color: var(--text-secondary);
-    margin: 0;
-}
-
-.modal-close-btn {
-    background: transparent;
-    border: none;
-    font-size: 2rem;
-    cursor: pointer;
-    color: var(--text-dark-alt);
-    line-height: 1;
-}
-
-.modal-body {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-}
-
-.modal-body img {
-    width: 100%;
-    max-height: 300px;
-    object-fit: cover;
-    border-radius: var(--border-radius-sm);
-    margin-bottom: 1.5rem;
-}
-
-.modal-body p {
-    font-family: var(--font-roboto);
-    line-height: 1.8;
-    font-size: 1rem;
-    text-align: justify;
-}
-
-.iframe-container {
-    flex-grow: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.modal-iframe {
-    width: 100%;
-    max-width: 550px;
-    height: 100%;
-    min-height: 70vh;
-    border: 1px solid #ddd;
-    border-radius: var(--border-radius-sm);
-}
 
 
 @keyframes fadeIn {
@@ -292,3 +173,140 @@ body {
     .modal-header h2 { font-size: 1.8rem; }
     .modal-iframe { border: none; }
 }
+ .article-detail-container {
+          max-width: 900px;
+          margin: 0 auto;
+          padding: 2rem;
+          color: var(--text-dark);
+        }
+
+        .article-detail-header {
+          margin-bottom: 2rem;
+        }
+
+        .back-btn {
+          background: transparent;
+          border: 2px solid var(--button-primary);
+          color: var(--button-primary);
+          padding: 0.6rem 1.2rem;
+          border-radius: var(--border-radius-md);
+          font-size: 0.9rem;
+          font-weight: 600;
+          cursor: pointer;
+          margin-bottom: 2rem;
+          transition: all 0.3s ease;
+          text-decoration: none;
+          display: inline-block;
+        }
+
+        .back-btn:hover {
+          background-color: var(--button-primary);
+          color: var(--white);
+          transform: translateX(-2px);
+        }
+
+        .article-detail-title {
+          font-family: var(--font-handwriting);
+          font-size: 3rem;
+          color: var(--text-secondary);
+          margin: 1rem 0;
+          line-height: 1.2;
+        }
+
+        .article-detail-meta {
+          display: flex;
+          gap: 2rem;
+          margin-bottom: 2rem;
+          font-size: 1rem;
+        }
+
+        .article-author {
+          color: var(--text-secondary);
+          font-weight: 600;
+        }
+
+        .article-date {
+          color: #666;
+        }
+
+        .article-detail-content {
+          background: var(--card-bg);
+          border-radius: var(--border-radius-sm);
+          padding: 2rem;
+          box-shadow: 0 10px 20px -5px rgba(0,0,0,0.1);
+        }
+
+        .article-detail-image {
+          width: 100%;
+          max-height: 400px;
+          object-fit: cover;
+          border-radius: var(--border-radius-sm);
+          margin-bottom: 2rem;
+          box-shadow: 0 6px 12px -2px rgba(0,0,0,0.1);
+        }
+
+        .article-detail-text {
+          line-height: 1.8;
+          font-size: 1.1rem;
+          font-family: var(--font-roboto);
+        }
+
+        .article-detail-text p {
+          margin-bottom: 1.5rem;
+          text-align: justify;
+        }
+
+        .article-embed-container {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          min-height: 70vh;
+        }
+
+        .article-embed-iframe {
+          width: 100%;
+          max-width: 550px;
+          height: 70vh;
+          border: 1px solid #ddd;
+          border-radius: var(--border-radius-sm);
+        }
+
+        .article-not-found {
+          text-align: center;
+          padding: 4rem 2rem;
+        }
+
+        .article-not-found h2 {
+          font-family: var(--font-handwriting);
+          font-size: 2.5rem;
+          color: var(--text-secondary);
+          margin-bottom: 2rem;
+        }
+
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+          .article-detail-container {
+            padding: 1rem;
+          }
+
+          .article-detail-title {
+            font-size: 2.2rem;
+          }
+
+          .article-detail-meta {
+            flex-direction: column;
+            gap: 0.5rem;
+          }
+
+          .article-detail-content {
+            padding: 1.5rem;
+          }
+
+          .article-detail-text {
+            font-size: 1rem;
+          }
+
+          .article-embed-iframe {
+            height: 60vh;
+          }
+        }

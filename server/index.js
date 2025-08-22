@@ -52,13 +52,13 @@ app.use(
     store: new PGStore({
       pool: pgPool,
       tableName: "user_sessions", 
-      createTableIfMissing: true, // Create table if it doesn't exist
+      createTableIfMissing: true, 
     }),
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: process.env.NODE_ENV === "production" ? true : false, // Use secure cookies in production
+      secure: process.env.NODE_ENV === "production" ? true : false, 
       httpOnly: true,
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", //false works in dev mode :)
     },

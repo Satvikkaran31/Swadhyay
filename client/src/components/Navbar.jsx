@@ -58,10 +58,10 @@ export default function Navbar({ aboutRef }) {
         duration: 800,
         delay: 0,
         smooth: 'easeInOutQuart',
-        offset: -90, // Adjust for your fixed navbar height
+        offset: -90, 
       });
     } else {
-      // If not on the home page, navigate to the home page and then scroll
+      
       navigate(`/#${sectionId}`);
     }
   };

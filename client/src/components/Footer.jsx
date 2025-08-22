@@ -39,7 +39,7 @@ const Footer = () => {
   <div className="footer-section contact ">
 <h3>Contact Us</h3>
  <ul>
- <li> nehasharma@swadhyay.com</li>
+ <li> nehasharma@swadhyay.co</li>
  <li><a href="https://www.linkedin.com/in/neha-sharma-00b69565?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" >Linkedin</a></li>
  <li> <a href="mailto:nehasharma@swadhyay.co" >Mail</a></li>
   <li> <Link to="/contact-us" >Contact</Link></li>
