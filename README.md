@@ -1,6 +1,6 @@
-Of course. Here is the information formatted as a professional GitHub README file.
 
-Swadhyay — Coaching Booking Platform
+
+#Swadhyay — Coaching Booking Platform
 A full-stack coaching booking web application with secure authentication, integrated payments, and automated scheduling. Built to simplify how students connect with coaches, book sessions, and manage their online classes.
 
 Live App → swadhyay.co
