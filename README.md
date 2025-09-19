@@ -20,7 +20,7 @@ Live App → swadhyay.co
 
 ## 🛠️ Tech Stack
 ### Category	Technology
-### Frontend	React (Vite), React Router, Tailwind CSS
+### Frontend	React (Vite), HTML , CSS
 ### Backend	Node.js, Express.js
 ### Database	PostgreSQL
 ### Authentication	OAuth 2.0 (Google & Microsoft)
