@@ -3,7 +3,7 @@
 # Swadhyay — Coaching Booking Platform
 A full-stack coaching booking web application with secure authentication, integrated payments, and automated scheduling. Built to simplify how students connect with coaches, book sessions, and manage their online classes.
 
-Live App → swadhyay.co
+Live App → https://swadhyay.co
 
 ## ✨ Features
 ### 🔐 Secure Authentication: Implemented with OAuth 2.0 (Google & Microsoft login) and secure server-side session management to protect user data.
