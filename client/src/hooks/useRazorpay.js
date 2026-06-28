@@ -48,11 +48,16 @@ export function useRazorpay() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ amount, currency: 'INR', receipt: `rcpt_${Date.now()}` }),
+        // Pass course_id (if present) so server can look up the canonical price
+        body: JSON.stringify({ amount, currency: 'INR', receipt: `rcpt_${Date.now()}`, ...metadata }),
       });
-      if (!res.ok) throw new Error(`Order creation failed: ${res.status}`);
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        onFailure?.(err.error || 'Failed to initiate payment. Please try again.');
+        return;
+      }
       order = await res.json();
-    } catch (err) {
+    } catch {
       onFailure?.('Failed to initiate payment. Please try again.');
       return;
     }

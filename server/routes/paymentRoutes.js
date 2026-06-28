@@ -8,10 +8,31 @@ const router = express.Router();
 // All routes in this file are protected by ensureAuthenticated in index.js
 
 router.post("/create-order", async (req, res) => {
-  const { amount, currency, receipt } = req.body;
+  const { amount, currency, receipt, course_id } = req.body;
+
+  let resolvedAmount;
+
+  if (course_id) {
+    // For course payments, always use the server-stored price — never trust the client amount
+    try {
+      const { rows } = await pool.query("SELECT price FROM courses WHERE id = $1", [course_id]);
+      if (!rows.length) return res.status(404).json({ error: "Course not found" });
+      resolvedAmount = rows[0].price;
+      if (resolvedAmount <= 0) return res.status(400).json({ error: "This course is free — no payment needed" });
+    } catch {
+      return res.status(500).json({ error: "Failed to verify course price" });
+    }
+  } else {
+    // Session booking: user enters quoted amount — validate it's a positive integer
+    resolvedAmount = parseInt(amount);
+    if (!resolvedAmount || resolvedAmount <= 0) {
+      return res.status(400).json({ error: "Amount must be a positive number" });
+    }
+  }
+
   try {
     const order = await razorpay.orders.create({
-      amount: parseInt(amount),
+      amount: resolvedAmount,
       currency: currency || "INR",
       receipt: receipt || `rcpt_${Date.now()}`,
     });
