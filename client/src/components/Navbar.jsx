@@ -2,110 +2,67 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { scroller } from "react-scroll";
 import "../styles/Navbar.css";
+import "../styles/NavbarHamburger.css";
 import BookingModal from "./BookingModal";
+import LoginButton from "./LoginButton";
 import { useTriggerGoogleLogin } from "../utils/googleLoginHelper";
 import { useUser } from "../context/UserProvider";
 
-// ── Interactive Eye ──────────────────────────────────────────────────────────
-function InteractiveEye() {
-  const containerRef = useRef(null);
-  const pupilGroupRef = useRef(null);
-  const rafRef = useRef(null);
-  const target = useRef({ x: 0, y: 0 });
-  const current = useRef({ x: 0, y: 0 });
-
-  useEffect(() => {
-    const onMove = (e) => {
-      if (!containerRef.current) return;
-      const r = containerRef.current.getBoundingClientRect();
-      const cx = r.left + r.width / 2;
-      const cy = r.top + r.height / 2;
-      const angle = Math.atan2(e.clientY - cy, e.clientX - cx);
-      const radius = 3.5;
-      target.current = { x: Math.cos(angle) * radius, y: Math.sin(angle) * radius };
-    };
-
-    const loop = () => {
-      const lerp = 0.12;
-      current.current.x += (target.current.x - current.current.x) * lerp;
-      current.current.y += (target.current.y - current.current.y) * lerp;
-      if (pupilGroupRef.current) {
-        pupilGroupRef.current.setAttribute(
-          "transform",
-          `translate(${current.current.x.toFixed(3)}, ${current.current.y.toFixed(3)})`
-        );
-      }
-      rafRef.current = requestAnimationFrame(loop);
-    };
-
-    document.addEventListener("mousemove", onMove, { passive: true });
-    rafRef.current = requestAnimationFrame(loop);
-    return () => {
-      document.removeEventListener("mousemove", onMove);
-      cancelAnimationFrame(rafRef.current);
-    };
-  }, []);
-
-  return (
-    <div ref={containerRef} className="header-eye" aria-hidden="true">
-      <svg width="44" height="28" viewBox="0 0 44 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-        {/* Outer eye almond */}
-        <path
-          d="M2 14 C9 3, 35 3, 42 14 C35 25, 9 25, 2 14 Z"
-          stroke="rgba(255,255,255,0.7)"
-          strokeWidth="1.25"
-          fill="none"
-          strokeLinejoin="round"
-        />
-        {/* Iris ring */}
-        <circle cx="22" cy="14" r="6.5" stroke="rgba(255,255,255,0.45)" strokeWidth="1.25" fill="none" />
-        {/* Pupil group — this moves */}
-        <g ref={pupilGroupRef}>
-          <circle cx="22" cy="14" r="3.5" fill="white" />
-          <circle cx="23.4" cy="12.6" r="1" fill="rgba(0,0,0,0.35)" />
-        </g>
-      </svg>
-    </div>
-  );
-}
-
-// ── Navbar ───────────────────────────────────────────────────────────────────
 export default function Navbar() {
-  const [menuOpen, setMenuOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [aboutOpen, setAboutOpen] = useState(false);
+  const [learningOpen, setLearningOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   const { user, setUser, logout } = useUser();
   const navigate = useNavigate();
   const location = useLocation();
   const login = useTriggerGoogleLogin(setUser);
 
-  const closeMenu = () => setMenuOpen(false);
+  const aboutRef = useRef(null);
+  const learningRef = useRef(null);
+  const profileRef = useRef(null);
 
-  // Body scroll lock
+  // ── Scroll: at top → pill visible, scrolled → transparent ─────────
   useEffect(() => {
-    document.body.style.overflow = menuOpen ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
-  }, [menuOpen]);
-
-  // Close on route change
-  useEffect(() => { closeMenu(); }, [location.pathname]);
-
-  // Escape key
-  useEffect(() => {
-    const handler = (e) => { if (e.key === "Escape") closeMenu(); };
-    document.addEventListener("keydown", handler);
-    return () => document.removeEventListener("keydown", handler);
+    const check = () => setScrolled(window.scrollY > 24);
+    check();
+    window.addEventListener("scroll", check, { passive: true });
+    return () => window.removeEventListener("scroll", check);
   }, []);
 
-  const scrollTo = (sectionId) => {
-    closeMenu();
-    if (location.pathname === "/") {
-      scroller.scrollTo(sectionId, { duration: 800, delay: 0, smooth: "easeInOutQuart", offset: -80 });
-    } else {
-      navigate(`/#${sectionId}`);
-    }
-  };
+  // ── Mobile breakpoint ──────────────────────────────────────────────
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth <= 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
+  // ── Click-outside close ────────────────────────────────────────────
+  useEffect(() => {
+    const handler = (e) => {
+      if (aboutRef.current && !aboutRef.current.contains(e.target)) setAboutOpen(false);
+      if (learningRef.current && !learningRef.current.contains(e.target)) setLearningOpen(false);
+      if (profileRef.current && !profileRef.current.contains(e.target)) setProfileOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  // ── Body scroll lock for mobile menu ──────────────────────────────
+  useEffect(() => {
+    document.body.classList.toggle("mobile-menu-open", mobileOpen);
+    return () => document.body.classList.remove("mobile-menu-open");
+  }, [mobileOpen]);
+
+  // ── Close mobile on route change ──────────────────────────────────
+  useEffect(() => { setMobileOpen(false); }, [location.pathname]);
+
+  // ── Hash scroll ────────────────────────────────────────────────────
   useEffect(() => {
     const hash = location.hash.replace("#", "");
     if (hash) {
@@ -116,113 +73,218 @@ export default function Navbar() {
     }
   }, [location.pathname, location.hash]);
 
+  const scrollTo = (sectionId) => {
+    setMobileOpen(false);
+    if (location.pathname === "/") {
+      scroller.scrollTo(sectionId, { duration: 800, delay: 0, smooth: "easeInOutQuart", offset: -90 });
+    } else {
+      navigate(`/#${sectionId}`);
+    }
+  };
+
+  const closeAll = () => {
+    setAboutOpen(false);
+    setLearningOpen(false);
+    setProfileOpen(false);
+  };
+
+  const isAboutActive = ["/contact-us", "/whoami"].some(p => location.pathname.startsWith(p));
+  const isLearningActive = ["/articles", "/article/", "/courses", "/my-learning"].some(p =>
+    location.pathname === p || location.pathname.startsWith(p)
+  );
+  const isPricingActive = location.pathname === "/booking";
+
   const handleSchedule = () => {
-    closeMenu();
+    setMobileOpen(false);
     if (!user) login(); else setShowModal(true);
   };
 
   const handleLogout = async () => {
-    closeMenu();
     await logout();
+    setProfileOpen(false);
+    setMobileOpen(false);
   };
 
-  const navLinks = [
-    { label: "About",     action: () => scrollTo("about-content") },
-    { label: "Articles",  path: "/articles" },
-    { label: "Courses",   path: "/courses" },
-    { label: "Pricing",   path: "/booking" },
-    { label: "Schedule",  action: handleSchedule },
-    ...(user ? [{ label: "My Learning", path: "/my-learning" }] : []),
-    ...(user?.role === "admin" ? [{ label: "Admin", path: "/admin" }] : []),
+  const aboutItems = [
+    { label: "Our Mission",  action: () => scrollTo("about-goal") },
+    { label: "About Neha",   action: () => scrollTo("about-content") },
+    { label: "Contact Us",   path: "/contact-us" },
   ];
+
+  const learningItems = [
+    { label: "Articles",     path: "/articles" },
+    { label: "Courses",      path: "/courses" },
+    ...(user ? [{ label: "My Learning", path: "/my-learning" }] : []),
+    { label: "Who Am I?",    path: "/whoami" },
+  ];
+
+  const Chevron = ({ open }) => (
+    <svg className={`chevron${open ? " up" : ""}`} width="10" height="10" viewBox="0 0 12 12" fill="none">
+      <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
 
   return (
     <>
-      {/* ── Header bar ──────────────────────────────────────────────────── */}
-      <header className="site-header">
-        <div className="header-inner">
-          <button className="header-logo" onClick={() => scrollTo("main")}>
-            Swadhyay
+      {/* ── Pill wrapper ──────────────────────────────────────────── */}
+      <nav className={`pill-nav${scrolled ? " scrolled" : ""}`}>
+
+        {/* ── Desktop pill ────────────────────────────────────────── */}
+        <div className="pill-inner desktop-pill">
+
+          {/* Brand */}
+          <button className="pill-brand" onClick={() => scrollTo("main")}>
+            <svg width="18" height="18" viewBox="0 0 80 75" fill="currentColor">
+              <path d="m31.83,52.52l4.91,-3.63l0.87,1.13c2.22,2.87 4.64,5.02 7.26,6.44c2.59,1.4 5.41,2.1 8.45,2.1c2.82,0 5.44,-0.7 7.87,-2.08c2.49,-1.42 4.79,-3.57 6.92,-6.44l0.92,-1.24l12.76,10.64l-1.07,1.13c-3.49,3.67 -7.01,6.44 -10.56,8.29c-3.62,1.89 -7.28,2.83 -10.97,2.83c-5.51,0 -10.6,-1.45 -15.26,-4.36c-4.6,-2.87 -8.76,-7.15 -12.47,-12.84l-0.75,-1.15l1.12,-0.82zm24.21,-14.83l8.88,9.03l-9.95,9.75l-10.07,-10.34l10.15,-9.46l0.99,1.02z"/>
+            </svg>
           </button>
 
-          <div className="header-right">
-            <InteractiveEye />
+          <span className="pill-sep" />
 
+          {/* About */}
+          <div className="pill-drop-wrap" ref={aboutRef}
+            onMouseEnter={() => !isMobile && setAboutOpen(true)}
+            onMouseLeave={() => !isMobile && setAboutOpen(false)}
+          >
             <button
-              className={`ham-btn${menuOpen ? " is-open" : ""}`}
-              onClick={() => setMenuOpen(v => !v)}
-              aria-label={menuOpen ? "Close menu" : "Open menu"}
-              aria-expanded={menuOpen}
+              className={`pill-item${isAboutActive ? " active" : ""}`}
+              onClick={() => { setAboutOpen(v => !v); setLearningOpen(false); setProfileOpen(false); }}
             >
-              <span className="ham-line" />
-              <span className="ham-line" />
+              About <Chevron open={aboutOpen} />
             </button>
-          </div>
-        </div>
-      </header>
-
-      {/* ── Full-screen overlay ──────────────────────────────────────────── */}
-      <div className={`nav-overlay${menuOpen ? " is-open" : ""}`} aria-hidden={!menuOpen} inert={!menuOpen ? "" : undefined}>
-        <nav className="overlay-inner">
-
-          <ul className="overlay-links">
-            {navLinks.map((item, i) => (
-              <li
-                key={item.label}
-                className="overlay-item"
-                style={{ animationDelay: `${120 + i * 55}ms` }}
-              >
-                {item.path ? (
-                  <Link to={item.path} className="overlay-link" onClick={closeMenu}>
-                    {item.label}
-                  </Link>
-                ) : (
-                  <button className="overlay-link" onClick={item.action}>
+            {aboutOpen && (
+              <div className="pill-dropdown">
+                {aboutItems.map((item, i) => (
+                  <button key={i} className="pill-drop-item" onClick={() => { item.path ? navigate(item.path) : item.action(); closeAll(); }}>
                     {item.label}
                   </button>
-                )}
-              </li>
-            ))}
-          </ul>
-
-          {/* Auth row */}
-          <div className="overlay-footer">
-            <div className="overlay-auth">
-              {user ? (
-                <>
-                  <img
-                    src={user.picture}
-                    alt=""
-                    className="overlay-avatar"
-                    referrerPolicy="no-referrer"
-                  />
-                  <span className="overlay-username">{user.name.split(" ")[0]}</span>
-                  <button className="overlay-meta-btn" onClick={handleLogout}>Log out</button>
-                </>
-              ) : (
-                <button className="overlay-meta-btn" onClick={() => { login(); closeMenu(); }}>
-                  Log in
-                </button>
-              )}
-            </div>
-
-            {/* Social links */}
-            <div className="overlay-social">
-              <a href="https://www.linkedin.com/company/swadhyay" target="_blank" rel="noreferrer" className="social-icon" aria-label="LinkedIn">
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                </svg>
-              </a>
-              <a href="https://www.instagram.com/swadhyay" target="_blank" rel="noreferrer" className="social-icon" aria-label="Instagram">
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
-                </svg>
-              </a>
-            </div>
+                ))}
+              </div>
+            )}
           </div>
 
-        </nav>
-      </div>
+          {/* Schedule */}
+          <button className="pill-item" onClick={handleSchedule}>Schedule</button>
+
+          {/* Learning */}
+          <div className="pill-drop-wrap" ref={learningRef}
+            onMouseEnter={() => !isMobile && setLearningOpen(true)}
+            onMouseLeave={() => !isMobile && setLearningOpen(false)}
+          >
+            <button
+              className={`pill-item${isLearningActive ? " active" : ""}`}
+              onClick={() => { setLearningOpen(v => !v); setAboutOpen(false); setProfileOpen(false); }}
+            >
+              Learning <Chevron open={learningOpen} />
+            </button>
+            {learningOpen && (
+              <div className="pill-dropdown">
+                {learningItems.map((item, i) => (
+                  <button key={i} className="pill-drop-item" onClick={() => { navigate(item.path); closeAll(); }}>
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Pricing */}
+          <Link className={`pill-item${isPricingActive ? " active" : ""}`} to="/booking" onClick={closeAll}>
+            Pricing
+          </Link>
+
+          <span className="pill-sep" />
+
+          {/* Auth */}
+          {user?.picture ? (
+            <div className="pill-drop-wrap" ref={profileRef}
+              onMouseEnter={() => !isMobile && setProfileOpen(true)}
+              onMouseLeave={() => !isMobile && setProfileOpen(false)}
+            >
+              <img
+                src={user.picture} alt="Profile" className="pill-avatar"
+                onClick={() => { setProfileOpen(v => !v); setAboutOpen(false); setLearningOpen(false); }}
+                referrerPolicy="no-referrer"
+              />
+              {profileOpen && (
+                <div className="pill-dropdown right">
+                  <button className="pill-drop-item muted" disabled>{user.name.split(" ")[0]}</button>
+                  {user.role === "admin" && (
+                    <button className="pill-drop-item" onClick={() => { navigate("/admin"); closeAll(); }}>Admin</button>
+                  )}
+                  <button className="pill-drop-item" onClick={handleLogout}>Log out</button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <LoginButton />
+          )}
+        </div>
+
+        {/* ── Mobile pill ─────────────────────────────────────────── */}
+        <div className="pill-inner mobile-pill">
+          <button className="pill-brand" onClick={() => scrollTo("main")}>
+            <svg width="18" height="18" viewBox="0 0 80 75" fill="currentColor">
+              <path d="m31.83,52.52l4.91,-3.63l0.87,1.13c2.22,2.87 4.64,5.02 7.26,6.44c2.59,1.4 5.41,2.1 8.45,2.1c2.82,0 5.44,-0.7 7.87,-2.08c2.49,-1.42 4.79,-3.57 6.92,-6.44l0.92,-1.24l12.76,10.64l-1.07,1.13c-3.49,3.67 -7.01,6.44 -10.56,8.29c-3.62,1.89 -7.28,2.83 -10.97,2.83c-5.51,0 -10.6,-1.45 -15.26,-4.36c-4.6,-2.87 -8.76,-7.15 -12.47,-12.84l-0.75,-1.15l1.12,-0.82zm24.21,-14.83l8.88,9.03l-9.95,9.75l-10.07,-10.34l10.15,-9.46l0.99,1.02z"/>
+            </svg>
+            <span className="pill-brand-name">Swadhyay</span>
+          </button>
+          {!mobileOpen && (
+            <button className="pill-ham" onClick={() => setMobileOpen(true)} aria-label="Open menu">
+              <span /><span /><span />
+            </button>
+          )}
+        </div>
+      </nav>
+
+      {/* ── Mobile overlay ─────────────────────────────────────────── */}
+      {mobileOpen && (
+        <div className="mob-overlay" onClick={(e) => e.target === e.currentTarget && setMobileOpen(false)}>
+          <div className="mob-menu">
+            <div className="mob-header">
+              <button className="pill-brand" onClick={() => { scrollTo("main"); setMobileOpen(false); }}>
+                <svg width="18" height="18" viewBox="0 0 80 75" fill="currentColor">
+                  <path d="m31.83,52.52l4.91,-3.63l0.87,1.13c2.22,2.87 4.64,5.02 7.26,6.44c2.59,1.4 5.41,2.1 8.45,2.1c2.82,0 5.44,-0.7 7.87,-2.08c2.49,-1.42 4.79,-3.57 6.92,-6.44l0.92,-1.24l12.76,10.64l-1.07,1.13c-3.49,3.67 -7.01,6.44 -10.56,8.29c-3.62,1.89 -7.28,2.83 -10.97,2.83c-5.51,0 -10.6,-1.45 -15.26,-4.36c-4.6,-2.87 -8.76,-7.15 -12.47,-12.84l-0.75,-1.15l1.12,-0.82zm24.21,-14.83l8.88,9.03l-9.95,9.75l-10.07,-10.34l10.15,-9.46l0.99,1.02z"/>
+                </svg>
+                <span style={{ fontWeight: 600, fontSize: "0.95rem", color: "var(--text-secondary)" }}>Swadhyay</span>
+              </button>
+              <button className="mob-close" onClick={() => setMobileOpen(false)}>×</button>
+            </div>
+            <div className="mob-body">
+              <p className="mob-section-label">About</p>
+              {aboutItems.map((item, i) => (
+                <button key={i} className="mob-link sub" onClick={() => { item.path ? navigate(item.path) : item.action(); }}>
+                  {item.label}
+                </button>
+              ))}
+              <button className="mob-link" onClick={handleSchedule}>Schedule</button>
+              <p className="mob-section-label">Learning</p>
+              {learningItems.map((item, i) => (
+                <button key={i} className="mob-link sub" onClick={() => { navigate(item.path); setMobileOpen(false); }}>
+                  {item.label}
+                </button>
+              ))}
+              <Link className="mob-link" to="/booking" onClick={() => setMobileOpen(false)}>Pricing</Link>
+              {user ? (
+                <div className="mob-auth">
+                  <div className="mob-user">
+                    <img src={user.picture} alt="" className="mob-avatar" referrerPolicy="no-referrer" />
+                    <span>{user.name.split(" ")[0]}</span>
+                  </div>
+                  {user.role === "admin" && (
+                    <button className="mob-link" onClick={() => { navigate("/admin"); setMobileOpen(false); }}>Admin Panel</button>
+                  )}
+                  <button className="mob-link logout" onClick={handleLogout}>Log out</button>
+                </div>
+              ) : (
+                <div className="mob-auth">
+                  <button className="mob-login-btn" onClick={() => { login(); setMobileOpen(false); }}>Log in with Google</button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {showModal && <BookingModal onClose={() => setShowModal(false)} />}
     </>
