@@ -233,6 +233,18 @@
   box-shadow: 0 -4px 12px rgba(0,0,0,0.08);
 }
 
+.course-detail-payment-error {
+  margin-top: 0.75rem;
+  color: var(--accent-red);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.course-detail-payment-error.sticky {
+  margin: 0;
+  font-size: 0.8rem;
+}
+
 /* ── Responsive ───────────────────────────────────────────────── */
 @media (max-width: 768px) {
   .course-detail-hero {

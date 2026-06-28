@@ -4,6 +4,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useUser } from "../context/UserProvider";
 import { useTriggerGoogleLogin } from "../utils/googleLoginHelper";
+import { useRazorpay } from "../hooks/useRazorpay";
 import "../styles/CourseDetail.css";
 
 const API = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
@@ -22,12 +23,14 @@ export default function CourseDetail() {
   const navigate = useNavigate();
   const { user, setUser } = useUser();
   const login = useTriggerGoogleLogin(setUser);
+  const { initiatePayment } = useRazorpay();
 
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
   const [enrolled, setEnrolled] = useState(false);
   const [enrolling, setEnrolling] = useState(false);
-  const [openModule, setOpenModule] = useState(0);
+  const [paymentError, setPaymentError] = useState(null);
+  const [openModule, setOpenModule] = useState(null);
   const [previewLesson, setPreviewLesson] = useState(null);
 
   useEffect(() => {
@@ -37,48 +40,100 @@ export default function CourseDetail() {
         if (data.error) { navigate("/courses"); return; }
         setCourse(data);
         setLoading(false);
-        // Auto-open first module
         if (data.modules?.length > 0) setOpenModule(data.modules[0].id);
       })
       .catch(() => setLoading(false));
   }, [slug]);
 
+  // Re-check enrollment whenever the logged-in user changes (e.g. they just logged in)
   useEffect(() => {
     if (!user || !course) return;
+    setEnrolled(false);
     fetch(`${API}/api/enrollments/check/${course.id}`, { credentials: "include" })
       .then(r => r.json())
-      .then(d => setEnrolled(d.enrolled));
-  }, [user, course]);
+      .then(d => setEnrolled(Boolean(d.enrolled)))
+      .catch(() => {});
+  }, [user?.id, course?.id]);
 
-  const handleEnroll = async () => {
-    if (!user) { login(); return; }
-    if (enrolled) { navigate(`/courses/${slug}/learn`); return; }
-
-    if (course.price === 0) {
-      setEnrolling(true);
+  const enrollFree = async () => {
+    setEnrolling(true);
+    setPaymentError(null);
+    try {
       const res = await fetch(`${API}/api/enrollments`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({ course_id: course.id }),
       });
-      if (res.ok) { setEnrolled(true); navigate(`/courses/${slug}/learn`); }
+      if (!res.ok) throw new Error("Enrollment failed");
+      navigate(`/courses/${slug}/learn`);
+    } catch {
+      setPaymentError("Could not enroll. Please try again.");
+    } finally {
       setEnrolling(false);
-    } else {
-      // Paid: trigger Razorpay, then enroll with payment_id
-      navigate(`/courses/${slug}/checkout`);
     }
   };
 
-  const totalLessons = course?.modules?.reduce((acc, m) => acc + (m.lessons?.length || 0), 0) || 0;
+  const enrollPaid = async () => {
+    setEnrolling(true);
+    setPaymentError(null);
 
-  if (loading) return <div className="main"><Navbar /><div className="course-detail-loading">Loading...</div><Footer /></div>;
+    await initiatePayment({
+      amount: course.price,
+      description: course.title,
+      user,
+      metadata: { course_id: course.id },
+      onSuccess: (result) => {
+        if (result.enrolled) {
+          navigate(`/courses/${slug}/learn`);
+        } else if (result.error === "enrollment_failed") {
+          // Payment went through but enrollment failed server-side
+          setPaymentError(result.message);
+        }
+        setEnrolling(false);
+      },
+      onFailure: (message) => {
+        if (message) setPaymentError(message);
+        setEnrolling(false);
+      },
+      onDismiss: () => {
+        setEnrolling(false);
+      },
+    });
+  };
+
+  const handleEnrollClick = () => {
+    setPaymentError(null);
+    if (!user) { login(); return; }
+    if (enrolled) { navigate(`/courses/${slug}/learn`); return; }
+    if (course.price === 0) { enrollFree(); } else { enrollPaid(); }
+  };
+
+  const enrollLabel = () => {
+    if (enrolling) return "Processing...";
+    if (enrolled) return "Continue Learning";
+    if (course?.price === 0) return "Enroll for Free";
+    return `Enroll — ₹${(course.price / 100).toLocaleString("en-IN")}`;
+  };
+
+  const totalLessons = course?.modules?.reduce((acc, m) => acc + (m.lessons?.length || 0), 0) ?? 0;
+
+  if (loading) {
+    return (
+      <div className="main">
+        <Navbar />
+        <div className="course-detail-loading">Loading...</div>
+        <Footer />
+      </div>
+    );
+  }
   if (!course) return null;
 
   return (
     <div className="main">
       <Navbar />
       <div className="course-detail-page">
+
         {/* Hero */}
         <div className="course-detail-hero">
           <div className="course-detail-hero-text">
@@ -87,7 +142,7 @@ export default function CourseDetail() {
             <div className="course-detail-meta">
               <span>{totalLessons} lessons</span>
               <span>·</span>
-              <span>{course.modules?.length || 0} modules</span>
+              <span>{course.modules?.length ?? 0} modules</span>
             </div>
             <div className="course-detail-price-row">
               <span className="course-detail-price">
@@ -95,12 +150,13 @@ export default function CourseDetail() {
               </span>
               <button
                 className="course-detail-enroll-btn"
-                onClick={handleEnroll}
+                onClick={handleEnrollClick}
                 disabled={enrolling}
               >
-                {enrolling ? "Processing..." : enrolled ? "Continue Learning" : course.price === 0 ? "Enroll for Free" : "Enroll Now"}
+                {enrollLabel()}
               </button>
             </div>
+            {paymentError && <p className="course-detail-payment-error">{paymentError}</p>}
           </div>
           {course.thumbnail_url && (
             <img src={course.thumbnail_url} alt={course.title} className="course-detail-thumb" />
@@ -135,8 +191,11 @@ export default function CourseDetail() {
                 onClick={() => setOpenModule(openModule === mod.id ? null : mod.id)}
               >
                 <span>{mod.title}</span>
-                <span className="syllabus-module-count">{mod.lessons?.length || 0} lessons</span>
-                <svg className={`syllabus-arrow ${openModule === mod.id ? "rotated" : ""}`} width="14" height="14" viewBox="0 0 12 12" fill="none">
+                <span className="syllabus-module-count">{mod.lessons?.length ?? 0} lessons</span>
+                <svg
+                  className={`syllabus-arrow ${openModule === mod.id ? "rotated" : ""}`}
+                  width="14" height="14" viewBox="0 0 12 12" fill="none"
+                >
                   <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </button>
@@ -154,7 +213,10 @@ export default function CourseDetail() {
                         </span>
                       )}
                       {lesson.is_preview && lesson.video_url && (
-                        <button className="syllabus-preview-btn" onClick={() => setPreviewLesson(lesson)}>
+                        <button
+                          className="syllabus-preview-btn"
+                          onClick={() => setPreviewLesson(lesson)}
+                        >
                           Preview
                         </button>
                       )}
@@ -166,15 +228,21 @@ export default function CourseDetail() {
           ))}
         </div>
 
-        {/* Sticky enroll CTA */}
+        {/* Sticky CTA */}
         <div className="course-detail-sticky-cta">
+          {paymentError && <p className="course-detail-payment-error sticky">{paymentError}</p>}
           <span className="course-detail-price">
             {course.price === 0 ? "Free" : `₹${(course.price / 100).toLocaleString("en-IN")}`}
           </span>
-          <button className="course-detail-enroll-btn" onClick={handleEnroll} disabled={enrolling}>
-            {enrolling ? "Processing..." : enrolled ? "Continue Learning" : "Enroll Now"}
+          <button
+            className="course-detail-enroll-btn"
+            onClick={handleEnrollClick}
+            disabled={enrolling}
+          >
+            {enrollLabel()}
           </button>
         </div>
+
       </div>
       <Footer />
     </div>

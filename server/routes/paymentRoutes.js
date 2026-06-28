@@ -1,36 +1,78 @@
 import express from "express";
-import razorpay from "../utils/razorpay.js";
 import crypto from "crypto";
+import razorpay from "../utils/razorpay.js";
+import pool from "../utils/db.js";
 
 const router = express.Router();
+
+// All routes in this file are protected by ensureAuthenticated in index.js
 
 router.post("/create-order", async (req, res) => {
   const { amount, currency, receipt } = req.body;
   try {
     const order = await razorpay.orders.create({
-      amount: amount * 100, // Convert to paise
+      amount: parseInt(amount),
       currency: currency || "INR",
-      receipt: receipt || `receipt_${Date.now()}`,
+      receipt: receipt || `rcpt_${Date.now()}`,
     });
     res.json(order);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to create Razorpay order" });
+  } catch {
+    res.status(500).json({ error: "Failed to create payment order" });
   }
 });
 
-router.post("/verify", (req, res) => {
-  const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+/**
+ * Verify Razorpay payment signature.
+ * If course_id is provided, atomically creates an enrollment record.
+ * This is the single source of truth for post-payment actions — the client
+ * should never attempt enrollment separately after a payment.
+ */
+router.post("/verify", async (req, res) => {
+  const {
+    razorpay_order_id,
+    razorpay_payment_id,
+    razorpay_signature,
+    course_id,
+  } = req.body;
 
-  const hmac = crypto
+  // 1. Verify HMAC signature
+  const expected = crypto
     .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
-    .update(razorpay_order_id + "|" + razorpay_payment_id)
+    .update(`${razorpay_order_id}|${razorpay_payment_id}`)
     .digest("hex");
 
-  if (hmac === razorpay_signature) {
-    return res.status(200).json({ success: true, message: "Payment verified" });
-  } else {
-    return res.status(400).json({ success: false, message: "Invalid signature" });
+  if (expected !== razorpay_signature) {
+    return res.status(400).json({ success: false, error: "Invalid payment signature" });
   }
+
+  // 2. If this payment is for a course, create enrollment atomically
+  if (course_id) {
+    const userId = req.session.user.id;
+    try {
+      await pool.query(
+        `INSERT INTO enrollments (user_id, course_id, payment_id)
+         VALUES ($1, $2, $3)
+         ON CONFLICT (user_id, course_id) DO NOTHING`,
+        [userId, course_id, razorpay_payment_id]
+      );
+    } catch (err) {
+      // Payment is verified — money moved. Log for manual recovery, don't return failure.
+      console.error(
+        `ENROLLMENT_FAILED user=${userId} course=${course_id} payment=${razorpay_payment_id}`,
+        err.message
+      );
+      return res.status(500).json({
+        success: true,
+        enrolled: false,
+        error: "enrollment_failed",
+        message: "Payment succeeded but we could not enroll you automatically. Our team will resolve this within 24 hours.",
+      });
+    }
+
+    return res.status(200).json({ success: true, enrolled: true });
+  }
+
+  return res.status(200).json({ success: true, enrolled: false });
 });
 
 export default router;

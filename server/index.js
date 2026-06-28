@@ -71,8 +71,8 @@ app.use(
 // API Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/payment", ensureAuthenticated, paymentRoutes);
-app.use("/api/calendar", calendarRoutes);
-app.use("/api/availability", availabilityRoutes);
+app.use("/api/calendar", ensureAuthenticated, calendarRoutes);
+app.use("/api/availability", ensureAuthenticated, availabilityRoutes);
 app.use("/api/courses", courseRoutes);
 app.use("/api/enrollments", enrollmentRoutes);
 app.use("/api/progress", progressRoutes);

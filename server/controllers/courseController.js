@@ -264,7 +264,31 @@ export async function getLessonDetail(req, res) {
 
 export async function getLessonResources(req, res) {
   const { id } = req.params;
+  const userId = req.session?.user?.id;
+  const isAdmin = req.session?.user?.role === 'admin';
+
   try {
+    // Resolve lesson → course and check preview status in one query
+    const { rows: lessonRows } = await pool.query(
+      `SELECT l.is_preview, m.course_id
+       FROM lessons l
+       JOIN modules m ON m.id = l.module_id
+       WHERE l.id = $1`,
+      [id]
+    );
+    if (!lessonRows.length) return res.status(404).json({ error: 'Lesson not found' });
+
+    const { is_preview, course_id } = lessonRows[0];
+
+    if (!isAdmin && !is_preview) {
+      if (!userId) return res.status(401).json({ error: 'Authentication required' });
+      const { rows: enroll } = await pool.query(
+        'SELECT id FROM enrollments WHERE user_id = $1 AND course_id = $2',
+        [userId, course_id]
+      );
+      if (!enroll.length) return res.status(403).json({ error: 'Enrollment required to access resources' });
+    }
+
     const { rows } = await pool.query(
       'SELECT id, title, url, type FROM resources WHERE lesson_id = $1',
       [id]
