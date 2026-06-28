@@ -1,30 +1,17 @@
-import express from 'express';
-import nodemailer from 'nodemailer';
 import rateLimit from 'express-rate-limit';
 import validator from 'validator';
+import transporter from '../utils/mailer.js';
 
 // Rate limiting middleware
 const inquiryLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000, // 60 minutes
-  max: 3, // Limit each IP to 3 requests per windowMs
-  
+  windowMs: 60 * 60 * 1000,
+  max: 3,
   message: {
     error: 'Too many inquiry requests from this IP, please try again later.'
   },
   standardHeaders: true,
   legacyHeaders: false,
 });
-
-// Email configuration
-const createTransporter = () => {
-  return nodemailer.createTransport({
-    service: 'gmail', // or your preferred email service
-    auth: {
-      user: process.env.MAIL_USER, // Your email
-      pass: process.env.MAIL_PASS, // Your email password or app password
-    },
-  });
-};
 
 // Validation helper
 const validateInquiryData = (data) => {
@@ -54,7 +41,6 @@ const validateInquiryData = (data) => {
 export { inquiryLimiter };
 
 export const handleInquiry = async (req, res) => {
-    console.log("Incoming inquiry:", req.body);
   try {
     if (req.method !== 'POST') {
       return res.status(405).json({ error: 'Method not allowed' });
@@ -71,8 +57,6 @@ export const handleInquiry = async (req, res) => {
       });
     }
 
-    // Create email transporter
-    const transporter = createTransporter();
 
     // Email template
     const emailTemplate = `

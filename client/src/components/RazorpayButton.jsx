@@ -2,6 +2,7 @@ import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserProvider";
 import { useRazorpay } from "../hooks/useRazorpay";
+import toast from "react-hot-toast";
 import "../styles/RazorpayButton.css";
 
 export default function RazorpayButton({ amount, isProcessing, setIsProcessing }) {
@@ -22,7 +23,7 @@ export default function RazorpayButton({ amount, isProcessing, setIsProcessing }
         navigate("/booking/success");
       },
       onFailure: (message) => {
-        if (message) alert(message);
+        if (message) toast.error(message);
       },
       onDismiss: () => {
         // User closed the modal — no action needed

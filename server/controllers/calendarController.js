@@ -87,7 +87,6 @@ export const bookSession = async (req, res) => {
 
    meetLink = response?.data?.hangoutLink;
    if (!meetLink) throw new Error("Google Meet link could not be created.");
-   console.log("Google Meet link:", meetLink);
   }
 
   // 2. Send simple confirmation email to the USER
@@ -106,7 +105,6 @@ export const bookSession = async (req, res) => {
         <p>You will receive a calendar invitation shortly.</p>
    `,
   });
-    console.log("User confirmation email sent.");
 
     // 2b. Send detailed notification email to the ADMIN
     await transporter.sendMail({
@@ -125,8 +123,6 @@ export const bookSession = async (req, res) => {
     <p><strong>Meeting Link:</strong> <a href="${meetLink}">${meetLink}</a></p>
    `,
   });
-    console.log("Admin notification email sent.");
-
 
   // 3. Mirror Event in Outlook (with new details in body)
   try {
@@ -162,7 +158,6 @@ export const bookSession = async (req, res) => {
     },
     { headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" } }
    );
-   console.log("Outlook calendar event created.");
   } catch (msError) {
    console.error("Outlook calendar error:", msError.response?.data || msError.message);
   }

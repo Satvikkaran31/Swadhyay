@@ -2,14 +2,14 @@
 import { useGoogleLogin } from '@react-oauth/google';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import toast from 'react-hot-toast';
 
 export function useTriggerGoogleLogin(setUser, navigateTo = "/") {
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
   return useGoogleLogin({
     flow: 'auth-code',
     onSuccess: async (codeResponse) => {
       try {
-    
         const apiBase = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
 
         const response = await axios.post(`${apiBase}/api/auth/google`, {
@@ -21,18 +21,15 @@ export function useTriggerGoogleLogin(setUser, navigateTo = "/") {
 
         const userData = response.data.user;
         setUser(userData);
-
-        console.log('Login successful');
         navigate(navigateTo);
-
       } catch (err) {
         console.error("Login error:", err);
-        alert("Google login failed. Please try again.");
+        toast.error("Google login failed. Please try again.");
       }
     },
     onError: (error) => {
       console.error("Login Failed:", error);
-      alert("Google login failed. Please try again.");
+      toast.error("Google login failed. Please try again.");
     },
     scope: 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email',
   });

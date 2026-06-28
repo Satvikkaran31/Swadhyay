@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../context/UserProvider";
 import axios from "axios";
+import toast from "react-hot-toast";
 import "../styles/BookingModal.css";
 import TeamsBookingModal from "./TeamsBookingModal";
 
@@ -71,10 +72,11 @@ export default function BookingModal({ onClose }) {
     form,
     { withCredentials: true }
    );
-   alert("Session booked! A meeting link has been sent to your email.");
+   toast.success("Session booked! A meeting link has been sent to your email.");
    onClose();
   } catch (err) {
-   alert("Booking failed. Please try again.");
+   const msg = err.response?.data?.error || "Booking failed. Please try again.";
+   toast.error(msg);
   } finally {
    setLoading(false);
   }

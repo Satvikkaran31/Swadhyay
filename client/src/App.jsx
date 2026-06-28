@@ -1,5 +1,6 @@
 import React, { useRef, Suspense, lazy, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 import Navbar from "./components/Navbar";
 import ScrollToTop from "./components/ScrollToTop";
 import Home from "./pages/Home";
@@ -106,6 +107,7 @@ export default function App() {
 
   return (
     <Router>
+      <Toaster position="top-center" toastOptions={{ duration: 4000 }} />
       <ScrollToTop />
       <Suspense fallback={<LoadingFallback />}>
         <Routes>

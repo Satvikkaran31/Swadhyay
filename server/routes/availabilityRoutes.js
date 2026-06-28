@@ -45,15 +45,13 @@ router.get('/', async (req, res) => {
  const endOfDay = encodeURIComponent(endOfDayISO);
 
  try {
-  console.log("Calling Graph for events for:", process.env.ADMIN_EMAIL);
   const events = await graphClient
    .api(`/users/${process.env.ADMIN_EMAIL}/calendarView`)
-   .header("Prefer", 'outlook.timezone="Asia/Kolkata"') 
+   .header("Prefer", 'outlook.timezone="Asia/Kolkata"')
    .query({ startDateTime: startOfDay, endDateTime: endOfDay })
    .select("start,end")
    .orderby("start/dateTime")
    .get();
-   console.log("Events returned from Graph:", events); 
 
   const busyRanges = events.value.map(ev => ({
    start: DateTime.fromISO(ev.start.dateTime, { zone: "Asia/Kolkata" }),
