@@ -1,12 +1,1 @@
-/* Prevent page scroll when mobile menu is open */
-body.mobile-menu-open {
-  overflow: hidden;
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  height: 100svh;
-  touch-action: none;
-  -webkit-overflow-scrolling: none;
-  overscroll-behavior: none;
-}
+/* kept for import compatibility — scroll lock is now handled via JS in Navbar.jsx */

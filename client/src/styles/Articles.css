@@ -41,6 +41,7 @@ body {
 
 .main{
     min-height: 100dvh;
+    padding-top: var(--header-height);
 }
 /* --- Articles Section --- */
 .articles-section {

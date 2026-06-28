@@ -7,7 +7,7 @@ body {
 .courses-page {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 6rem 2rem 4rem;
+  padding: calc(var(--header-height) + 3rem) 2rem 4rem;
   min-height: 80vh;
 }
 

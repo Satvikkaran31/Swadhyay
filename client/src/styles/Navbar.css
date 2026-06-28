@@ -1,473 +1,289 @@
-/* ── Pill wrapper (positions the pill fixed, centered) ─────────────── */
-.navbar-pill-wrap {
+/* ═══════════════════════════════════════════════════════════════════
+   SITE HEADER  — full-width dark bar, fixed at top
+   ═══════════════════════════════════════════════════════════════════ */
+
+.site-header {
   position: fixed;
-  top: 1.25rem;
-  left: 50%;
-  transform: translateX(-50%);
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 62px;
   z-index: 1000;
-  display: flex;
-  align-items: center;
-  pointer-events: none; /* children opt-in */
-}
-
-/* ── Shared pill shell ─────────────────────────────────────────────── */
-.nav-pill {
-  display: flex;
-  align-items: center;
-  gap: 0.125rem;
-  padding: 0.3rem 0.45rem;
-  border-radius: 9999px;
-  pointer-events: auto;
-  transition:
-    background 0.35s ease,
-    box-shadow 0.35s ease,
-    backdrop-filter 0.35s ease;
-}
-
-/* At top — transparent, items float freely */
-.nav-pill.at-top {
-  background: transparent;
-  box-shadow: none;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-}
-
-/* Scrolled — full frosted-glass pill materialises */
-.nav-pill.scrolled {
-  background: rgba(255, 255, 255, 0.92);
-  box-shadow:
-    0 2px 12px rgba(0, 0, 0, 0.09),
-    0 0 0 1px rgba(0, 0, 0, 0.07);
+  background: rgba(8, 8, 8, 0.94);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.055);
 }
 
-/* ── Desktop vs mobile visibility ─────────────────────────────────── */
-.mobile-pill  { display: none; }
-.desktop-pill { display: flex; }
-
-/* ── At-top colour overrides (dark hero behind transparent pill) ────── */
-.nav-pill.at-top .pill-item,
-.nav-pill.at-top .pill-brand,
-.nav-pill.at-top .pill-brand-text,
-.nav-pill.at-top .login-button {
-  color: rgba(255, 255, 255, 0.92);
-}
-
-.nav-pill.at-top .pill-divider {
-  background: rgba(255, 255, 255, 0.25);
-}
-
-.nav-pill.at-top .pill-item:hover {
-  background: rgba(255, 255, 255, 0.12);
-}
-
-.nav-pill.at-top .pill-item.active {
-  background: rgba(255, 255, 255, 0.18);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
-  color: #fff;
-}
-
-/* ── Brand mark (home button inside pill) ─────────────────────────── */
-.pill-brand {
+.header-inner {
   display: flex;
   align-items: center;
-  gap: 0.45rem;
-  padding: 0.4rem 0.65rem 0.4rem 0.5rem;
-  border-radius: 9999px;
+  justify-content: space-between;
+  height: 100%;
+  padding: 0 2.25rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* ── Logo / name ───────────────────────────────────────────────────── */
+.header-logo {
+  font-family: var(--font-primary);
+  font-size: 1rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  letter-spacing: 0.025em;
   background: none;
   border: none;
   cursor: pointer;
-  color: var(--text-secondary);
-  transition: background 0.15s ease;
+  padding: 0;
+  transition: opacity 0.2s ease;
+  line-height: 1;
 }
 
-.pill-brand:hover {
-  background: rgba(0, 0, 0, 0.05);
-}
+.header-logo:hover { opacity: 0.6; }
 
-.pill-brand-text {
-  font-family: var(--font-primary);
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--text-secondary);
-  white-space: nowrap;
-}
-
-/* ── Vertical divider ──────────────────────────────────────────────── */
-.pill-divider {
-  width: 1px;
-  height: 1.1rem;
-  background: rgba(0, 0, 0, 0.1);
-  margin: 0 0.2rem;
-  flex-shrink: 0;
-}
-
-/* ── Nav items ─────────────────────────────────────────────────────── */
-.pill-item {
+/* ── Right cluster: eye + hamburger ────────────────────────────────── */
+.header-right {
   display: flex;
   align-items: center;
-  gap: 0.3rem;
-  padding: 0.42rem 0.85rem;
-  border-radius: 9999px;
+  gap: 1.5rem;
+}
+
+/* ── Interactive Eye ───────────────────────────────────────────────── */
+.header-eye {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.85;
+  transition: opacity 0.2s ease;
+  cursor: none;
+}
+
+.header-eye:hover { opacity: 1; }
+
+/* ── Hamburger (two lines → X) ─────────────────────────────────────── */
+.ham-btn {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  width: 32px;
+  height: 32px;
+  padding: 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ham-line {
+  display: block;
+  width: 20px;
+  height: 1.5px;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 1px;
+  transform-origin: center;
+  transition: transform 0.38s cubic-bezier(0.23, 1, 0.32, 1),
+              opacity 0.22s ease,
+              width 0.25s ease;
+}
+
+/* Two-line → X morph */
+.ham-btn.is-open .ham-line:nth-child(1) {
+  transform: translateY(3.75px) rotate(45deg);
+}
+.ham-btn.is-open .ham-line:nth-child(2) {
+  transform: translateY(-3.75px) rotate(-45deg);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   FULL-SCREEN OVERLAY
+   ═══════════════════════════════════════════════════════════════════ */
+
+.nav-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  background: #080808;
+  display: flex;
+  align-items: stretch;
+
+  /* Closed state — slides up */
+  transform: translateY(-100%);
+  transition: transform 0.52s cubic-bezier(0.76, 0, 0.24, 1);
+  will-change: transform;
+}
+
+.nav-overlay.is-open {
+  transform: translateY(0);
+}
+
+/* ── Inner layout ──────────────────────────────────────────────────── */
+.overlay-inner {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 2.25rem 2.5rem;
+  padding-top: 62px; /* clear the header */
+  max-width: 1400px;
+  margin: 0 auto;
+  gap: 0;
+}
+
+/* ── Link list ─────────────────────────────────────────────────────── */
+.overlay-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: center;
+  gap: 0;
+}
+
+/* Staggered entrance — each item slides up from below */
+.overlay-item {
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.nav-overlay.is-open .overlay-item {
+  animation: itemEnter 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+
+@keyframes itemEnter {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Link typography ────────────────────────────────────────────────── */
+.overlay-link {
   font-family: var(--font-primary);
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--text-secondary);
+  font-size: clamp(2.4rem, 4.5vw, 3.75rem);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+  color: rgba(255, 255, 255, 0.78);
   background: none;
   border: none;
   cursor: pointer;
   text-decoration: none;
-  white-space: nowrap;
-  transition: background 0.25s ease, color 0.35s ease;
-  line-height: 1;
-  -webkit-tap-highlight-color: transparent;
+  padding: 0.2em 0;
+  display: inline-block;
+  position: relative;
+  transition: color 0.22s ease, transform 0.22s ease;
 }
 
-.pill-item:hover {
-  background: rgba(0, 0, 0, 0.05);
+.overlay-link::after {
+  content: "";
+  position: absolute;
+  bottom: 0.1em;
+  left: 0;
+  width: 0;
+  height: 1.5px;
+  background: rgba(255, 255, 255, 0.5);
+  transition: width 0.3s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
-.pill-item.active {
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow:
-    0 1px 5px rgba(0, 0, 0, 0.1),
-    0 0 0 1px rgba(0, 0, 0, 0.08);
-  color: var(--text-secondary);
+.overlay-link:hover {
+  color: #fff;
+  transform: translateX(10px);
 }
 
-/* ── Chevron arrow ─────────────────────────────────────────────────── */
-.pill-chevron {
-  opacity: 0.55;
-  transition: transform 0.2s ease, opacity 0.2s ease;
-  flex-shrink: 0;
+.overlay-link:hover::after { width: 100%; }
+
+/* ── Footer row: auth + social ────────────────────────────────────── */
+.overlay-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.4s ease 0.35s, transform 0.4s ease 0.35s;
 }
 
-.pill-item:hover .pill-chevron,
-.pill-item.active .pill-chevron {
-  opacity: 0.8;
+.nav-overlay.is-open .overlay-footer {
+  opacity: 1;
+  transform: translateY(0);
 }
 
-.pill-chevron.rotated {
-  transform: rotate(180deg);
+.overlay-auth {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
 }
 
-/* ── Profile avatar ────────────────────────────────────────────────── */
-.pill-avatar {
+.overlay-avatar {
   width: 1.85rem;
   height: 1.85rem;
   border-radius: 50%;
   object-fit: cover;
-  cursor: pointer;
-  border: 1.5px solid rgba(0, 0, 0, 0.1);
-  margin: 0 0.2rem;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-  display: block;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.pill-avatar:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 0 2px var(--button-primary);
-}
-
-/* ── Login button (inside pill) ───────────────────────────────────── */
-.pill-login,
-.login-button {
-  padding: 0.42rem 0.9rem;
-  border-radius: 9999px;
+.overlay-username {
   font-family: var(--font-primary);
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--text-secondary);
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.overlay-meta-btn {
+  font-family: var(--font-primary);
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.38);
   background: none;
   border: none;
   cursor: pointer;
-  transition: background 0.15s ease;
-  white-space: nowrap;
+  padding: 0;
   text-decoration: none;
+  transition: color 0.2s ease;
 }
 
-.pill-login:hover,
-.login-button:hover {
-  background: rgba(0, 0, 0, 0.05);
-}
+.overlay-meta-btn:hover { color: rgba(255, 255, 255, 0.8); }
 
-/* ── Dropdown wrapper ──────────────────────────────────────────────── */
-.pill-dropdown-wrap {
-  position: relative;
-}
-
-/* ── Dropdown panel ────────────────────────────────────────────────── */
-.pill-dropdown {
-  position: absolute;
-  top: calc(100% + 0.6rem);
-  left: 50%;
-  transform: translateX(-50%);
-  min-width: 148px;
-  background: rgba(255, 255, 255, 0.97);
-  border-radius: 14px;
-  box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.12),
-    0 0 0 1px rgba(0, 0, 0, 0.07);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  overflow: hidden;
-  z-index: 9999;
-  animation: dropdownIn 0.15s ease;
-}
-
-.pill-dropdown.right {
-  left: auto;
-  right: 0;
-  transform: none;
-  min-width: 120px;
-}
-
-@keyframes dropdownIn {
-  from { opacity: 0; transform: translateX(-50%) translateY(-6px); }
-  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
-}
-
-.pill-dropdown.right {
-  animation: dropdownInRight 0.15s ease;
-}
-
-@keyframes dropdownInRight {
-  from { opacity: 0; transform: translateY(-6px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* ── Dropdown items ────────────────────────────────────────────────── */
-.pill-dropdown-item {
-  display: block;
-  width: 100%;
-  padding: 0.7rem 1rem;
-  text-align: left;
-  background: transparent;
-  border: none;
-  color: var(--text-secondary);
-  font-family: var(--font-primary);
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.12s ease;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-}
-
-.pill-dropdown-item:last-child {
-  border-bottom: none;
-}
-
-.pill-dropdown-item:hover {
-  background: rgba(0, 0, 0, 0.04);
-}
-
-.pill-dropdown-item.label {
-  font-weight: 600;
-  cursor: default;
-  opacity: 0.65;
-  font-size: 0.8rem;
-}
-
-/* ── Mobile hamburger (inside mobile pill) ─────────────────────────── */
-.pill-hamburger {
+.overlay-social {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 0.45rem 0.6rem;
-  background: none;
-  border: none;
-  cursor: pointer;
-  border-radius: 9999px;
-  transition: background 0.15s ease;
-  -webkit-tap-highlight-color: transparent;
+  gap: 1.1rem;
+  align-items: center;
 }
 
-.pill-hamburger:hover {
-  background: rgba(0, 0, 0, 0.05);
-}
-
-.pill-hamburger span {
-  display: block;
-  width: 18px;
-  height: 1.5px;
-  background: var(--text-secondary);
-  border-radius: 1px;
-  transition: transform 0.2s ease;
-}
-
-/* ── Mobile full-screen menu ───────────────────────────────────────── */
-.mobile-menu-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.35);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  z-index: 999;
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-end;
-  padding: 0.75rem;
-  animation: overlayIn 0.2s ease;
-}
-
-@keyframes overlayIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-
-.mobile-menu {
-  width: min(320px, calc(100vw - 1.5rem));
-  background: rgba(255, 255, 255, 0.97);
-  border-radius: 20px;
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.18), 0 0 0 1px rgba(0, 0, 0, 0.06);
-  overflow: hidden;
-  animation: menuIn 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-@keyframes menuIn {
-  from { opacity: 0; transform: scale(0.92) translateY(-8px); }
-  to   { opacity: 1; transform: scale(1) translateY(0); }
-}
-
-.mobile-menu-header {
+.social-icon {
+  color: rgba(255, 255, 255, 0.28);
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 0.85rem 1rem 0.85rem 0.75rem;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
-}
-
-.mobile-close-btn {
-  width: 2rem;
-  height: 2rem;
-  border-radius: 50%;
-  border: none;
-  background: rgba(0, 0, 0, 0.06);
-  font-size: 1.1rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-secondary);
-  transition: background 0.15s ease;
-  line-height: 1;
-}
-
-.mobile-close-btn:hover {
-  background: rgba(0, 0, 0, 0.1);
-}
-
-.mobile-menu-content {
-  padding: 0.5rem 0 0.75rem;
-  display: flex;
-  flex-direction: column;
-}
-
-.mobile-menu-section {
-  padding: 0.25rem 0;
-}
-
-.mobile-menu-section-title {
-  padding: 0.5rem 1.25rem 0.25rem;
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  color: rgba(0, 0, 0, 0.35);
-  font-family: var(--font-primary);
-}
-
-.mobile-menu-subitem,
-.mobile-menu-item {
-  display: block;
-  width: 100%;
-  text-align: left;
-  padding: 0.65rem 1.25rem;
-  background: none;
-  border: none;
-  font-family: var(--font-primary);
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: var(--text-secondary);
-  cursor: pointer;
   text-decoration: none;
-  transition: background 0.12s ease;
-  -webkit-tap-highlight-color: transparent;
+  transition: color 0.2s ease, transform 0.2s ease;
 }
 
-.mobile-menu-subitem {
-  padding-left: 1.5rem;
-  font-size: 0.9rem;
-  color: rgba(26, 43, 60, 0.75);
+.social-icon:hover {
+  color: rgba(255, 255, 255, 0.85);
+  transform: translateY(-2px);
 }
 
-.mobile-menu-subitem:hover,
-.mobile-menu-item:hover {
-  background: rgba(0, 0, 0, 0.04);
-}
+/* ═══════════════════════════════════════════════════════════════════
+   MOBILE
+   ═══════════════════════════════════════════════════════════════════ */
 
-.mobile-menu-item.logout-item {
-  color: #c0392b;
-}
+@media (max-width: 640px) {
+  .header-inner { padding: 0 1.25rem; }
+  .header-eye   { display: none; }
 
-.mobile-menu-user {
-  padding: 0.5rem 0 0.25rem;
-  border-top: 1px solid rgba(0, 0, 0, 0.07);
-  margin-top: 0.25rem;
-}
+  .overlay-inner {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
 
-.mobile-user-info {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.6rem 1.25rem;
-}
+  .overlay-link {
+    font-size: clamp(1.9rem, 9vw, 2.6rem);
+  }
 
-.mobile-profile-pic {
-  width: 2rem;
-  height: 2rem;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 1.5px solid rgba(0, 0, 0, 0.1);
-}
-
-.mobile-user-name {
-  font-family: var(--font-primary);
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--text-secondary);
-}
-
-.mobile-menu-auth {
-  padding: 0.5rem 1.25rem;
-}
-
-.mobile-login-btn {
-  width: 100%;
-  padding: 0.65rem 1.25rem;
-  background: var(--button-primary);
-  color: #fff;
-  border: none;
-  border-radius: 9999px;
-  font-family: var(--font-primary);
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: opacity 0.15s ease;
-}
-
-.mobile-login-btn:hover {
-  opacity: 0.88;
-}
-
-/* ── Responsive: switch desktop ↔ mobile pill ──────────────────────── */
-@media (max-width: 768px) {
-  .desktop-pill { display: none; }
-  .mobile-pill  { display: flex; }
-}
-
-/* ── Page padding so content isn't hidden under fixed pill ─────────── */
-body {
-  padding-top: 0;
+  .overlay-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
 }

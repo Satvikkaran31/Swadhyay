@@ -13,8 +13,8 @@ body {
     align-items: center;
     justify-content: center;
     text-align: center;
-    min-height: calc(100dvh - 10dvh); /* Adjust 80px based on your navbar height */
-    padding: 2rem;
+    min-height: calc(100dvh - var(--header-height));
+    padding: calc(var(--header-height) + 2rem) 2rem 2rem;
 }
 
 .wip-content {

@@ -46,6 +46,8 @@
   src: url('../fonts/sacramento-v16-latin-regular.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
 }
 :root {
+  --header-height: 62px;
+
   /* Color Variables */
   --primary-bg: #ECF5EE;
   --gradient-start: #1D2A2D;

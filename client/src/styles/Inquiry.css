@@ -1,6 +1,7 @@
 /* Inquiry Section Styles */
 .main-inquiry{
     background-color: var(--primary-bg);
+    padding-top: var(--header-height);
 }
 .inquiry-section {
   padding: 1rem ;
