@@ -28,6 +28,16 @@ export default function Navbar() {
   const itemRefs = useRef({});
   const [chipStyle, setChipStyle] = useState({ left: 0, width: 0, opacity: 0 });
 
+  // Hover timer — prevents dropdown closing during mouse transit over gap
+  const hoverTimer = useRef({});
+  const hoverOpen = (key, setter) => {
+    clearTimeout(hoverTimer.current[key]);
+    setter(true);
+  };
+  const hoverClose = (key, setter) => {
+    hoverTimer.current[key] = setTimeout(() => setter(false), 140);
+  };
+
   const { user, setUser, logout } = useUser();
   const navigate = useNavigate();
   const location = useLocation();
@@ -182,8 +192,8 @@ export default function Navbar() {
 
           {/* ── Left items ──────────────────────────────────────── */}
           <div ref={aboutRef} className="pnav-drop-wrap"
-            onMouseEnter={() => !isMobile && setAboutOpen(true)}
-            onMouseLeave={() => !isMobile && setAboutOpen(false)}
+            onMouseEnter={() => !isMobile && hoverOpen("about", setAboutOpen)}
+            onMouseLeave={() => !isMobile && hoverClose("about", setAboutOpen)}
           >
             <button
               ref={el => itemRefs.current.about = el}
@@ -193,7 +203,10 @@ export default function Navbar() {
               About <Chevron open={aboutOpen} />
             </button>
             {aboutOpen && (
-              <div className="pnav-dropdown">
+              <div className="pnav-dropdown"
+                onMouseEnter={() => !isMobile && hoverOpen("about", setAboutOpen)}
+                onMouseLeave={() => !isMobile && hoverClose("about", setAboutOpen)}
+              >
                 {aboutItems.map((item, i) => (
                   <button key={i} className="pnav-drop-item"
                     onClick={() => { item.path ? navigate(item.path) : item.action(); closeAll(); }}>
@@ -210,8 +223,8 @@ export default function Navbar() {
 
           {/* ── Right items ─────────────────────────────────────── */}
           <div ref={learningRef} className="pnav-drop-wrap"
-            onMouseEnter={() => !isMobile && setLearningOpen(true)}
-            onMouseLeave={() => !isMobile && setLearningOpen(false)}
+            onMouseEnter={() => !isMobile && hoverOpen("learning", setLearningOpen)}
+            onMouseLeave={() => !isMobile && hoverClose("learning", setLearningOpen)}
           >
             <button
               ref={el => itemRefs.current.learning = el}
@@ -221,7 +234,10 @@ export default function Navbar() {
               Learning <Chevron open={learningOpen} />
             </button>
             {learningOpen && (
-              <div className="pnav-dropdown">
+              <div className="pnav-dropdown"
+                onMouseEnter={() => !isMobile && hoverOpen("learning", setLearningOpen)}
+                onMouseLeave={() => !isMobile && hoverClose("learning", setLearningOpen)}
+              >
                 {learningItems.map((item, i) => (
                   <button key={i} className="pnav-drop-item"
                     onClick={() => { navigate(item.path); closeAll(); }}>
@@ -246,8 +262,8 @@ export default function Navbar() {
           {/* ── Auth ────────────────────────────────────────────── */}
           {user?.picture ? (
             <div ref={profileRef} className="pnav-drop-wrap"
-              onMouseEnter={() => !isMobile && setProfileOpen(true)}
-              onMouseLeave={() => !isMobile && setProfileOpen(false)}
+              onMouseEnter={() => !isMobile && hoverOpen("profile", setProfileOpen)}
+              onMouseLeave={() => !isMobile && hoverClose("profile", setProfileOpen)}
             >
               <img
                 src={user.picture} alt="Profile" className="pnav-avatar"
@@ -255,7 +271,10 @@ export default function Navbar() {
                 referrerPolicy="no-referrer"
               />
               {profileOpen && (
-                <div className="pnav-dropdown right">
+                <div className="pnav-dropdown right"
+                  onMouseEnter={() => !isMobile && hoverOpen("profile", setProfileOpen)}
+                  onMouseLeave={() => !isMobile && hoverClose("profile", setProfileOpen)}
+                >
                   <button className="pnav-drop-item muted" disabled>{user.name.split(" ")[0]}</button>
                   {user.role === "admin" && (
                     <button className="pnav-drop-item" onClick={() => { navigate("/admin"); closeAll(); }}>Admin</button>
