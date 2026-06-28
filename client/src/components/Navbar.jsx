@@ -173,6 +173,13 @@ export default function Navbar() {
             }}
           />
 
+          {/* ── Logo (leftmost) ─────────────────────────────────── */}
+          <button className="pnav-logo-btn" onClick={() => scrollTo("main")}>
+            <Logo size={19} />
+          </button>
+
+          <span className="pnav-sep" />
+
           {/* ── Left items ──────────────────────────────────────── */}
           <div ref={aboutRef} className="pnav-drop-wrap"
             onMouseEnter={() => !isMobile && setAboutOpen(true)}
@@ -199,11 +206,6 @@ export default function Navbar() {
 
           <button className="pnav-item" onClick={handleSchedule}>
             Schedule
-          </button>
-
-          {/* ── Center logo ─────────────────────────────────────── */}
-          <button className="pnav-logo-btn" onClick={() => scrollTo("main")}>
-            <Logo size={19} />
           </button>
 
           {/* ── Right items ─────────────────────────────────────── */}
