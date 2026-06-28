@@ -16,19 +16,57 @@
   align-items: center;
   gap: 0.125rem;
   padding: 0.3rem 0.45rem;
-  background: rgba(255, 255, 255, 0.88);
   border-radius: 9999px;
+  pointer-events: auto;
+  transition:
+    background 0.35s ease,
+    box-shadow 0.35s ease,
+    backdrop-filter 0.35s ease;
+}
+
+/* At top — transparent, items float freely */
+.nav-pill.at-top {
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* Scrolled — full frosted-glass pill materialises */
+.nav-pill.scrolled {
+  background: rgba(255, 255, 255, 0.92);
   box-shadow:
     0 2px 12px rgba(0, 0, 0, 0.09),
     0 0 0 1px rgba(0, 0, 0, 0.07);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  pointer-events: auto;
 }
 
 /* ── Desktop vs mobile visibility ─────────────────────────────────── */
 .mobile-pill  { display: none; }
 .desktop-pill { display: flex; }
+
+/* ── At-top colour overrides (dark hero behind transparent pill) ────── */
+.nav-pill.at-top .pill-item,
+.nav-pill.at-top .pill-brand,
+.nav-pill.at-top .pill-brand-text,
+.nav-pill.at-top .login-button {
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.nav-pill.at-top .pill-divider {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.nav-pill.at-top .pill-item:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.nav-pill.at-top .pill-item.active {
+  background: rgba(255, 255, 255, 0.18);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+  color: #fff;
+}
 
 /* ── Brand mark (home button inside pill) ─────────────────────────── */
 .pill-brand {
@@ -81,7 +119,7 @@
   cursor: pointer;
   text-decoration: none;
   white-space: nowrap;
-  transition: background 0.15s ease, color 0.15s ease;
+  transition: background 0.25s ease, color 0.35s ease;
   line-height: 1;
   -webkit-tap-highlight-color: transparent;
 }
