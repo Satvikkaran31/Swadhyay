@@ -1,0 +1,269 @@
+.learn-fullscreen-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  font-family: var(--font-primary);
+  color: #666;
+  font-size: 1.1rem;
+  background: var(--primary-bg);
+}
+
+/* ── Layout ──────────────────────────────────────────────────── */
+.learn-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: var(--primary-bg);
+  font-family: var(--font-primary);
+}
+
+/* ── Topbar ──────────────────────────────────────────────────── */
+.learn-topbar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--gradient-start);
+  color: var(--text-primary);
+  flex-shrink: 0;
+}
+
+.learn-back-btn {
+  background: none;
+  border: 1px solid rgba(255,255,255,0.3);
+  color: var(--text-primary);
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: var(--font-primary);
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.learn-course-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.learn-progress-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.learn-progress-bar {
+  height: 6px;
+  width: 80px;
+  background: var(--accent-green);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.learn-sidebar-toggle {
+  background: none;
+  border: 1px solid rgba(255,255,255,0.3);
+  color: var(--text-primary);
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: var(--font-primary);
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+/* ── Body ────────────────────────────────────────────────────── */
+.learn-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ── Main ────────────────────────────────────────────────────── */
+.learn-main {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2rem;
+}
+
+.learn-video-wrap {
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
+  background: #000;
+  border-radius: var(--border-radius-sm);
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+.learn-video-wrap iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.learn-no-video {
+  background: #eee;
+  border-radius: var(--border-radius-sm);
+  padding: 4rem;
+  text-align: center;
+  color: #999;
+  margin-bottom: 1.5rem;
+}
+
+.learn-lesson-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.learn-lesson-info h2 {
+  font-size: 1.3rem;
+  color: var(--text-secondary);
+  font-family: var(--font-hero-title);
+}
+
+.learn-complete-btn {
+  background: var(--button-primary);
+  color: #fff;
+  border: none;
+  padding: 0.6rem 1.25rem;
+  border-radius: var(--border-radius-xsm);
+  font-family: var(--font-primary);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+
+.learn-complete-btn.completed {
+  background: #4CAF50;
+  cursor: default;
+}
+
+.learn-complete-btn:disabled:not(.completed) {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── Resources ───────────────────────────────────────────────── */
+.learn-resources {
+  background: #fff;
+  border-radius: var(--border-radius-sm);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-default);
+}
+
+.learn-resources h3 {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.75rem;
+}
+
+.learn-resources ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.learn-resources li a {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--button-primary);
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.learn-resources li a:hover { text-decoration: underline; }
+
+/* ── Sidebar ─────────────────────────────────────────────────── */
+.learn-sidebar {
+  width: 320px;
+  flex-shrink: 0;
+  background: #fff;
+  border-left: 1px solid #dde6df;
+  overflow-y: auto;
+}
+
+.learn-sidebar-header {
+  padding: 1rem 1.25rem;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  border-bottom: 1px solid #dde6df;
+  position: sticky;
+  top: 0;
+  background: #fff;
+}
+
+.learn-sidebar-module {
+  border-bottom: 1px solid #eef3ee;
+}
+
+.learn-sidebar-module-title {
+  padding: 0.75rem 1.25rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #888;
+  background: #f9fbf9;
+}
+
+.learn-sidebar-lesson {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.65rem 1.25rem;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  font-family: var(--font-primary);
+  font-size: 0.85rem;
+  color: #444;
+  transition: background 0.15s;
+  border-bottom: 1px solid #f0f4f0;
+}
+
+.learn-sidebar-lesson:hover { background: #f5f8f5; }
+.learn-sidebar-lesson.active { background: #e8f4ea; color: var(--text-secondary); font-weight: 600; }
+.learn-sidebar-lesson.done .learn-sidebar-check { color: #4CAF50; }
+
+.learn-sidebar-check {
+  font-size: 0.8rem;
+  width: 16px;
+  flex-shrink: 0;
+  color: #bbb;
+}
+
+.learn-sidebar-lesson-title {
+  flex: 1;
+  line-height: 1.4;
+}
+
+.learn-sidebar-duration {
+  font-size: 0.75rem;
+  color: #aaa;
+  flex-shrink: 0;
+}
+
+/* ── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .learn-sidebar { display: none; }
+  .learn-main { padding: 1rem; }
+}

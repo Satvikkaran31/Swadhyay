@@ -10,8 +10,8 @@ export default function BookingModal({ onClose }) {
  const [form, setForm] = useState({
   name: "",
   email: "",
-    occupation: "", // New field
-    organization: "", // New field
+  occupation: "", // New field
+  organization: "", // New field
   date: "",
   time: "",
   sessionType: "one-on-one",
@@ -63,14 +63,6 @@ export default function BookingModal({ onClose }) {
  const handleSubmit = async (e) => {
   e.preventDefault();
   setLoading(true);
-
-  if (form.meetingType === "teams") {
-   const base = import.meta.env.VITE_BOOKING_LINK;
-   window.open(`${base}?`, "_blank");
-   onClose();
-   setLoading(false);
-   return;
-  }
 
   try {
    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";

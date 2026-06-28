@@ -13,6 +13,9 @@ import calendarRoutes from "./routes/calendarRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import availabilityRoutes from "./routes/availabilityRoutes.js";
+import courseRoutes from "./routes/courseRoutes.js";
+import enrollmentRoutes from "./routes/enrollmentRoutes.js";
+import progressRoutes from "./routes/progressRoutes.js";
 import { ensureAuthenticated } from "./controllers/auth.js";
 import { handleInquiry,inquiryLimiter } from "./controllers/Inquiry.js";
 dotenv.config();
@@ -70,6 +73,9 @@ app.use("/api/auth", authRoutes);
 app.use("/api/payment", ensureAuthenticated, paymentRoutes);
 app.use("/api/calendar", calendarRoutes);
 app.use("/api/availability", availabilityRoutes);
+app.use("/api/courses", courseRoutes);
+app.use("/api/enrollments", enrollmentRoutes);
+app.use("/api/progress", progressRoutes);
 app.post("/api/contact-us", inquiryLimiter, handleInquiry)
 // Serve frontend build (from Vite)
 app.use(express.static(path.join(__dirname, "../client/dist")));
@@ -83,4 +89,4 @@ const PORT = process.env.PORT || 5000;
 const HOST = process.env.NODE_ENV === "production" ? "0.0.0.0" : "localhost";
 app.listen(PORT, HOST, () => {
   console.log(`Server running on http://${HOST}:${PORT}`);
-});
+});    

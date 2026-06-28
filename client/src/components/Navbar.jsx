@@ -190,7 +190,8 @@ export default function Navbar({ aboutRef }) {
   const learningDropdownItems = [
     { label: "Articles", path: "/articles" },
     { label: "Courses", path: "/courses" },
-    { label: "Who Am I?", path: "/whoami" }
+    ...(user ? [{ label: "My Learning", path: "/my-learning" }] : []),
+    { label: "Who Am I?", path: "/whoami" },
   ];
 
   const handleDropdownItemClick = (item) => {
@@ -325,6 +326,9 @@ export default function Navbar({ aboutRef }) {
                 {dropdownOpen && (
                   <div className="nav-dropdown-menu pp">
                     <button className="nav-dropdown-item" disabled style={{ fontWeight: "bold", cursor: "default" }}>{user.name.split(" ")[0]}</button>
+                    {user.role === "admin" && (
+                      <button className="nav-dropdown-item" onClick={() => { navigate("/admin"); setDropdownOpen(false); }}>Admin Panel</button>
+                    )}
                     <button className="nav-dropdown-item" onClick={handleLogout}>Logout</button>
                   </div>
                 )}

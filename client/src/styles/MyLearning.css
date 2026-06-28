@@ -1,0 +1,132 @@
+.my-learning-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 6rem 2rem 4rem;
+  min-height: 80vh;
+  font-family: var(--font-primary);
+}
+
+.my-learning-page h1 {
+  font-family: var(--font-hero-title);
+  font-size: 2.4rem;
+  color: var(--text-secondary);
+  margin-bottom: 2.5rem;
+}
+
+.my-learning-status {
+  text-align: center;
+  padding: 5rem 0;
+  color: #666;
+  font-size: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.my-learning-login-btn,
+.my-learning-browse-btn {
+  background: var(--button-primary);
+  color: #fff;
+  border: none;
+  padding: 0.75rem 2rem;
+  border-radius: var(--border-radius-xsm);
+  font-family: var(--font-primary);
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.my-learning-login-btn:hover,
+.my-learning-browse-btn:hover {
+  background: var(--gradient-mid);
+}
+
+/* ── Grid ────────────────────────────────────────────────────── */
+.my-learning-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+/* ── Card ────────────────────────────────────────────────────── */
+.my-learning-card {
+  background: #fff;
+  border-radius: var(--border-radius-sm);
+  overflow: hidden;
+  box-shadow: var(--shadow-default);
+  display: flex;
+  flex-direction: column;
+}
+
+.my-learning-thumb {
+  width: 100%;
+  height: 170px;
+  object-fit: cover;
+}
+
+.my-learning-thumb-placeholder {
+  width: 100%;
+  height: 170px;
+  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+}
+
+.my-learning-card-body {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.my-learning-card-body h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.my-learning-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.my-learning-progress-bar {
+  height: 6px;
+  background: #dde6df;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.my-learning-progress-fill {
+  height: 100%;
+  background: var(--accent-dark-green);
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+
+.my-learning-progress span {
+  font-size: 0.78rem;
+  color: #888;
+}
+
+.my-learning-continue-btn {
+  background: var(--button-primary);
+  color: #fff;
+  border: none;
+  padding: 0.6rem 1.25rem;
+  border-radius: var(--border-radius-xsm);
+  font-family: var(--font-primary);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  align-self: flex-start;
+}
+
+.my-learning-continue-btn:hover { background: var(--gradient-mid); }
+
+@media (max-width: 600px) {
+  .my-learning-grid { grid-template-columns: 1fr; }
+  .my-learning-page h1 { font-size: 1.8rem; }
+}

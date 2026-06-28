@@ -1,5 +1,6 @@
 import express from 'express';
 import { OAuth2Client } from 'google-auth-library';
+import pool from '../utils/db.js';
 
 const router = express.Router();
 
@@ -8,18 +9,12 @@ const client = new OAuth2Client(
   process.env.GOOGLE_CLIENT_SECRET
 );
 
-// Google login route
 router.post('/google', async (req, res) => {
   const { code, redirect_uri } = req.body;
 
   try {
-    // Exchange authorization code for tokens
-    const { tokens } = await client.getToken({
-      code,
-      redirect_uri,
-    });
+    const { tokens } = await client.getToken({ code, redirect_uri });
 
-    // Verify the ID token and extract user info
     const ticket = await client.verifyIdToken({
       idToken: tokens.id_token,
       audience: process.env.GOOGLE_CLIENT_ID,
@@ -27,11 +22,29 @@ router.post('/google', async (req, res) => {
 
     const payload = ticket.getPayload();
 
+    // Upsert user into persistent users table
+    const { rows } = await pool.query(
+      `INSERT INTO users (google_id, name, email, picture, role)
+       VALUES ($1, $2, $3, $4,
+         CASE WHEN $3 = $5 THEN 'admin' ELSE 'student' END
+       )
+       ON CONFLICT (google_id) DO UPDATE
+         SET name    = EXCLUDED.name,
+             picture = EXCLUDED.picture,
+             role    = CASE WHEN users.email = $5 THEN 'admin' ELSE 'student' END
+       RETURNING id, name, email, picture, role`,
+      [payload.sub, payload.name, payload.email, payload.picture, process.env.ADMIN_EMAIL]
+    );
+
+    const dbUser = rows[0];
+
     const user = {
-      id: payload.sub,
-      name: payload.name,
-      email: payload.email,
-      picture: payload.picture,
+      id: dbUser.id,
+      google_id: payload.sub,
+      name: dbUser.name,
+      email: dbUser.email,
+      picture: dbUser.picture,
+      role: dbUser.role,
       verified: payload.email_verified,
     };
 
@@ -42,25 +55,20 @@ router.post('/google', async (req, res) => {
     };
 
     req.session.save((err) => {
-      if (err) {
-        return res.status(500).json({ error: 'Session not saved' });
-      }
+      if (err) return res.status(500).json({ error: 'Session not saved' });
       res.json({ success: true, user: req.session.user });
     });
   } catch (error) {
     if (error.message.includes('redirect_uri_mismatch')) {
       return res.status(400).json({ error: 'Redirect URI mismatch.' });
     }
-
     if (error.message.includes('invalid_grant')) {
       return res.status(400).json({ error: 'Invalid authorization code.' });
     }
-
     res.status(401).json({ error: 'Authentication failed' });
   }
 });
 
-// Get current user session
 router.get('/me', (req, res) => {
   if (req.session && req.session.user) {
     return res.status(200).json({ success: true, user: req.session.user });
@@ -68,12 +76,9 @@ router.get('/me', (req, res) => {
   return res.status(200).json({ success: true, user: null });
 });
 
-// Logout route
 router.post('/logout', (req, res) => {
   req.session.destroy((err) => {
-    if (err) {
-      return res.status(500).json({ error: 'Logout failed' });
-    }
+    if (err) return res.status(500).json({ error: 'Logout failed' });
 
     res.clearCookie('connect.sid', {
       path: '/',

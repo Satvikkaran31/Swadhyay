@@ -44,7 +44,6 @@ const validateInquiryData = (data) => {
   
   if (!data.message || data.message.trim().length < 10) {
     errors.push('Message must be at least 10 characters long');
-    alert('Message must be at least 10 characters long')
   }
   
   return errors;
