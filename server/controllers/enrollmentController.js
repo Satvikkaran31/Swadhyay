@@ -53,8 +53,8 @@ export async function getMyEnrollments(req, res) {
     const { rows } = await pool.query(
       `SELECT c.id, c.slug, c.title, c.description, c.thumbnail_url, c.price,
               e.enrolled_at,
-              COUNT(DISTINCT l.id) AS total_lessons,
-              COUNT(DISTINCT p.lesson_id) AS completed_lessons
+              COUNT(DISTINCT l.id)::int AS total_lessons,
+              COUNT(DISTINCT p.lesson_id)::int AS completed_lessons
        FROM enrollments e
        JOIN courses c ON c.id = e.course_id
        LEFT JOIN modules m ON m.course_id = c.id

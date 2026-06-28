@@ -25,13 +25,36 @@ const transporter = nodemailer.createTransport({
  },
 });
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const DATE_RE  = /^\d{4}-\d{2}-\d{2}$/;
+const TIME_RE  = /^\d{2}:\d{2}$/;
+
 export const bookSession = async (req, res) => {
-  // Destructure the new fields from the request body
  const { name, email, date, time, sessionType, meetingType, occupation, organization } = req.body;
 
-  // Add validation for the new fields
  if (!name || !email || !date || !time || !sessionType || !meetingType || !occupation || !organization) {
   return res.status(400).json({ error: "Missing required fields" });
+ }
+
+ if (typeof name !== 'string' || name.trim().length < 2 || name.trim().length > 100) {
+  return res.status(400).json({ error: "Name must be between 2 and 100 characters" });
+ }
+
+ if (!EMAIL_RE.test(email)) {
+  return res.status(400).json({ error: "Invalid email address" });
+ }
+
+ if (!DATE_RE.test(date) || isNaN(Date.parse(date))) {
+  return res.status(400).json({ error: "Date must be in YYYY-MM-DD format" });
+ }
+
+ if (!TIME_RE.test(time)) {
+  return res.status(400).json({ error: "Time must be in HH:MM format" });
+ }
+
+ const bookingDt = DateTime.fromISO(`${date}T${time}`, { zone: "Asia/Kolkata" });
+ if (!bookingDt.isValid || bookingDt < DateTime.now()) {
+  return res.status(400).json({ error: "Booking must be in the future" });
  }
 
  try {

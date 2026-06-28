@@ -68,8 +68,8 @@ router.get('/', async (req, res) => {
     second: 0,
     millisecond: 0
    });
-      // The meeting itself is 30 minutes long
-   const slotEnd = slotStart.plus({ minutes: 30 });
+      // Sessions are 1 hour — match the calendar event duration created in calendarController
+   const slotEnd = slotStart.plus({ hours: 1 });
 
    const isOverlapping = busyRanges.some(busyEvent =>
     slotStart < busyEvent.end && slotEnd > busyEvent.start

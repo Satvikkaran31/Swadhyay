@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS courses (
   title         VARCHAR(500) NOT NULL,
   description   TEXT,
   thumbnail_url TEXT,
-  price         INTEGER NOT NULL DEFAULT 0,  -- in paise; 0 = free
+  price         INTEGER NOT NULL DEFAULT 0 CHECK (price >= 0),  -- in paise; 0 = free
   is_published  BOOLEAN NOT NULL DEFAULT false,
   created_at    TIMESTAMP NOT NULL DEFAULT NOW(),
   updated_at    TIMESTAMP NOT NULL DEFAULT NOW()

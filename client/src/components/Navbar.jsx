@@ -316,7 +316,7 @@ export default function Navbar({ aboutRef }) {
               )}
             </div>
 
-            <Link className="nav-link-btn" to="/booking" onClick={(e) => { if (!user) { e.preventDefault(); login(); } }}>
+            <Link className="nav-link-btn" to="/booking">
               Pricing
             </Link>
 
@@ -378,7 +378,7 @@ export default function Navbar({ aboutRef }) {
                     ))}
                   </div>
                 
-                <Link className="mobile-menu-item" to="/booking" onClick={(e) => { if (!user) { e.preventDefault(); login(); } setMobileMenuOpen(false); }}>Pricing</Link>
+                <Link className="mobile-menu-item" to="/booking" onClick={() => setMobileMenuOpen(false)}>Pricing</Link>
                 {user && user.picture ? (
                   <div className="mobile-menu-user">
                     <div className="mobile-user-info">

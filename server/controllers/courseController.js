@@ -1,12 +1,66 @@
 import pool from '../utils/db.js';
 
-// Helper: build slug from title
 function slugify(title) {
   return title
     .toLowerCase()
     .replace(/[^a-z0-9\s-]/g, '')
     .trim()
     .replace(/\s+/g, '-');
+}
+
+const ALLOWED_VIDEO_HOSTS = [
+  'youtube.com', 'www.youtube.com', 'youtu.be',
+  'vimeo.com', 'player.vimeo.com',
+];
+
+function isAllowedVideoUrl(url) {
+  if (!url) return true;
+  try {
+    const { hostname } = new URL(url);
+    return ALLOWED_VIDEO_HOSTS.includes(hostname);
+  } catch {
+    return false;
+  }
+}
+
+// Reshape flat JOIN rows into nested course → modules → lessons [→ resources]
+function reshapeCourseRows(rows, { includeResources = false } = {}) {
+  if (!rows.length) return null;
+  const r = rows[0];
+  const course = {
+    id: r.id, slug: r.slug, title: r.title, description: r.description,
+    thumbnail_url: r.thumbnail_url, price: r.price,
+    is_published: r.is_published, created_at: r.created_at, updated_at: r.updated_at,
+    modules: [],
+  };
+  const moduleMap = new Map();
+  const lessonMap = new Map();
+  for (const row of rows) {
+    if (!row.m_id) continue;
+    if (!moduleMap.has(row.m_id)) {
+      const mod = { id: row.m_id, title: row.m_title, position: row.m_pos, lessons: [] };
+      moduleMap.set(row.m_id, mod);
+      course.modules.push(mod);
+    }
+    if (!row.l_id) continue;
+    if (!lessonMap.has(row.l_id)) {
+      const lesson = {
+        id: row.l_id, title: row.l_title, duration: row.l_duration,
+        position: row.l_pos, is_preview: row.l_is_preview,
+        video_url: (includeResources || row.l_is_preview) ? row.l_video_url : undefined,
+      };
+      if (includeResources) lesson.resources = [];
+      lessonMap.set(row.l_id, lesson);
+      moduleMap.get(row.m_id).lessons.push(lesson);
+    }
+    if (includeResources && row.r_id) {
+      const lesson = lessonMap.get(row.l_id);
+      if (!lesson.resources.some(x => x.id === row.r_id)) {
+        lesson.resources.push({ id: row.r_id, title: row.r_title, url: row.r_url, type: row.r_type });
+      }
+    }
+  }
+  return course;
 }
 
 // ── PUBLIC ────────────────────────────────────────────────────────────────────
@@ -18,47 +72,32 @@ export async function getCourses(req, res) {
        FROM courses WHERE is_published = true ORDER BY created_at DESC`
     );
     res.json(rows);
-  } catch (err) {
+  } catch {
     res.status(500).json({ error: 'Failed to fetch courses' });
   }
 }
 
 export async function getCourse(req, res) {
   try {
-    const { rows: courseRows } = await pool.query(
-      `SELECT * FROM courses WHERE slug = $1`,
+    const isAdmin = req.session?.user?.role === 'admin';
+    const { rows } = await pool.query(
+      `SELECT
+         c.id, c.slug, c.title, c.description, c.thumbnail_url, c.price,
+         c.is_published, c.created_at, c.updated_at,
+         m.id AS m_id, m.title AS m_title, m.position AS m_pos,
+         l.id AS l_id, l.title AS l_title, l.video_url AS l_video_url,
+         l.duration AS l_duration, l.position AS l_pos, l.is_preview AS l_is_preview
+       FROM courses c
+       LEFT JOIN modules m ON m.course_id = c.id
+       LEFT JOIN lessons l ON l.module_id = m.id
+       WHERE c.slug = $1
+       ORDER BY m.position, l.position`,
       [req.params.slug]
     );
-    if (!courseRows.length) return res.status(404).json({ error: 'Course not found' });
-
-    const course = courseRows[0];
-
-    // Only non-admin users are blocked from unpublished courses
-    if (!course.is_published && req.session?.user?.role !== 'admin') {
-      return res.status(404).json({ error: 'Course not found' });
-    }
-
-    const { rows: modules } = await pool.query(
-      `SELECT id, title, position FROM modules WHERE course_id = $1 ORDER BY position`,
-      [course.id]
-    );
-
-    for (const mod of modules) {
-      const { rows: lessons } = await pool.query(
-        `SELECT id, title, video_url, duration, position, is_preview
-         FROM lessons WHERE module_id = $1 ORDER BY position`,
-        [mod.id]
-      );
-      // Strip video_url from non-preview lessons for unauthenticated/non-enrolled users
-      // (enrollment check happens on the /learn route; here we just expose metadata)
-      mod.lessons = lessons.map(l => ({
-        ...l,
-        video_url: l.is_preview ? l.video_url : undefined,
-      }));
-    }
-
-    res.json({ ...course, modules });
-  } catch (err) {
+    if (!rows.length) return res.status(404).json({ error: 'Course not found' });
+    if (!rows[0].is_published && !isAdmin) return res.status(404).json({ error: 'Course not found' });
+    res.json(reshapeCourseRows(rows));
+  } catch {
     res.status(500).json({ error: 'Failed to fetch course' });
   }
 }
@@ -68,6 +107,7 @@ export async function getCourse(req, res) {
 export async function createCourse(req, res) {
   const { title, description, thumbnail_url, price = 0, is_published = false } = req.body;
   if (!title) return res.status(400).json({ error: 'Title is required' });
+  if (price < 0) return res.status(400).json({ error: 'Price cannot be negative' });
 
   const slug = slugify(title);
   try {
@@ -86,6 +126,7 @@ export async function createCourse(req, res) {
 export async function updateCourse(req, res) {
   const { id } = req.params;
   const { title, description, thumbnail_url, price, is_published } = req.body;
+  if (price !== undefined && price < 0) return res.status(400).json({ error: 'Price cannot be negative' });
   try {
     const { rows } = await pool.query(
       `UPDATE courses
@@ -100,17 +141,16 @@ export async function updateCourse(req, res) {
     );
     if (!rows.length) return res.status(404).json({ error: 'Course not found' });
     res.json(rows[0]);
-  } catch (err) {
+  } catch {
     res.status(500).json({ error: 'Failed to update course' });
   }
 }
 
 export async function deleteCourse(req, res) {
-  const { id } = req.params;
   try {
-    await pool.query('DELETE FROM courses WHERE id = $1', [id]);
+    await pool.query('DELETE FROM courses WHERE id = $1', [req.params.id]);
     res.json({ success: true });
-  } catch (err) {
+  } catch {
     res.status(500).json({ error: 'Failed to delete course' });
   }
 }
@@ -126,7 +166,7 @@ export async function createModule(req, res) {
       [course_id, title, position]
     );
     res.status(201).json(rows[0]);
-  } catch (err) {
+  } catch {
     res.status(500).json({ error: 'Failed to create module' });
   }
 }
@@ -142,17 +182,16 @@ export async function updateModule(req, res) {
     );
     if (!rows.length) return res.status(404).json({ error: 'Module not found' });
     res.json(rows[0]);
-  } catch (err) {
+  } catch {
     res.status(500).json({ error: 'Failed to update module' });
   }
 }
 
 export async function deleteModule(req, res) {
-  const { id } = req.params;
   try {
-    await pool.query('DELETE FROM modules WHERE id = $1', [id]);
+    await pool.query('DELETE FROM modules WHERE id = $1', [req.params.id]);
     res.json({ success: true });
-  } catch (err) {
+  } catch {
     res.status(500).json({ error: 'Failed to delete module' });
   }
 }
@@ -162,6 +201,9 @@ export async function deleteModule(req, res) {
 export async function createLesson(req, res) {
   const { module_id, title, video_url, duration, position = 0, is_preview = false } = req.body;
   if (!module_id || !title) return res.status(400).json({ error: 'module_id and title are required' });
+  if (!isAllowedVideoUrl(video_url)) {
+    return res.status(400).json({ error: 'Video URL must be from YouTube or Vimeo' });
+  }
   try {
     const { rows } = await pool.query(
       `INSERT INTO lessons (module_id, title, video_url, duration, position, is_preview)
@@ -169,7 +211,7 @@ export async function createLesson(req, res) {
       [module_id, title, video_url, duration, position, is_preview]
     );
     res.status(201).json(rows[0]);
-  } catch (err) {
+  } catch {
     res.status(500).json({ error: 'Failed to create lesson' });
   }
 }
@@ -177,6 +219,9 @@ export async function createLesson(req, res) {
 export async function updateLesson(req, res) {
   const { id } = req.params;
   const { title, video_url, duration, position, is_preview } = req.body;
+  if (!isAllowedVideoUrl(video_url)) {
+    return res.status(400).json({ error: 'Video URL must be from YouTube or Vimeo' });
+  }
   try {
     const { rows } = await pool.query(
       `UPDATE lessons
@@ -190,17 +235,16 @@ export async function updateLesson(req, res) {
     );
     if (!rows.length) return res.status(404).json({ error: 'Lesson not found' });
     res.json(rows[0]);
-  } catch (err) {
+  } catch {
     res.status(500).json({ error: 'Failed to update lesson' });
   }
 }
 
 export async function deleteLesson(req, res) {
-  const { id } = req.params;
   try {
-    await pool.query('DELETE FROM lessons WHERE id = $1', [id]);
+    await pool.query('DELETE FROM lessons WHERE id = $1', [req.params.id]);
     res.json({ success: true });
-  } catch (err) {
+  } catch {
     res.status(500).json({ error: 'Failed to delete lesson' });
   }
 }
@@ -216,17 +260,16 @@ export async function createResource(req, res) {
       [lesson_id, title, url, type]
     );
     res.status(201).json(rows[0]);
-  } catch (err) {
+  } catch {
     res.status(500).json({ error: 'Failed to create resource' });
   }
 }
 
 export async function deleteResource(req, res) {
-  const { id } = req.params;
   try {
-    await pool.query('DELETE FROM resources WHERE id = $1', [id]);
+    await pool.query('DELETE FROM resources WHERE id = $1', [req.params.id]);
     res.json({ success: true });
-  } catch (err) {
+  } catch {
     res.status(500).json({ error: 'Failed to delete resource' });
   }
 }
@@ -257,7 +300,7 @@ export async function getLessonDetail(req, res) {
     }
 
     res.json(lesson);
-  } catch (err) {
+  } catch {
     res.status(500).json({ error: 'Failed to fetch lesson' });
   }
 }
@@ -268,11 +311,9 @@ export async function getLessonResources(req, res) {
   const isAdmin = req.session?.user?.role === 'admin';
 
   try {
-    // Resolve lesson → course and check preview status in one query
     const { rows: lessonRows } = await pool.query(
       `SELECT l.is_preview, m.course_id
-       FROM lessons l
-       JOIN modules m ON m.id = l.module_id
+       FROM lessons l JOIN modules m ON m.id = l.module_id
        WHERE l.id = $1`,
       [id]
     );
@@ -294,7 +335,7 @@ export async function getLessonResources(req, res) {
       [id]
     );
     res.json(rows);
-  } catch (err) {
+  } catch {
     res.status(500).json({ error: 'Failed to fetch resources' });
   }
 }
@@ -308,42 +349,32 @@ export async function getAdminCourses(req, res) {
        FROM courses ORDER BY created_at DESC`
     );
     res.json(rows);
-  } catch (err) {
+  } catch {
     res.status(500).json({ error: 'Failed to fetch courses' });
   }
 }
 
 export async function getAdminCourse(req, res) {
   try {
-    const { rows: courseRows } = await pool.query(
-      `SELECT * FROM courses WHERE id = $1`, [req.params.id]
+    const { rows } = await pool.query(
+      `SELECT
+         c.id, c.slug, c.title, c.description, c.thumbnail_url, c.price,
+         c.is_published, c.created_at, c.updated_at,
+         m.id AS m_id, m.title AS m_title, m.position AS m_pos,
+         l.id AS l_id, l.title AS l_title, l.video_url AS l_video_url,
+         l.duration AS l_duration, l.position AS l_pos, l.is_preview AS l_is_preview,
+         r.id AS r_id, r.title AS r_title, r.url AS r_url, r.type AS r_type
+       FROM courses c
+       LEFT JOIN modules m ON m.course_id = c.id
+       LEFT JOIN lessons l ON l.module_id = m.id
+       LEFT JOIN resources r ON r.lesson_id = l.id
+       WHERE c.id = $1
+       ORDER BY m.position, l.position, r.id`,
+      [req.params.id]
     );
-    if (!courseRows.length) return res.status(404).json({ error: 'Course not found' });
-    const course = courseRows[0];
-
-    const { rows: modules } = await pool.query(
-      `SELECT id, title, position FROM modules WHERE course_id = $1 ORDER BY position`,
-      [course.id]
-    );
-
-    for (const mod of modules) {
-      const { rows: lessons } = await pool.query(
-        `SELECT id, title, video_url, duration, position, is_preview FROM lessons
-         WHERE module_id = $1 ORDER BY position`,
-        [mod.id]
-      );
-      for (const lesson of lessons) {
-        const { rows: resources } = await pool.query(
-          `SELECT id, title, url, type FROM resources WHERE lesson_id = $1`,
-          [lesson.id]
-        );
-        lesson.resources = resources;
-      }
-      mod.lessons = lessons;
-    }
-
-    res.json({ ...course, modules });
-  } catch (err) {
+    if (!rows.length) return res.status(404).json({ error: 'Course not found' });
+    res.json(reshapeCourseRows(rows, { includeResources: true }));
+  } catch {
     res.status(500).json({ error: 'Failed to fetch course' });
   }
 }

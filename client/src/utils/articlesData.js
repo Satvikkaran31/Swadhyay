@@ -198,7 +198,7 @@ above lines is desirable or necessary is best left to the decision makers! `
   {
     id: 4,
     title: "Awareness based Coaching - Key to leadership",
-    slug: "the-trinity-taking-a-cue-for-career-building", // URL-friendly version
+    slug: "awareness-based-coaching-key-to-leadership",
     excerpt: "Why compassionate and human-centered leadership is emerging as the cornerstone for resilient organizations and systemic growth.",
     imageUrl: "https://placehold.co/600x400/B0B5AD/1A2B3C?text=Leadership+Awareness",
     author: "Neha Sharma",

@@ -1,3 +1,33 @@
+.booking-login-prompt {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem 0;
+}
+
+.booking-login-prompt p {
+  color: #555;
+  font-size: 0.95rem;
+}
+
+.booking-login-btn {
+  background: var(--button-primary);
+  color: #fff;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--border-radius-xsm);
+  font-family: var(--font-primary);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  align-self: flex-start;
+}
+
+.booking-login-btn:hover {
+  background: var(--gradient-mid);
+}
+
 .booking-container {
   width: 100%;
   min-height: 100dvh;
