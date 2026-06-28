@@ -1,671 +1,435 @@
-
-/* =================================================================
-   CSS CUSTOM PROPERTIES (VARIABLES)
-   ================================================================= */
-
-/* =================================================================
-   KEYFRAME ANIMATIONS
-   ================================================================= */
-@keyframes scale-down-center {
-  0% {
-    transform: translateX(-50%) scale(0.1);
-    opacity: 1;
-  }
-  100% {
-    transform: translateX(-50%) translateY(0) scale(1);
-    opacity: 1;
-  }
-}
-
-@keyframes scale-up-center {
-  0% {
-    transform: translateX(0) scale(0.5);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-/* =================================================================
-   BASE NAVBAR STYLES
-   ================================================================= */
-.navbar {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  padding: 0.5rem 4rem  0.5rem 1rem;
-  transform-origin: top center;
-  transition: all 0.4 ease;
-
-}
-
-.nav-container {
+/* ── Pill wrapper (positions the pill fixed, centered) ─────────────── */
+.navbar-pill-wrap {
+  position: fixed;
+  top: 1.25rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
   align-items: center;
-  padding: 0;
+  pointer-events: none; /* children opt-in */
 }
 
-/* =================================================================
-   NAVBAR LOGO
-   ================================================================= */
-.nav-logo {
-  font-weight: 600;
-  letter-spacing: 1px;
-  color: #E0E7E9;
-  font-family: 'Sacramento', cursive;
-  font-style: normal;
-  font-size: 3rem;
-  transition: font-size 0.4s ease, transform 0.4s ease, opacity 0.4s ease;
-  opacity: 1;
-  transform: scale(1);
+/* ── Shared pill shell ─────────────────────────────────────────────── */
+.nav-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.125rem;
+  padding: 0.3rem 0.45rem;
+  background: rgba(255, 255, 255, 0.88);
+  border-radius: 9999px;
+  box-shadow:
+    0 2px 12px rgba(0, 0, 0, 0.09),
+    0 0 0 1px rgba(0, 0, 0, 0.07);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  pointer-events: auto;
+}
+
+/* ── Desktop vs mobile visibility ─────────────────────────────────── */
+.mobile-pill  { display: none; }
+.desktop-pill { display: flex; }
+
+/* ── Brand mark (home button inside pill) ─────────────────────────── */
+.pill-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.4rem 0.65rem 0.4rem 0.5rem;
+  border-radius: 9999px;
   background: none;
   border: none;
   cursor: pointer;
+  color: var(--text-secondary);
+  transition: background 0.15s ease;
 }
 
-/* =================================================================
-   NAVBAR LINKS
-   ================================================================= */
-.nav-links.desktop-nav {
+.pill-brand:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.pill-brand-text {
+  font-family: var(--font-primary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+/* ── Vertical divider ──────────────────────────────────────────────── */
+.pill-divider {
+  width: 1px;
+  height: 1.1rem;
+  background: rgba(0, 0, 0, 0.1);
+  margin: 0 0.2rem;
+  flex-shrink: 0;
+}
+
+/* ── Nav items ─────────────────────────────────────────────────────── */
+.pill-item {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.42rem 0.85rem;
+  border-radius: 9999px;
+  font-family: var(--font-primary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.15s ease, color 0.15s ease;
+  line-height: 1;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.pill-item:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.pill-item.active {
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow:
+    0 1px 5px rgba(0, 0, 0, 0.1),
+    0 0 0 1px rgba(0, 0, 0, 0.08);
+  color: var(--text-secondary);
+}
+
+/* ── Chevron arrow ─────────────────────────────────────────────────── */
+.pill-chevron {
+  opacity: 0.55;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  flex-shrink: 0;
+}
+
+.pill-item:hover .pill-chevron,
+.pill-item.active .pill-chevron {
+  opacity: 0.8;
+}
+
+.pill-chevron.rotated {
+  transform: rotate(180deg);
+}
+
+/* ── Profile avatar ────────────────────────────────────────────────── */
+.pill-avatar {
+  width: 1.85rem;
+  height: 1.85rem;
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
+  border: 1.5px solid rgba(0, 0, 0, 0.1);
+  margin: 0 0.2rem;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  display: block;
+}
+
+.pill-avatar:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 0 2px var(--button-primary);
+}
+
+/* ── Login button (inside pill) ───────────────────────────────────── */
+.pill-login,
+.login-button {
+  padding: 0.42rem 0.9rem;
+  border-radius: 9999px;
+  font-family: var(--font-primary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.pill-login:hover,
+.login-button:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+/* ── Dropdown wrapper ──────────────────────────────────────────────── */
+.pill-dropdown-wrap {
+  position: relative;
+}
+
+/* ── Dropdown panel ────────────────────────────────────────────────── */
+.pill-dropdown {
+  position: absolute;
+  top: calc(100% + 0.6rem);
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 148px;
+  background: rgba(255, 255, 255, 0.97);
+  border-radius: 14px;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.12),
+    0 0 0 1px rgba(0, 0, 0, 0.07);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  overflow: hidden;
+  z-index: 9999;
+  animation: dropdownIn 0.15s ease;
+}
+
+.pill-dropdown.right {
+  left: auto;
+  right: 0;
+  transform: none;
+  min-width: 120px;
+}
+
+@keyframes dropdownIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(-6px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+.pill-dropdown.right {
+  animation: dropdownInRight 0.15s ease;
+}
+
+@keyframes dropdownInRight {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Dropdown items ────────────────────────────────────────────────── */
+.pill-dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 0.7rem 1rem;
+  text-align: left;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-family: var(--font-primary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.12s ease;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.pill-dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.pill-dropdown-item:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.pill-dropdown-item.label {
+  font-weight: 600;
+  cursor: default;
+  opacity: 0.65;
+  font-size: 0.8rem;
+}
+
+/* ── Mobile hamburger (inside mobile pill) ─────────────────────────── */
+.pill-hamburger {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0.45rem 0.6rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-radius: 9999px;
+  transition: background 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.pill-hamburger:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.pill-hamburger span {
+  display: block;
+  width: 18px;
+  height: 1.5px;
+  background: var(--text-secondary);
+  border-radius: 1px;
+  transition: transform 0.2s ease;
+}
+
+/* ── Mobile full-screen menu ───────────────────────────────────────── */
+.mobile-menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 999;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: 0.75rem;
+  animation: overlayIn 0.2s ease;
+}
+
+@keyframes overlayIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.mobile-menu {
+  width: min(320px, calc(100vw - 1.5rem));
+  background: rgba(255, 255, 255, 0.97);
+  border-radius: 20px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.18), 0 0 0 1px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  animation: menuIn 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes menuIn {
+  from { opacity: 0; transform: scale(0.92) translateY(-8px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.mobile-menu-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1rem 0.85rem 0.75rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+}
+
+.mobile-close-btn {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0, 0, 0, 0.06);
+  font-size: 1.1rem;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 2.5rem;
+  color: var(--text-secondary);
+  transition: background 0.15s ease;
+  line-height: 1;
 }
 
-.nav-links a,
-.nav-link-btn,
-.login-button {
-  text-decoration: none;
-  font-weight: 400;
-  font-size: 1.5rem;
-  color: #E0E7E9;
+.mobile-close-btn:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.mobile-menu-content {
+  padding: 0.5rem 0 0.75rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.mobile-menu-section {
+  padding: 0.25rem 0;
+}
+
+.mobile-menu-section-title {
+  padding: 0.5rem 1.25rem 0.25rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.35);
+  font-family: var(--font-primary);
+}
+
+.mobile-menu-subitem,
+.mobile-menu-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 0.65rem 1.25rem;
   background: none;
   border: none;
-  cursor: pointer;
-  transition: color 0.3s ease, transform 0.2s ease;
-  font-family: 'Poppins', sans-serif;
-  line-height: normal;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-}
-
-.nav-links a:hover,
-.nav-link-btn:hover {
-  transform: translateY(-2px);
-}
-
-/* Hide home button in expanded navbar */
-.nav-links > .nav-link-btn:nth-child(1) {
-  display: none;
-}
-
-/* =================================================================
-   LOGIN BUTTON
-   ================================================================= */
-.login-button {
-  color: 	#FFC857;
-}
-
-.login-button:hover {
-  transform: translateY(-2px);
-}
-
-/* =================================================================
-   PROFILE PICTURE & USER
-   ================================================================= */
-.profile-pic {
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #2a9d8f;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-  position: relative;
-}
-
-
-/* =================================================================
-   NAVBAR SHRINK/EXPAND STATES
-   ================================================================= */
-
-.navbar.shrink {
-  
-  top: 1rem;
-  left: 50%;
-  transform: translateX(-50%);
-  transform-origin: center;
-  border-radius: 30px;
-  padding: 0rem 1.5rem;
-  box-shadow: 0 10px 27px rgba(0, 0, 0, 0.3);
-  background: rgba(18, 53, 36, 0.4);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  animation: scale-down-center 0.4s cubic-bezier(.25,.46,.45,.94) forwards;
-  pointer-events: auto;
-  width: fit-content;
-  
-}
-
-.navbar.expand {
-  top: 0;
-  left: 0;
-  animation: scale-up-center 0.3s cubic-bezier(.25,.46,.45,.94) forwards;
-}
-
-/* Shrink state adjustments */
-.navbar.shrink .nav-links {
-  gap: 1.5rem;
-}
-
-.navbar.shrink .nav-links a,
-.navbar.shrink .nav-link-btn {
-  font-size: 1.4rem;
-  color: white;
-  transition: font-size 0.8s ease, color 0.8s ease;
-  font-weight: 500;
-  padding: 0.75rem 0rem;
-}
-
-/* Show home button in shrunk navbar */
-.navbar.shrink .nav-links > .nav-link-btn:nth-of-type(1) {
-  display: inline-block;
-}
-.navbar.shrink .nav-dropdown-wrapper.pp {
-  display: none;
-}
-
-/* =================================================================
-   SHRUNK NAVBAR HOVER FIXES
-   ================================================================= */
-.navbar.shrink .nav-links a:hover,
-.navbar.shrink .nav-link-btn:hover {
-  transform: translateY(-2px);
-  color: var(--accent-green);
-}
-
-
-/* =================================================================
-   BOOKING BACKGROUND STYLES
-   ================================================================= */
-.booking-bg .nav-links a,
-.booking-bg .nav-link-btn,
-.booking-bg .login-button {
-  color: var(--text-secondary);
-  font-weight: 500;
-}
-
-.navbar.booking-bg .nav-logo {
-  color: var(--text-secondary);
-}
- .booking-bg .nav-dropdown-menu {
-    background: var(--gradient-start);
-    border-color: rgba(154, 230, 180, 0.3);
-  }
-  
-  .booking-bg .nav-dropdown-menu::before {
-    border-bottom-color: var(--gradient-start);
-  }
-  
-  .booking-bg .nav-dropdown-item {
-    color: var(--text-primary);
-    border-bottom-color: rgba(224, 231, 233, 0.1);
-  }
-  
-
-/* =================================================================
-   DROPDOWN MENU STYLES
-   ================================================================= */
-.nav-dropdown-wrapper {
-  position: relative;
-  display: inline-block;
-  gap: 2rem;
-}
-
-/* Dropdown Trigger */
-.dropdown-trigger {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  position: relative;
-  transition: all 0.3s ease;
-}
-
-/* Dropdown Arrow */
-.dropdown-arrow {
-  transition: transform 0.3s ease;
-  opacity: 0.7;
-}
-
-.dropdown-arrow.rotated {
-  transform: rotate(180deg);
-}
-
-/* Base Dropdown Menu */
-.nav-dropdown-menu {
-  pointer-events: auto;
-  position: absolute;
-  left: 50%;
-  transform: translateX(-15%);
-  border-radius: var(--border-radius-sm);
-  border: 1px solid rgba(0, 128, 0, 0.3);
-  overflow: hidden;
-  z-index: 9999;
-  color: var(--text-dark);
-  visibility: visible;
-  background-color: var(--accent-green);
-}
-
-.nav-dropdown-menu.pp {
-  min-width: 100px;
-}
-
-/* Dropdown Arrow Pointer */
-.nav-dropdown-menu::before {
-  content: '';
-  position: absolute;
-  top: -8px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: 8px solid transparent;
-  border-right: 8px solid transparent;
-  border-bottom: 8px solid var(--white);
-  filter: drop-shadow(0 -2px 4px rgba(0, 0, 0, 0.1));
-}
-
-/* Dropdown Items */
-.nav-dropdown-item {
-  display: block;
-  width: 100%;
-  padding: 0.75rem 1rem;
-  text-align: left;
-  background: transparent;
-  border: none;
-  color: var(--text-secondary);
   font-family: var(--font-primary);
   font-size: 0.95rem;
   font-weight: 500;
+  color: var(--text-secondary);
   cursor: pointer;
-  transition: all 0.2s ease;
-  border-bottom: 1px solid rgba(26, 43, 60, 0.08);
-  border-bottom-color: var(--text-secondary);
-}
-
-.nav-dropdown-item:last-child,
-.navbar.shrink .nav-dropdown-item:last-child {
-  border-bottom: none;
-}
-.nav-dropdown-item:hover {
-  background-color: var(--accent-dark-green);
-}
-.nav-dropdown-item:hover span{
-  display: inline-block;
-  transform: scale(1.05);
-}
-
-.nav-dropdown-item:focus span{
-  background: rgba(154, 230, 180, 0.1);
-  transform: scale(1.1);
-}
-
-/* Loading State */
-.nav-dropdown-item.loading {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.nav-dropdown-item.loading:hover {
-  transform: none;
-  background: transparent;
-}
-
-
-/* =================================================================
-   SHRUNK NAVBAR DROPDOWN STYLES
-   ================================================================= */
-.navbar.shrink .nav-dropdown-menu, .booking-bg .navbar.shrink .nav-dropdown-menu {
-  top: calc(100% );
-  
-  border: 1px solid var(--gradient-start);
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
-  z-index: 10000;
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  min-width: 130px;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
-  border-bottom-left-radius: var(--border-radius-sm);
-  border-bottom-right-radius: var(--border-radius-sm);
-  overflow: hidden;
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
-  
-}
-
-.navbar.shrink .nav-dropdown-menu::before {
-  border-bottom-color: var(--white);
-  content: '';
-  position: absolute;
-  top: -8px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: 8px solid transparent;
-  border-right: 8px solid transparent;
-  border-bottom: 8px solid var(--white);
-  filter: drop-shadow(0 -2px 4px rgba(0, 0, 0, 0.1));
-}  
-.navbar.shrink .nav-dropdown-item, .booking-bg .navbar.shrink .nav-dropdown-item 
- {
-   background: var(--gradient-start);
-  color: var(--text-primary);
-  border-bottom-color: rgba(26, 43, 60, 0.1);
-  display: block;
-  width: 100%;
-  padding: 0.75rem 1rem;
-  text-align: left;
-
-  border: none;
-  font-family: var(--font-primary);
-  font-size: 0.95rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  border-bottom: 1px solid rgba(26, 43, 60, 0.08);
-}
-
-
-.navbar.shrink .nav-dropdown-item:focus {
-  transform: scale(1.1);
-  outline: none;
-}
-
-/* =================================================================
-   ENHANCED DROPDOWN TRIGGER HOVER FOR SHRUNK STATE
-   ================================================================= */
-.navbar.shrink .nav-dropdown-wrapper {
-  position: relative;
-}
-
-.navbar.shrink .dropdown-trigger {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  position: relative;
-  transition: all 0.3s ease;
-  cursor: pointer;
-}
-
-.navbar.shrink .dropdown-trigger:hover .dropdown-arrow {
-  opacity: 1;
-  color: var(--accent-green);
-  transform: scale(1.1);
-}
-
-.navbar.shrink .dropdown-trigger:hover {
-  color: var(--accent-green);
-}
-
-.navbar.shrink .dropdown-arrow {
-  transition: transform 0.3s ease, color 0.3s ease;
-  opacity: 0.7;
-}
-
-.navbar.shrink .dropdown-arrow.rotated {
-  transform: rotate(180deg);
-}
-
-/* Smooth Transitions */
-.nav-dropdown-wrapper * {
-  transition: all 0.2s ease;
-}
-
-/* =================================================================
-   MEDIA QUERIES - TABLET & MOBILE
-   ================================================================= */
-@media (min-width: 850px) and (max-width: 1200px) {
-  .navbar.shrink {
-    left: 0;
-    transform: none;
-    margin: 0 auto;
-    animation: none;
-  }
-
-}
-/* Tablet */
-@media (max-width: 850px) {
-  .nav-link-btn:focus,
-  .nav-link-btn:active {
-    outline: none;
-    background: none;
-  }
-  
-  .nav-link-btn:focus-visible {
-    outline: none;
-  }
-/* Ensure smooth transitions */
-  .nav-link-btn {
-  transition: all 0.2s ease;
+  text-decoration: none;
+  transition: background 0.12s ease;
   -webkit-tap-highlight-color: transparent;
 }
-  .navbar {
-    padding: 0.5rem 0rem;
-  }
-  
-  .navbar.shrink .nav-links > .nav-dropdown-wrapper:nth-of-type(1),
-  .navbar.shrink .nav-links > .nav-dropdown-wrapper:nth-of-type(3),
-  .navbar.shrink .nav-links > .login-button {
-    display: none;
-  }
-  
-  .nav-container {
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-    gap: 0.2rem;
-    
-  }
-  
-  .nav-links {
-    gap: 0.6rem;
-  }
-  
-  .nav-links > .nav-link-btn:nth-child(1) {
-    display: none;
-  }
-  @keyframes fade-scale-up {
-  0% {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
+
+.mobile-menu-subitem {
+  padding-left: 1.5rem;
+  font-size: 0.9rem;
+  color: rgba(26, 43, 60, 0.75);
 }
 
-@keyframes fade-scale-down {
-  0% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(1);
-  }
-}
-/* MOBILE SHRINK */
-  .navbar.shrink {
-    left: auto; 
-    margin-left: auto;
-    margin-right: auto;
-    animation: fade-scale-up 0.5s ease forwards;
-    padding: 0;
-  }
-  
-  
-  .profile-pic {
-    width: 2rem;
-    height: 2rem;
-  }
-  
-  .profile-wrapper {
-    display: flex;
-    align-items: center;
-  }
-  
-  .navbar.shrink .nav-links {
-    gap: 1rem;
-    padding: 0.3rem 1rem;
-  }
-  
-  .navbar.shrink .nav-links a,
-  .navbar.shrink .nav-link-btn {
-    font-size: 1.2rem;
-    font-weight: 600;
-  }
-  
-  .nav-links a,
-  .nav-link-btn,
-  .login-button {
-    font-size: 1rem;
-  }
-  
-  /* Mobile Dropdown Styles */
-  .nav-dropdown-menu {
-    position: absolute;
-    top: calc(100% + 0.5rem);
-    left: 50%;
-    transform: translateX(-10%);
-    width: fit-content;
-    min-width: 180px;
-    max-width: 90vw;
-    background: var(--white);
-    border-radius: var(--border-radius-sm);
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
-    border: 1px solid rgba(154, 230, 180, 0.2);
-    z-index: 1001;
-  }
-  
-  .nav-dropdown-menu::before {
-    border-bottom-color: var(--white);
-  }
-  
-  .nav-dropdown-item {
-    padding: 1rem 1.5rem;
-    font-size: 1rem;
-    border-bottom: 1px solid rgba(26, 43, 60, 0.1);
-  }
-  
-  .nav-dropdown-item:hover {
-    background: rgba(154, 230, 180, 0.1);
-  }
- 
-  
+.mobile-menu-subitem:hover,
+.mobile-menu-item:hover {
+  background: rgba(0, 0, 0, 0.04);
 }
 
-/* Small Mobile - 480px and below */
-@media (max-width: 480px) {
-  .nav-dropdown-menu {
-    min-width: 140px;
-    top: calc(100% + 0.25rem);
-  }
-  
-  .dropdown-trigger {
-    gap: 0.25rem;
-  }
-  
-  .dropdown-arrow {
-    width: 10px;
-    height: 10px;
-  }
-  
-  .nav-dropdown-item {
-    padding: 0.875rem 1.25rem;
-    font-size: 0.9rem;
-  }
-   .navbar.shrink .nav-links{
-    gap: 0.5rem;
-  }
-    .navbar.shrink .nav-links a,
-  .navbar.shrink .nav-link-btn {
-    font-size: 1rem;
-    font-weight: 600;
-  }
+.mobile-menu-item.logout-item {
+  color: #c0392b;
 }
 
-/* Very Small Mobile - 360px and below */
-@media (max-width: 360px) {
-  .navbar.shrink {
-    max-width: 95%;
-  }
-  .navbar.shrink .nav-links{
-    gap: 0.5rem;
-  }
-  .navbar.shrink .nav-links a,
-  .navbar.shrink .nav-link-btn {
-    font-size: 0.95rem;
-    font-weight: 600;
-    padding: 0.5rem 0;
-  }
-  
-  .navbar.shrink .nav-links > .nav-dropdown-wrapper:nth-of-type(1),
-  .navbar.shrink .nav-links > .nav-dropdown-wrapper:nth-of-type(3) {
-    display: none;
-  }
+.mobile-menu-user {
+  padding: 0.5rem 0 0.25rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.07);
+  margin-top: 0.25rem;
 }
 
-/* =================================================================
-  EFFECTS FOR DESKTOP
-   ================================================================= */
-@media (min-width: 769px) {
-  .dropdown-trigger:hover .dropdown-arrow {
-    opacity: 1;
-    color: var(--accent-green);
-  }
-
-  .navbar.shrink .dropdown-trigger:hover .dropdown-arrow {
-    opacity: 1;
-    color: var(--accent-green);
-    transform: scale(1.2);
-  }
-  
-  .navbar.shrink .dropdown-trigger:hover {
-    color: var(--accent-green);
-    transform: translateY(-1px);
-  }
-  
-  /* Force hover states to work properly */
-  .navbar.shrink .nav-dropdown-wrapper:hover .nav-dropdown-menu,.booking-bg .navbar.shrink .nav-dropdown-wrapper:hover .nav-dropdown-menu {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-  }
-  
-  .navbar.shrink .nav-dropdown-item:hover,.booking-bg .navbar.shrink .nav-dropdown-item:hover {
-    background: var(--accent-green) ;
-    transform: scale(1.02) ;
-    color: var(--text-dark) ;
-  }
+.mobile-user-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 1.25rem;
 }
 
-/* =================================================================
-   DARK MODE SUPPORT
-   ================================================================= */
+.mobile-profile-pic {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid rgba(0, 0, 0, 0.1);
+}
 
+.mobile-user-name {
+  font-family: var(--font-primary);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
 
-  
+.mobile-menu-auth {
+  padding: 0.5rem 1.25rem;
+}
+
+.mobile-login-btn {
+  width: 100%;
+  padding: 0.65rem 1.25rem;
+  background: var(--button-primary);
+  color: #fff;
+  border: none;
+  border-radius: 9999px;
+  font-family: var(--font-primary);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.mobile-login-btn:hover {
+  opacity: 0.88;
+}
+
+/* ── Responsive: switch desktop ↔ mobile pill ──────────────────────── */
+@media (max-width: 768px) {
+  .desktop-pill { display: none; }
+  .mobile-pill  { display: flex; }
+}
+
+/* ── Page padding so content isn't hidden under fixed pill ─────────── */
+body {
+  padding-top: 0;
+}
