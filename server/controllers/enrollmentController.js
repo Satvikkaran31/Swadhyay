@@ -1,4 +1,5 @@
 import pool from '../utils/db.js';
+import transporter from '../utils/mailer.js';
 
 export async function enroll(req, res) {
   const userId = req.session.user.id;
@@ -7,13 +8,13 @@ export async function enroll(req, res) {
   if (!course_id) return res.status(400).json({ error: 'course_id is required' });
 
   try {
-    // For paid courses, verify payment_id is present
     const { rows: courseRows } = await pool.query(
-      'SELECT price FROM courses WHERE id = $1', [course_id]
+      'SELECT title, price FROM courses WHERE id = $1', [course_id]
     );
     if (!courseRows.length) return res.status(404).json({ error: 'Course not found' });
 
-    if (courseRows[0].price > 0 && !payment_id) {
+    const course = courseRows[0];
+    if (course.price > 0 && !payment_id) {
       return res.status(400).json({ error: 'payment_id is required for paid courses' });
     }
 
@@ -24,6 +25,23 @@ export async function enroll(req, res) {
        RETURNING *`,
       [userId, course_id, payment_id || null]
     );
+
+    // Send confirmation email (non-blocking — don't fail enrollment if mail fails)
+    if (rows[0]) {
+      const { email, name } = req.session.user;
+      transporter.sendMail({
+        from: process.env.MAIL_USER,
+        to: email,
+        subject: `You're enrolled in "${course.title}"`,
+        html: `
+          <h2>Enrollment confirmed!</h2>
+          <p>Hi ${name},</p>
+          <p>You're now enrolled in <strong>${course.title}</strong>.</p>
+          <p>Head over to <a href="${process.env.CLIENT_URL || 'http://localhost:3000'}/my-learning">My Learning</a> to start watching.</p>
+          <p>Happy learning!</p>
+        `,
+      }).catch(err => console.error('Enrollment email error:', err.message));
+    }
 
     res.status(201).json({ success: true, enrollment: rows[0] || null });
   } catch (err) {

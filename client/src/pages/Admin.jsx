@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../context/UserProvider";
 import "../styles/Admin.css";
@@ -67,9 +67,22 @@ function CourseEditor({ courseId, onSave, onCancel }) {
   const [form, setForm] = useState(emptyCourse());
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const isDirty = useRef(false);
   const isNew = !courseId;
 
+  // Warn on browser close/tab close when there are unsaved changes
   useEffect(() => {
+    const handler = (e) => {
+      if (!isDirty.current) return;
+      e.preventDefault();
+      e.returnValue = "";
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, []);
+
+  useEffect(() => {
+    isDirty.current = false;
     if (!courseId) { setForm(emptyCourse()); return; }
     apiFetch(`/api/courses/admin/${courseId}`).then(data => {
       setForm({
@@ -85,18 +98,25 @@ function CourseEditor({ courseId, onSave, onCancel }) {
     });
   }, [courseId]);
 
-  const setField = (field, val) => setForm(f => ({ ...f, [field]: val }));
+  const setField = (field, val) => { isDirty.current = true; setForm(f => ({ ...f, [field]: val })); };
 
-  const setModuleTitle = (mi, val) =>
+  const setModuleTitle = (mi, val) => {
+    isDirty.current = true;
     setForm(f => { const mods = [...f.modules]; mods[mi] = { ...mods[mi], title: val }; return { ...f, modules: mods }; });
+  };
 
-  const addModule = () =>
+  const addModule = () => {
+    isDirty.current = true;
     setForm(f => ({ ...f, modules: [...f.modules, emptyModule()] }));
+  };
 
-  const removeModule = (mi) =>
+  const removeModule = (mi) => {
+    isDirty.current = true;
     setForm(f => { const mods = f.modules.filter((_, i) => i !== mi); return { ...f, modules: mods }; });
+  };
 
-  const setLessonField = (mi, li, field, val) =>
+  const setLessonField = (mi, li, field, val) => {
+    isDirty.current = true;
     setForm(f => {
       const mods = [...f.modules];
       const lessons = [...mods[mi].lessons];
@@ -104,20 +124,25 @@ function CourseEditor({ courseId, onSave, onCancel }) {
       mods[mi] = { ...mods[mi], lessons };
       return { ...f, modules: mods };
     });
+  };
 
-  const addLesson = (mi) =>
+  const addLesson = (mi) => {
+    isDirty.current = true;
     setForm(f => {
       const mods = [...f.modules];
       mods[mi] = { ...mods[mi], lessons: [...mods[mi].lessons, emptyLesson()] };
       return { ...f, modules: mods };
     });
+  };
 
-  const removeLesson = (mi, li) =>
+  const removeLesson = (mi, li) => {
+    isDirty.current = true;
     setForm(f => {
       const mods = [...f.modules];
       mods[mi] = { ...mods[mi], lessons: mods[mi].lessons.filter((_, i) => i !== li) };
       return { ...f, modules: mods };
     });
+  };
 
   const handleSave = async () => {
     if (!form.title.trim()) { setError("Course title is required"); return; }
@@ -199,6 +224,7 @@ function CourseEditor({ courseId, onSave, onCancel }) {
         }
       }
 
+      isDirty.current = false;
       onSave();
     } catch (err) {
       setError("Save failed. Please try again.");
@@ -211,7 +237,11 @@ function CourseEditor({ courseId, onSave, onCancel }) {
     <div className="admin-section">
       <div className="admin-section-header">
         <h2>{isNew ? "New Course" : "Edit Course"}</h2>
-        <button className="admin-btn-secondary" onClick={onCancel}>Cancel</button>
+        <button className="admin-btn-secondary" onClick={() => {
+          if (isDirty.current && !confirm("You have unsaved changes. Discard them?")) return;
+          isDirty.current = false;
+          onCancel();
+        }}>Cancel</button>
       </div>
 
       {error && <div className="admin-error">{error}</div>}

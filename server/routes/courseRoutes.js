@@ -1,7 +1,7 @@
 import express from 'express';
 import { isAdmin } from '../controllers/adminMiddleware.js';
 import {
-  getCourses, getCourse,
+  getCourses, getCourse, getCourseLearning,
   createCourse, updateCourse, deleteCourse,
   createModule, updateModule, deleteModule,
   createLesson, updateLesson, deleteLesson,
@@ -24,7 +24,8 @@ router.get('/lessons/:id', getLessonDetail);
 
 // ── Public ────────────────────────────────────────────────────────────────────
 router.get('/', getCourses);
-router.get('/:slug', getCourse);        // must come after all fixed paths
+router.get('/:slug/learn', getCourseLearning);  // authenticated enrolled view
+router.get('/:slug', getCourse);                // must come after all fixed paths
 
 // ── Mutations ─────────────────────────────────────────────────────────────────
 router.post('/', isAdmin, createCourse);

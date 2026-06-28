@@ -17,8 +17,15 @@ import courseRoutes from "./routes/courseRoutes.js";
 import enrollmentRoutes from "./routes/enrollmentRoutes.js";
 import progressRoutes from "./routes/progressRoutes.js";
 import { ensureAuthenticated } from "./controllers/auth.js";
-import { handleInquiry,inquiryLimiter } from "./controllers/Inquiry.js";
+import { handleInquiry, inquiryLimiter } from "./controllers/Inquiry.js";
 dotenv.config();
+
+const REQUIRED_ENV = ["SESSION_SECRET", "POSTGRES_URL", "GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET", "RAZORPAY_KEY_ID", "RAZORPAY_KEY_SECRET"];
+const missingEnv = REQUIRED_ENV.filter(k => !process.env[k]);
+if (missingEnv.length) {
+  console.error(`FATAL: Missing required environment variables: ${missingEnv.join(", ")}`);
+  process.exit(1);
+}
 
 // Fix __dirname in ES modules
 const __filename = fileURLToPath(import.meta.url);

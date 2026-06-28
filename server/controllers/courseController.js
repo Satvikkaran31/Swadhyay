@@ -24,7 +24,7 @@ function isAllowedVideoUrl(url) {
 }
 
 // Reshape flat JOIN rows into nested course → modules → lessons [→ resources]
-function reshapeCourseRows(rows, { includeResources = false } = {}) {
+function reshapeCourseRows(rows, { includeResources = false, includeVideoUrls = false } = {}) {
   if (!rows.length) return null;
   const r = rows[0];
   const course = {
@@ -44,10 +44,11 @@ function reshapeCourseRows(rows, { includeResources = false } = {}) {
     }
     if (!row.l_id) continue;
     if (!lessonMap.has(row.l_id)) {
+      const showVideo = includeVideoUrls || includeResources || row.l_is_preview;
       const lesson = {
         id: row.l_id, title: row.l_title, duration: row.l_duration,
         position: row.l_pos, is_preview: row.l_is_preview,
-        video_url: (includeResources || row.l_is_preview) ? row.l_video_url : undefined,
+        video_url: showVideo ? row.l_video_url : undefined,
       };
       if (includeResources) lesson.resources = [];
       lessonMap.set(row.l_id, lesson);
@@ -97,6 +98,54 @@ export async function getCourse(req, res) {
     if (!rows.length) return res.status(404).json({ error: 'Course not found' });
     if (!rows[0].is_published && !isAdmin) return res.status(404).json({ error: 'Course not found' });
     res.json(reshapeCourseRows(rows));
+  } catch {
+    res.status(500).json({ error: 'Failed to fetch course' });
+  }
+}
+
+// Returns full course with all video_urls for enrolled users (single query, no N+1)
+export async function getCourseLearning(req, res) {
+  const userId = req.session?.user?.id;
+  const isAdmin = req.session?.user?.role === 'admin';
+
+  if (!userId) return res.status(401).json({ error: 'Authentication required' });
+
+  try {
+    // Resolve course and check enrollment in parallel
+    const [{ rows: courseCheck }, enrollCheck] = await Promise.all([
+      pool.query('SELECT id FROM courses WHERE slug = $1', [req.params.slug]),
+      isAdmin
+        ? Promise.resolve(null)
+        : pool.query(
+            `SELECT e.id FROM enrollments e
+             JOIN courses c ON c.id = e.course_id
+             WHERE c.slug = $1 AND e.user_id = $2`,
+            [req.params.slug, userId]
+          ),
+    ]);
+
+    if (!courseCheck.length) return res.status(404).json({ error: 'Course not found' });
+    if (!isAdmin && !enrollCheck.rows.length) {
+      return res.status(403).json({ error: 'Not enrolled' });
+    }
+
+    const { rows } = await pool.query(
+      `SELECT
+         c.id, c.slug, c.title, c.description, c.thumbnail_url, c.price,
+         c.is_published, c.created_at, c.updated_at,
+         m.id AS m_id, m.title AS m_title, m.position AS m_pos,
+         l.id AS l_id, l.title AS l_title, l.video_url AS l_video_url,
+         l.duration AS l_duration, l.position AS l_pos, l.is_preview AS l_is_preview
+       FROM courses c
+       LEFT JOIN modules m ON m.course_id = c.id
+       LEFT JOIN lessons l ON l.module_id = m.id
+       WHERE c.slug = $1
+       ORDER BY m.position, l.position`,
+      [req.params.slug]
+    );
+
+    if (!rows.length) return res.status(404).json({ error: 'Course not found' });
+    res.json(reshapeCourseRows(rows, { includeVideoUrls: true }));
   } catch {
     res.status(500).json({ error: 'Failed to fetch course' });
   }

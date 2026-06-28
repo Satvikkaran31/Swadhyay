@@ -1,8 +1,8 @@
 import { google } from "googleapis";
-import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 import axios from "axios";
 import { DateTime } from "luxon";
+import transporter from "../utils/mailer.js";
 
 dotenv.config();
 
@@ -15,15 +15,6 @@ const oauth2Client = new google.auth.OAuth2(
 oauth2Client.setCredentials({ refresh_token: process.env.REFRESH_TOKEN });
 
 const calendar = google.calendar({ version: "v3", auth: oauth2Client });
-
-// Nodemailer setup
-const transporter = nodemailer.createTransport({
- service: "gmail",
- auth: {
-  user: process.env.MAIL_USER,
-  pass: process.env.MAIL_PASS,
- },
-});
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const DATE_RE  = /^\d{4}-\d{2}-\d{2}$/;

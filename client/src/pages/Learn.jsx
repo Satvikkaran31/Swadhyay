@@ -11,7 +11,7 @@ function toEmbedUrl(url) {
   if (ytMatch) return `https://www.youtube.com/embed/${ytMatch[1]}`;
   const vimeoMatch = url.match(/vimeo\.com\/(\d+)/);
   if (vimeoMatch) return `https://player.vimeo.com/video/${vimeoMatch[1]}`;
-  return url;
+  return null; // Unknown host — don't embed
 }
 
 export default function Learn() {
@@ -20,7 +20,6 @@ export default function Learn() {
   const { user, loading: authLoading } = useUser();
 
   const [course, setCourse] = useState(null);
-  const [enrolled, setEnrolled] = useState(false);
   const [completedIds, setCompletedIds] = useState(new Set());
   const [activeLesson, setActiveLesson] = useState(null);
   const [resources, setResources] = useState([]);
@@ -32,56 +31,31 @@ export default function Learn() {
     if (!authLoading && !user) navigate(`/courses/${slug}`);
   }, [authLoading, user]);
 
-  // Load course
+  // Load course + enrollment + progress in 2 parallel requests
   useEffect(() => {
     if (!user) return;
-    fetch(`${API}/api/courses/${slug}`, { credentials: "include" })
-      .then(r => r.json())
-      .then(async data => {
-        if (data.error) { navigate("/courses"); return; }
 
-        // Check enrollment — admin bypasses
-        if (user.role !== "admin") {
-          const er = await fetch(`${API}/api/enrollments/check/${data.id}`, { credentials: "include" });
-          const ed = await er.json();
-          if (!ed.enrolled) { navigate(`/courses/${slug}`); return; }
-          setEnrolled(true);
-        } else {
-          setEnrolled(true);
-        }
+    const loadCourse = fetch(`${API}/api/courses/${slug}/learn`, { credentials: "include" })
+      .then(r => {
+        if (r.status === 401 || r.status === 403) { navigate(`/courses/${slug}`); return null; }
+        return r.json();
+      });
 
-        // Load full lesson data (video_url exposed only to enrolled)
-        const fullModules = await Promise.all(
-          data.modules.map(async mod => {
-            const lessons = await Promise.all(
-              mod.lessons.map(async lesson => {
-                const lr = await fetch(`${API}/api/courses/lessons/${lesson.id}`, { credentials: "include" });
-                if (lr.ok) return lr.json();
-                return lesson;
-              })
-            );
-            return { ...mod, lessons };
-          })
-        );
+    loadCourse.then(async data => {
+      if (!data || data.error) { navigate("/courses"); return; }
 
-        const courseWithFull = { ...data, modules: fullModules };
-        setCourse(courseWithFull);
+      // Load progress in parallel with setting course
+      const pr = await fetch(`${API}/api/progress/${data.id}`, { credentials: "include" }).then(r => r.json());
+      setCompletedIds(new Set(pr.completed_lesson_ids || []));
 
-        // Set first lesson
-        const firstLesson = fullModules[0]?.lessons[0];
-        if (firstLesson) setActiveLesson(firstLesson);
-
-        // Load progress
-        const pr = await fetch(`${API}/api/progress/${data.id}`, { credentials: "include" });
-        const pd = await pr.json();
-        setCompletedIds(new Set(pd.completed_lesson_ids || []));
-
-        setPageLoading(false);
-      })
-      .catch(() => setPageLoading(false));
+      setCourse(data);
+      const firstLesson = data.modules?.[0]?.lessons?.[0];
+      if (firstLesson) setActiveLesson(firstLesson);
+      setPageLoading(false);
+    }).catch(() => setPageLoading(false));
   }, [user, slug]);
 
-  // Load resources when lesson changes
+  // Load resources when active lesson changes
   useEffect(() => {
     if (!activeLesson) return;
     fetch(`${API}/api/courses/lessons/${activeLesson.id}/resources`, { credentials: "include" })
@@ -130,7 +104,7 @@ export default function Learn() {
       <div className="learn-body">
         {/* Main content */}
         <div className="learn-main">
-          {activeLesson?.video_url ? (
+          {activeLesson?.video_url && toEmbedUrl(activeLesson.video_url) ? (
             <div className="learn-video-wrap">
               <iframe
                 key={activeLesson.id}
