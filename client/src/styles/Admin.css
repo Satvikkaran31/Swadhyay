@@ -10,7 +10,7 @@
 /* ── Layout ──────────────────────────────────────────────────── */
 .admin-page {
   min-height: 100vh;
-  background: #f4f7f4;
+  background: var(--primary-bg);
   font-family: var(--font-primary);
 }
 
@@ -31,11 +31,16 @@
   background: none;
   border: 1px solid rgba(255,255,255,0.3);
   color: var(--text-primary);
-  padding: 0.35rem 0.75rem;
-  border-radius: 6px;
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--border-radius-xsm);
   cursor: pointer;
   font-family: var(--font-primary);
   font-size: 0.85rem;
+  transition: background 0.15s;
+}
+
+.admin-back-home:hover {
+  background: rgba(255,255,255,0.12);
 }
 
 .admin-topbar-title {
@@ -103,18 +108,18 @@
 .admin-table th {
   text-align: left;
   padding: 0.75rem 1rem;
-  background: #f5f8f5;
+  background: var(--primary-bg);
   color: #666;
-  font-weight: 600;
-  font-size: 0.8rem;
+  font-weight: 700;
+  font-size: 0.75rem;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  border-bottom: 2px solid #dde6df;
+  letter-spacing: 0.06em;
+  border-bottom: 2px solid rgba(140, 207, 157, 0.4);
 }
 
 .admin-table td {
-  padding: 0.85rem 1rem;
-  border-bottom: 1px solid #eef3ee;
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid rgba(26, 43, 60, 0.06);
   color: #444;
   vertical-align: middle;
 }
@@ -261,7 +266,7 @@
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem 1rem;
-  background: #f5f8f5;
+  background: var(--primary-bg);
 }
 
 .admin-module-title-input {
@@ -281,10 +286,10 @@
 }
 
 .admin-lesson-block {
-  background: #f9fbf9;
-  border-radius: 8px;
+  background: rgba(236, 245, 238, 0.5);
+  border-radius: var(--border-radius-xsm);
   padding: 0.85rem;
-  border: 1px solid #eef3ee;
+  border: 1px solid rgba(140, 207, 157, 0.3);
 }
 
 .admin-lesson-footer {
@@ -318,32 +323,35 @@
 /* ── Tab navigation ──────────────────────────────────────────── */
 .admin-tabs {
   display: flex;
-  gap: 0.25rem;
+  gap: 0.15rem;
   padding: 0 2rem;
-  border-bottom: 1px solid #e0e8e0;
+  border-bottom: 2px solid rgba(26, 43, 60, 0.1);
   background: #fff;
   overflow-x: auto;
+  box-shadow: 0 2px 8px -4px rgba(0,0,0,0.08);
 }
 
 .admin-tab-btn {
-  padding: 0.85rem 1.25rem;
+  padding: 0.9rem 1.35rem;
   border: none;
   background: none;
   font-family: var(--font-primary);
   font-size: 0.9rem;
   font-weight: 500;
-  color: #666;
+  color: #777;
   cursor: pointer;
-  border-bottom: 2px solid transparent;
-  margin-bottom: -1px;
+  border-bottom: 2.5px solid transparent;
+  margin-bottom: -2px;
   transition: color 0.15s, border-color 0.15s;
   white-space: nowrap;
 }
 
+.admin-tab-btn:hover { color: var(--button-primary); }
+
 .admin-tab-btn.active {
-  color: #1A2B3C;
-  border-bottom-color: #1A2B3C;
-  font-weight: 600;
+  color: var(--button-primary);
+  border-bottom-color: var(--button-primary);
+  font-weight: 700;
 }
 
 /* ── Stats grid ──────────────────────────────────────────────── */
@@ -356,24 +364,27 @@
 
 .admin-stat-card {
   background: #fff;
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.07);
+  border-radius: var(--border-radius-sm);
+  padding: 1.5rem 1.75rem;
+  box-shadow: var(--shadow-default);
+  border-left: 4px solid var(--accent-dark-green);
 }
 
 .admin-stat-value {
-  font-size: 2rem;
+  font-family: var(--font-hero-title);
+  font-size: 2.2rem;
   font-weight: 700;
-  color: #1A2B3C;
-  margin: 0.25rem 0 0;
+  color: var(--button-primary);
+  margin: 0.35rem 0 0;
+  letter-spacing: -0.02em;
 }
 
 .admin-stat-label {
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   color: #888;
-  font-weight: 500;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   margin: 0;
 }
 
@@ -386,20 +397,26 @@
 
 .admin-session-item {
   background: #fff;
-  border: 1px solid #e0e8e0;
-  border-radius: 10px;
-  padding: 1rem 1.25rem;
+  border: 1.5px solid rgba(26, 43, 60, 0.1);
+  border-radius: var(--border-radius-xsm);
+  padding: 1.1rem 1.35rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.admin-session-item:hover {
+  border-color: var(--accent-dark-green);
+  box-shadow: var(--shadow-default);
 }
 
 .admin-session-info h4 {
   font-size: 0.95rem;
   font-weight: 600;
-  color: #1A2B3C;
-  margin: 0 0 0.2rem;
+  color: var(--button-primary);
+  margin: 0 0 0.25rem;
 }
 
 .admin-session-info p {
@@ -410,14 +427,20 @@
 
 .admin-session-link {
   font-size: 0.82rem;
-  color: #1A2B3C;
+  color: var(--button-primary);
   text-decoration: none;
   white-space: nowrap;
   font-weight: 600;
+  padding: 0.35rem 0.8rem;
+  border: 1.5px solid rgba(26, 43, 60, 0.2);
+  border-radius: var(--border-radius-xsm);
+  transition: background 0.15s, border-color 0.15s;
 }
 
 .admin-session-link:hover {
-  text-decoration: underline;
+  background: var(--primary-bg);
+  border-color: var(--accent-dark-green);
+  text-decoration: none;
 }
 
 @media (max-width: 768px) {

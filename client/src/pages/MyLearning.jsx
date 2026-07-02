@@ -28,8 +28,10 @@ export default function MyLearning() {
   return (
     <div className="main">
       <Navbar />
-      <div className="my-learning-page">
+      <section className="my-learning-hero">
         <h1>My Learning</h1>
+      </section>
+      <div className="my-learning-page">
 
         {authLoading || loading ? (
           <div className="my-learning-status">Loading...</div>

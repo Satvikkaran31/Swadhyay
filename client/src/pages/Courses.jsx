@@ -21,11 +21,11 @@ export default function Courses() {
   return (
     <div className="main">
       <Navbar />
+      <section className="courses-hero">
+        <h1>Courses</h1>
+        <p>Deepen your practice with structured learning from Neha</p>
+      </section>
       <div className="courses-page">
-        <div className="courses-header">
-          <h1>Courses</h1>
-          <p>Deepen your practice with structured learning from Neha</p>
-        </div>
 
         {loading ? (
           <div className="courses-loading">Loading courses...</div>

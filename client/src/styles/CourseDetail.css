@@ -156,7 +156,7 @@
   align-items: center;
   gap: 0.75rem;
   padding: 1rem 1.25rem;
-  background: #f5f8f5;
+  background: var(--primary-bg);
   border: none;
   cursor: pointer;
   font-family: var(--font-primary);
@@ -167,8 +167,8 @@
   transition: background 0.15s;
 }
 
-.syllabus-module-header:hover { background: #eaf0ea; }
-.syllabus-module-header.open { background: var(--button-primary); color: #fff; }
+.syllabus-module-header:hover { background: rgba(140, 207, 157, 0.25); }
+.syllabus-module-header.open { background: var(--button-primary); color: var(--text-primary); }
 
 .syllabus-module-count {
   margin-left: auto;
