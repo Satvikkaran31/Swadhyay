@@ -26,7 +26,9 @@ export default function Navbar() {
   // Sliding chip
   const pillRef = useRef(null);
   const itemRefs = useRef({});
-  const [chipStyle, setChipStyle] = useState({ left: 0, width: 0, opacity: 0 });
+  const chipVisible = useRef(false);
+  const [chipTick, setChipTick] = useState(0);
+  const [chipStyle, setChipStyle] = useState({ left: 0, width: 0, opacity: 0, transition: 'none' });
 
   // Hover timer — prevents dropdown closing during mouse transit over gap
   const hoverTimer = useRef({});
@@ -35,7 +37,7 @@ export default function Navbar() {
     setter(true);
   };
   const hoverClose = (key, setter) => {
-    hoverTimer.current[key] = setTimeout(() => setter(false), 140);
+    hoverTimer.current[key] = setTimeout(() => setter(false), 200);
   };
 
   const { user, setUser, logout } = useUser();
@@ -94,6 +96,16 @@ export default function Navbar() {
     }
   }, [location.pathname, location.hash]);
 
+  // ── Chip recalculation on resize (font/layout shifts) ─────────────
+  useEffect(() => {
+    const onResize = () => {
+      chipVisible.current = false;
+      setChipTick(t => t + 1);
+    };
+    window.addEventListener("resize", onResize, { passive: true });
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
   // ── Active states ──────────────────────────────────────────────────
   const isAboutActive = ["/contact-us", "/whoami"].some(p => location.pathname.startsWith(p));
   const isLearningActive = ["/articles", "/article/", "/courses", "/my-learning"].some(p =>
@@ -111,15 +123,24 @@ export default function Navbar() {
     if (activeKey && itemRefs.current[activeKey] && pillRef.current) {
       const container = pillRef.current.getBoundingClientRect();
       const item = itemRefs.current[activeKey].getBoundingClientRect();
-      setChipStyle({
-        left: item.left - container.left,
-        width: item.width,
-        opacity: 1,
-      });
+      const left = item.left - container.left;
+      const width = item.width;
+      if (!chipVisible.current) {
+        // First appearance: snap to correct position, only fade opacity in
+        chipVisible.current = true;
+        setChipStyle({ left, width, opacity: 1, transition: 'opacity 0.22s ease' });
+      } else {
+        // Already visible: spring-slide to new position
+        setChipStyle({
+          left, width, opacity: 1,
+          transition: 'left 0.38s cubic-bezier(0.34,1.4,0.64,1), width 0.38s cubic-bezier(0.34,1.4,0.64,1), opacity 0.22s ease',
+        });
+      }
     } else {
-      setChipStyle(prev => ({ ...prev, opacity: 0 }));
+      chipVisible.current = false;
+      setChipStyle(prev => ({ ...prev, opacity: 0, transition: 'opacity 0.22s ease' }));
     }
-  }, [isAboutActive, isLearningActive, isPricingActive, location.pathname]);
+  }, [isAboutActive, isLearningActive, isPricingActive, location.pathname, chipTick]);
 
   const scrollTo = (sectionId) => {
     setMobileOpen(false);
@@ -180,6 +201,7 @@ export default function Navbar() {
               left: chipStyle.left,
               width: chipStyle.width,
               opacity: chipStyle.opacity,
+              transition: chipStyle.transition,
             }}
           />
 

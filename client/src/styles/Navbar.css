@@ -70,11 +70,7 @@
     0 0 0 1px rgba(0, 0, 0, 0.1);
   pointer-events: none;
   z-index: 0;
-  /* Spring slide animation */
-  transition:
-    left  0.38s cubic-bezier(0.34, 1.4, 0.64, 1),
-    width 0.38s cubic-bezier(0.34, 1.4, 0.64, 1),
-    opacity 0.22s ease;
+  /* transition is set inline — controls snap-vs-slide behaviour */
 }
 
 /* ── Center logo button ────────────────────────────────────────────── */
@@ -187,6 +183,8 @@
 .pnav-drop-wrap {
   position: relative;
   z-index: 2;
+  display: flex;
+  align-items: center;
 }
 
 /* Invisible bridge fills the gap so mouseleave never fires during transit */
@@ -194,10 +192,10 @@
   content: '';
   position: absolute;
   top: 100%;
-  left: -12px;
-  right: -12px;
-  height: 0.5rem;
-  /* transparent — just extends the hover target */
+  left: -16px;
+  right: -16px;
+  height: 0.85rem; /* must exceed the dropdown top offset (0.45rem) with margin */
+  /* transparent — just extends the hover hit-area */
 }
 
 /* ── Dropdown panel ────────────────────────────────────────────────── */
