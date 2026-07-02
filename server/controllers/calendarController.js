@@ -173,3 +173,33 @@ export const bookSession = async (req, res) => {
   res.status(500).json({ error: "Failed to book session" });
  }
 };
+
+export const getUpcomingBookings = async (req, res) => {
+ try {
+  const now = new Date();
+  const twoWeeksLater = new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000);
+
+  const response = await calendar.events.list({
+   calendarId: "primary",
+   timeMin: now.toISOString(),
+   timeMax: twoWeeksLater.toISOString(),
+   maxResults: 20,
+   singleEvents: true,
+   orderBy: "startTime",
+  });
+
+  const bookings = (response.data.items || []).map((ev) => ({
+   id: ev.id,
+   title: ev.summary,
+   start: ev.start?.dateTime || ev.start?.date,
+   end: ev.end?.dateTime || ev.end?.date,
+   attendees: ev.attendees?.map((a) => a.email) || [],
+   meetLink: ev.hangoutLink,
+  }));
+
+  res.json({ bookings });
+ } catch (err) {
+  console.error("Upcoming bookings error:", err);
+  res.status(500).json({ error: "Failed to fetch upcoming bookings" });
+ }
+};

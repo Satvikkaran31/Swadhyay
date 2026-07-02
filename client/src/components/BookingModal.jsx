@@ -3,197 +3,281 @@ import { UserContext } from "../context/UserProvider";
 import axios from "axios";
 import toast from "react-hot-toast";
 import "../styles/BookingModal.css";
-import TeamsBookingModal from "./TeamsBookingModal";
 
-export default function BookingModal({ onClose }) {
- const { user } = useContext(UserContext);
+const SESSION_TYPES = [
+  { value: "one-on-one", label: "1:1 Coaching", icon: "🌱" },
+  { value: "eft", label: "EFT Coaching", icon: "🌿" },
+  { value: "group-coaching", label: "Group Coaching", icon: "👥" },
+];
 
- const [form, setForm] = useState({
-  name: "",
-  email: "",
-  occupation: "", // New field
-  organization: "", // New field
-  date: "",
-  time: "",
-  sessionType: "one-on-one",
-  meetingType: "google",
- });
-
- const [loading, setLoading] = useState(false);
- const [showTeamsModal, setShowTeamsModal] = useState(false);
- const [availableSlots, setAvailableSlots] = useState([]);
- const [slotsError, setSlotsError] = useState(null);
-
- useEffect(() => {
-  document.body.style.overflow = "hidden";
-  if (user) {
-   setForm((prev) => ({
-    ...prev,
-    name: user.name,
-    email: user.email,
-   }));
+function buildGCalUrl(date, time, sessionType, meetLink) {
+  try {
+    // Build start in IST, shift to UTC for the URL
+    const startLocal = new Date(`${date}T${time}:00+05:30`);
+    const endLocal = new Date(startLocal.getTime() + 60 * 60 * 1000);
+    const fmt = (d) =>
+      d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}Z$/, "Z");
+    const title = encodeURIComponent(`${sessionType} with Neha`);
+    const details = encodeURIComponent(meetLink ? `Meet link: ${meetLink}` : "");
+    return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${fmt(startLocal)}/${fmt(endLocal)}&details=${details}`;
+  } catch {
+    return "https://calendar.google.com";
   }
-  return () => {
-   document.body.style.overflow = "auto";
+}
+
+export default function BookingModal({ onClose, initialSessionType = "one-on-one" }) {
+  const { user } = useContext(UserContext);
+
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    occupation: "",
+    organization: "",
+    date: "",
+    time: "",
+    sessionType: initialSessionType,
+    meetingType: "google",
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [availableSlots, setAvailableSlots] = useState([]);
+  const [slotsLoading, setSlotsLoading] = useState(false);
+  const [slotsError, setSlotsError] = useState(null);
+  const [success, setSuccess] = useState(false);
+  const [successDetails, setSuccessDetails] = useState(null);
+
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    if (user) {
+      setForm((prev) => ({
+        ...prev,
+        name: user.name,
+        email: user.email,
+      }));
+    }
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [user]);
+
+  const handleDateChange = async (e) => {
+    const selectedDate = e.target.value;
+    setForm({ ...form, date: selectedDate, time: "" });
+    setSlotsError(null);
+    setAvailableSlots([]);
+    setSlotsLoading(true);
+
+    try {
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+      const res = await axios.get(`${API_BASE_URL}/api/availability?date=${selectedDate}`);
+      setAvailableSlots(res.data.slots || []);
+    } catch (err) {
+      console.error("Failed to load slots:", err);
+      setSlotsError("Could not load available slots.");
+    } finally {
+      setSlotsLoading(false);
+    }
   };
- }, [user]);
 
- const handleDateChange = async (e) => {
-  const selectedDate = e.target.value;
-  setForm({ ...form, date: selectedDate, time: "" }); // Reset time when date changes
-  setSlotsError(null);
-  setAvailableSlots([]);
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
-  try {
-   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-   const res = await axios.get(
-  `${API_BASE_URL}/api/availability?date=${selectedDate}`,
-   { withCredentials: true }
-   );
-   setAvailableSlots(res.data.slots || []);
-  } catch (err) {
-   console.error("Failed to load slots:", err);
-   setSlotsError("Could not load available slots.");
-  }
- };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
 
- const handleChange = (e) => {
-  setForm({ ...form, [e.target.name]: e.target.value });
- };
+    try {
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+      const res = await axios.post(
+        `${API_BASE_URL}/api/calendar/book`,
+        form,
+        { withCredentials: true }
+      );
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
-  setLoading(true);
+      const meetLink = res.data.meetLink;
+      const gcalUrl = buildGCalUrl(form.date, form.time, form.sessionType, meetLink);
+      setSuccessDetails({
+        date: form.date,
+        time: form.time,
+        sessionType: form.sessionType,
+        meetLink,
+        gcalUrl,
+      });
+      setSuccess(true);
+    } catch (err) {
+      const msg = err.response?.data?.error || "Booking failed. Please try again.";
+      toast.error(msg);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  try {
-   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
-   await axios.post(
-    `${API_BASE_URL}/api/calendar/book`,
-    form,
-    { withCredentials: true }
-   );
-   toast.success("Session booked! A meeting link has been sent to your email.");
-   onClose();
-  } catch (err) {
-   const msg = err.response?.data?.error || "Booking failed. Please try again.";
-   toast.error(msg);
-  } finally {
-   setLoading(false);
-  }
- };
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-container" onClick={(e) => e.stopPropagation()}>
+        <button className="modal-close" onClick={onClose} aria-label="Close">
+          ✖
+        </button>
 
- return (
-  <div className="modal-overlay" onClick={onClose}>
-   <div className="modal-container" onClick={(e) => e.stopPropagation()}>
-    <button className="modal-close" onClick={onClose}>
-     ✖
-    </button>
-    <h2>Schedule a Session</h2>
-    <form onSubmit={handleSubmit}>
-          {/* --- Grouped fields into rows for better layout --- */}
-          <div className="form-row">
-            <input
-              type="text"
-              name="name"
-              value={form.name}
-              placeholder="Your Name"
-              onChange={handleChange}
-              required
-            />
-            <input
-              type="email"
-              name="email"
-              value={form.email}
-              placeholder="Email"
-              onChange={handleChange}
-              required
-            />
+        {success && successDetails ? (
+          <div className="booking-success">
+            <span className="booking-success-icon">✅</span>
+            <h3>Session booked!</h3>
+            <p>
+              <strong>{successDetails.sessionType}</strong> on{" "}
+              <strong>{successDetails.date}</strong> at{" "}
+              <strong>{successDetails.time}</strong>
+            </p>
+            <p>A confirmation email with the meeting link has been sent to you.</p>
+            <div className="booking-success-actions">
+              <a
+                href={successDetails.gcalUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="gcal-link"
+              >
+                📅 Add to Google Calendar
+              </a>
+              <button className="success-close-btn" onClick={onClose}>
+                Close
+              </button>
+            </div>
           </div>
+        ) : (
+          <>
+            <h2>Schedule a Session</h2>
+            <form onSubmit={handleSubmit}>
+              {/* Name + Email */}
+              <div className="form-row">
+                <input
+                  type="text"
+                  name="name"
+                  value={form.name}
+                  placeholder="Your Name"
+                  onChange={handleChange}
+                  required
+                />
+                <input
+                  type="email"
+                  name="email"
+                  value={form.email}
+                  placeholder="Email"
+                  onChange={handleChange}
+                  required
+                />
+              </div>
 
-          <div className="form-row">
-            <select
-              name="occupation"
-              value={form.occupation}
-              onChange={handleChange}
-              required
-            >
-              <option value="" disabled>Select your occupation</option>
-              <option value="Working Professional">Working Professional</option>
-              <option value="Student">Student</option>
-              <option value="Women Professional">Women Professional</option>
-              <option value="Other">Other</option>
-            </select>
-            <input
-              type="text"
-              name="organization"
-              value={form.organization}
-              placeholder="Company / Institution"
-              onChange={handleChange}
-              required
-            />
-          </div>
+              {/* Occupation + Organisation */}
+              <div className="form-row">
+                <select
+                  name="occupation"
+                  value={form.occupation}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="" disabled>Select your occupation</option>
+                  <option value="Working Professional">Working Professional</option>
+                  <option value="Student">Student</option>
+                  <option value="Women Professional">Women Professional</option>
+                  <option value="Other">Other</option>
+                </select>
+                <input
+                  type="text"
+                  name="organization"
+                  value={form.organization}
+                  placeholder="Company / Institution"
+                  onChange={handleChange}
+                  required
+                />
+              </div>
 
-          <div className="form-row">
-            <input
-              type="date"
-              name="date"
-              value={form.date}
-              onChange={handleDateChange}
-              min={new Date().toISOString().split("T")[0]}
-              required
-            />
-            <select name="time" value={form.time} onChange={handleChange} required>
-              <option value="" disabled>Select a time</option>
-              {Array.isArray(availableSlots) && availableSlots.length === 0 && form.date && (
-                <option disabled>— No slots available —</option>
-              )}
-              {Array.isArray(availableSlots) &&
-                availableSlots.map((slot) => (
-                  <option key={slot} value={slot}>
-                    {slot}
-                  </option>
-                ))}
-            </select>
-          </div>
+              {/* Session type cards */}
+              <div>
+                <p className="modal-section-label">Session type</p>
+                <div className="session-type-cards">
+                  {SESSION_TYPES.map((st) => (
+                    <button
+                      key={st.value}
+                      type="button"
+                      className={`session-card${form.sessionType === st.value ? " selected" : ""}`}
+                      onClick={() => setForm({ ...form, sessionType: st.value })}
+                    >
+                      <span className="session-card-icon">{st.icon}</span>
+                      <span className="session-card-label">{st.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
 
-     <select
-      name="sessionType"
-      value={form.sessionType}
-      onChange={handleChange}
-     >
-      <option value="one-on-one">One-on-One Coaching</option>
-      <option value="eft">EFT Coaching</option>
-      <option value="group-coaching">Group Coaching</option>
-     </select>
+              {/* Date */}
+              <input
+                type="date"
+                name="date"
+                value={form.date}
+                onChange={handleDateChange}
+                min={new Date().toISOString().split("T")[0]}
+                required
+              />
 
-     <label>Meeting Platform:</label>
-     <select
-      name="meetingType"
-      value={form.meetingType}
-      onChange={handleChange}
-     >
-      <option value="google">Google Meet</option>
-     </select>
+              {/* Time slots as pills */}
+              <div>
+                <p className="modal-section-label">Available time slots</p>
+                {slotsLoading ? (
+                  <div className="slots-loading">
+                    <span className="slots-loading-spinner" />
+                    Loading slots…
+                  </div>
+                ) : slotsError ? (
+                  <p className="error">{slotsError}</p>
+                ) : !form.date ? (
+                  <p className="slots-empty">Pick a date to see available slots.</p>
+                ) : availableSlots.length === 0 ? (
+                  <p className="slots-empty">No slots available on this day.</p>
+                ) : (
+                  <div className="slot-pills">
+                    {availableSlots.map((slot) => (
+                      <button
+                        key={slot}
+                        type="button"
+                        className={`slot-pill${form.time === slot ? " selected" : ""}`}
+                        onClick={() => setForm({ ...form, time: slot })}
+                      >
+                        {slot}
+                      </button>
+                    ))}
+                  </div>
+                )}
+                {/* Hidden required input to enforce slot selection */}
+                <input
+                  type="hidden"
+                  name="time"
+                  value={form.time}
+                  required
+                />
+              </div>
 
-     <button className="gmeet" type="submit" disabled={loading} >
-      {loading ? "Processing..." : "Schedule on Gmeet"}
-     </button>
-     <span>OR</span>
-     <button
-      className="Teams"
-      type="button"
-      onClick={() => setShowTeamsModal(true)}
-     >
-       Schedule on Teams
-     </button>
+              <button className="gmeet" type="submit" disabled={loading || !form.time}>
+                {loading ? "Processing…" : "Schedule on Google Meet"}
+              </button>
 
-     {showTeamsModal && (
-      <TeamsBookingModal onClose={() => setShowTeamsModal(false)} />
-     )}
-     {loading && <div className="loader"></div>}
-     {slotsError && <p className="error">{slotsError}</p>}
-    </form>
-   </div>
-  </div>
- );
+              <div className="modal-divider">OR</div>
+
+              <button
+                className="Teams"
+                type="button"
+                onClick={() =>
+                  window.open(import.meta.env.VITE_BOOKING_LINK, "_blank")
+                }
+              >
+                📅 Schedule on Microsoft Teams
+              </button>
+
+              {loading && <div className="loader" />}
+            </form>
+          </>
+        )}
+      </div>
+    </div>
+  );
 }

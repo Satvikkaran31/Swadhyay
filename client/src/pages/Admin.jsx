@@ -24,7 +24,23 @@ function emptyCourse() {
   return { title: "", description: "", thumbnail_url: "", price: 0, is_published: false, modules: [emptyModule()] };
 }
 
-// ── Sub-components ────────────────────────────────────────────────────────────
+function emptyArticle() {
+  return { title: "", excerpt: "", content: "", thumbnail_url: "", author: "Neha", is_published: false };
+}
+
+function formatDate(iso) {
+  if (!iso) return "—";
+  try {
+    return new Date(iso).toLocaleString("en-IN", {
+      day: "numeric", month: "short", year: "numeric",
+      hour: "2-digit", minute: "2-digit",
+    });
+  } catch {
+    return iso;
+  }
+}
+
+// ── Course sub-components ─────────────────────────────────────────────────────
 
 function CourseList({ courses, onSelect, onNew, onDelete }) {
   return (
@@ -70,7 +86,6 @@ function CourseEditor({ courseId, onSave, onCancel }) {
   const isDirty = useRef(false);
   const isNew = !courseId;
 
-  // Warn on browser close/tab close when there are unsaved changes
   useEffect(() => {
     const handler = (e) => {
       if (!isDirty.current) return;
@@ -178,13 +193,12 @@ function CourseEditor({ courseId, onSave, onCancel }) {
 
       const cid = savedCourse.id;
 
-      // Save modules and lessons sequentially
       for (let mi = 0; mi < form.modules.length; mi++) {
         const mod = form.modules[mi];
         let savedMod;
 
         if (mod.id) {
-          savedMod = await apiFetch(`/api/courses/modules/${mod.id}`, {
+          await apiFetch(`/api/courses/modules/${mod.id}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ title: mod.title, position: mi }),
@@ -246,7 +260,6 @@ function CourseEditor({ courseId, onSave, onCancel }) {
 
       {error && <div className="admin-error">{error}</div>}
 
-      {/* Course fields */}
       <div className="admin-form-group">
         <label>Title *</label>
         <input value={form.title} onChange={e => setField("title", e.target.value)} placeholder="Course title" />
@@ -272,7 +285,6 @@ function CourseEditor({ courseId, onSave, onCancel }) {
         </label>
       </div>
 
-      {/* Modules */}
       <div className="admin-modules">
         <div className="admin-modules-header">
           <h3>Modules</h3>
@@ -332,14 +344,305 @@ function CourseEditor({ courseId, onSave, onCancel }) {
   );
 }
 
+// ── Article sub-components ────────────────────────────────────────────────────
+
+function ArticleList({ articles, onSelect, onNew, onDelete }) {
+  return (
+    <div className="admin-section">
+      <div className="admin-section-header">
+        <h2>Articles</h2>
+        <button className="admin-btn-primary" onClick={onNew}>+ New Article</button>
+      </div>
+      {articles.length === 0 ? (
+        <p className="admin-empty">No articles yet. Write your first one!</p>
+      ) : (
+        <table className="admin-table">
+          <thead>
+            <tr><th>Title</th><th>Published?</th><th>Date</th><th>Actions</th></tr>
+          </thead>
+          <tbody>
+            {articles.map(a => (
+              <tr key={a.id}>
+                <td>{a.title}</td>
+                <td>
+                  <span className={`admin-badge ${a.is_published ? "published" : "draft"}`}>
+                    {a.is_published ? "Published" : "Draft"}
+                  </span>
+                </td>
+                <td style={{ whiteSpace: "nowrap", fontSize: "0.8rem", color: "#888" }}>
+                  {formatDate(a.published_at || a.created_at)}
+                </td>
+                <td className="admin-actions">
+                  <button className="admin-btn-sm" onClick={() => onSelect(a)}>Edit</button>
+                  <button className="admin-btn-sm danger" onClick={() => onDelete(a.id)}>Delete</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </div>
+  );
+}
+
+function ArticleEditor({ article, onSave, onCancel }) {
+  const isNew = !article?.id;
+  const [form, setForm] = useState(article ? { ...article } : emptyArticle());
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+
+  const setField = (field, val) => setForm(f => ({ ...f, [field]: val }));
+
+  const handleSave = async () => {
+    if (!form.title.trim()) { setError("Title is required"); return; }
+    setSaving(true); setError("");
+
+    try {
+      if (isNew) {
+        await apiFetch("/api/articles", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(form),
+        });
+      } else {
+        await apiFetch(`/api/articles/${article.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(form),
+        });
+      }
+      onSave();
+    } catch (err) {
+      setError("Save failed. Please try again.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="admin-section">
+      <div className="admin-section-header">
+        <h2>{isNew ? "New Article" : "Edit Article"}</h2>
+        <button className="admin-btn-secondary" onClick={onCancel}>Cancel</button>
+      </div>
+
+      {error && <div className="admin-error">{error}</div>}
+
+      <div className="admin-form-group">
+        <label>Title *</label>
+        <input value={form.title} onChange={e => setField("title", e.target.value)} placeholder="Article title" />
+      </div>
+      <div className="admin-form-group">
+        <label>Excerpt</label>
+        <textarea value={form.excerpt || ""} onChange={e => setField("excerpt", e.target.value)} rows={2} placeholder="Short summary shown on the articles page..." />
+      </div>
+      <div className="admin-form-group">
+        <label>Content</label>
+        <textarea value={form.content || ""} onChange={e => setField("content", e.target.value)} rows={10} placeholder="Supports paragraphs separated by blank lines..." />
+      </div>
+      <div className="admin-form-row">
+        <div className="admin-form-group">
+          <label>Thumbnail URL</label>
+          <input value={form.thumbnail_url || ""} onChange={e => setField("thumbnail_url", e.target.value)} placeholder="https://..." />
+        </div>
+        <div className="admin-form-group narrow">
+          <label>Author</label>
+          <input value={form.author || "Neha"} onChange={e => setField("author", e.target.value)} placeholder="Neha" />
+        </div>
+      </div>
+      <div className="admin-form-group checkbox-group">
+        <label>
+          <input type="checkbox" checked={form.is_published} onChange={e => setField("is_published", e.target.checked)} />
+          Published (visible to readers)
+        </label>
+      </div>
+
+      <div className="admin-save-row">
+        <button className="admin-btn-primary" onClick={handleSave} disabled={saving}>
+          {saving ? "Saving..." : isNew ? "Create Article" : "Save Changes"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ── Overview tab ──────────────────────────────────────────────────────────────
+
+function OverviewTab() {
+  const [stats, setStats] = useState(null);
+  const [sessions, setSessions] = useState([]);
+  const [sessionsError, setSessionsError] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    Promise.all([
+      apiFetch("/api/articles/admin/stats"),
+      apiFetch("/api/calendar/upcoming"),
+    ]).then(([statsData, sessionsData]) => {
+      setStats(statsData);
+      if (sessionsData?.bookings) {
+        setSessions(sessionsData.bookings);
+      } else {
+        setSessionsError("Could not load upcoming sessions.");
+      }
+    }).catch(() => {
+      setSessionsError("Could not load data.");
+    }).finally(() => setLoading(false));
+  }, []);
+
+  if (loading) return <div className="admin-empty">Loading overview…</div>;
+
+  return (
+    <div>
+      {stats && (
+        <div className="admin-stats-grid">
+          <div className="admin-stat-card">
+            <p className="admin-stat-label">Total Enrollments</p>
+            <p className="admin-stat-value">{stats.total_enrollments ?? "—"}</p>
+          </div>
+          <div className="admin-stat-card">
+            <p className="admin-stat-label">Revenue</p>
+            <p className="admin-stat-value">
+              {stats.revenue != null
+                ? `₹${(stats.revenue / 100).toLocaleString("en-IN")}`
+                : "—"}
+            </p>
+          </div>
+          <div className="admin-stat-card">
+            <p className="admin-stat-label">Courses</p>
+            <p className="admin-stat-value">{stats.total_courses ?? "—"}</p>
+          </div>
+          <div className="admin-stat-card">
+            <p className="admin-stat-label">Published Articles</p>
+            <p className="admin-stat-value">{stats.published_articles ?? "—"}</p>
+          </div>
+        </div>
+      )}
+
+      <div className="admin-section">
+        <div className="admin-section-header">
+          <h2>Upcoming Sessions</h2>
+        </div>
+
+        {sessionsError ? (
+          <p className="admin-empty" style={{ color: "#c00" }}>
+            {sessionsError}
+            <br />
+            <span style={{ fontWeight: 400, fontSize: "0.82rem", color: "#888" }}>
+              Ensure the Google Calendar integration is authorised.
+            </span>
+          </p>
+        ) : sessions.length === 0 ? (
+          <p className="admin-empty">No upcoming sessions in the next 2 weeks.</p>
+        ) : (
+          <div className="admin-sessions-list">
+            {sessions.map((s) => (
+              <div key={s.id} className="admin-session-item">
+                <div className="admin-session-info">
+                  <h4>{s.title || "Untitled event"}</h4>
+                  <p>{formatDate(s.start)}</p>
+                  {s.attendees?.length > 0 && (
+                    <p>{s.attendees.join(", ")}</p>
+                  )}
+                </div>
+                {s.meetLink && (
+                  <a
+                    href={s.meetLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="admin-session-link"
+                  >
+                    Join Meet →
+                  </a>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ── Sessions tab ──────────────────────────────────────────────────────────────
+
+function SessionsTab() {
+  const [sessions, setSessions] = useState([]);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    apiFetch("/api/calendar/upcoming")
+      .then((data) => {
+        if (data?.bookings) setSessions(data.bookings);
+        else setError("Could not load sessions.");
+      })
+      .catch(() => setError("Could not load sessions."))
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) return <div className="admin-empty">Loading sessions…</div>;
+
+  return (
+    <div className="admin-section">
+      <div className="admin-section-header">
+        <h2>Upcoming Sessions (next 2 weeks)</h2>
+      </div>
+
+      {error ? (
+        <p className="admin-empty" style={{ color: "#c00" }}>
+          {error}
+          <br />
+          <span style={{ fontWeight: 400, fontSize: "0.82rem", color: "#888" }}>
+            Ensure the Google Calendar integration is authorised in the server environment.
+          </span>
+        </p>
+      ) : sessions.length === 0 ? (
+        <p className="admin-empty">No upcoming sessions found.</p>
+      ) : (
+        <div className="admin-sessions-list">
+          {sessions.map((s) => (
+            <div key={s.id} className="admin-session-item">
+              <div className="admin-session-info">
+                <h4>{s.title || "Untitled event"}</h4>
+                <p>{formatDate(s.start)} → {formatDate(s.end)}</p>
+                {s.attendees?.length > 0 && <p>{s.attendees.join(", ")}</p>}
+              </div>
+              {s.meetLink && (
+                <a
+                  href={s.meetLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="admin-session-link"
+                >
+                  Join Meet →
+                </a>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ── Main Admin Page ───────────────────────────────────────────────────────────
 
 export default function Admin() {
   const { user, loading: authLoading } = useUser();
   const navigate = useNavigate();
+
+  const [tab, setTab] = useState("overview");
+
+  // Courses state
   const [courses, setCourses] = useState([]);
-  const [view, setView] = useState("list"); // "list" | "new" | "edit"
-  const [editingId, setEditingId] = useState(null);
+  const [courseView, setCourseView] = useState("list");
+  const [editingCourseId, setEditingCourseId] = useState(null);
+
+  // Articles state
+  const [articles, setArticles] = useState([]);
+  const [articleView, setArticleView] = useState("list");
+  const [editingArticle, setEditingArticle] = useState(null);
 
   useEffect(() => {
     if (!authLoading && (!user || user.role !== "admin")) {
@@ -351,14 +654,27 @@ export default function Admin() {
     apiFetch("/api/courses/admin/all").then(data => setCourses(Array.isArray(data) ? data : []));
   };
 
+  const loadArticles = () => {
+    apiFetch("/api/articles/admin/all").then(data => setArticles(Array.isArray(data) ? data : []));
+  };
+
   useEffect(() => {
-    if (user?.role === "admin") loadCourses();
+    if (user?.role === "admin") {
+      loadCourses();
+      loadArticles();
+    }
   }, [user]);
 
-  const handleDelete = async (id) => {
+  const handleDeleteCourse = async (id) => {
     if (!confirm("Delete this course? This cannot be undone.")) return;
     await apiFetch(`/api/courses/${id}`, { method: "DELETE" });
     loadCourses();
+  };
+
+  const handleDeleteArticle = async (id) => {
+    if (!confirm("Delete this article? This cannot be undone.")) return;
+    await apiFetch(`/api/articles/${id}`, { method: "DELETE" });
+    loadArticles();
   };
 
   if (authLoading) return <div className="admin-loader">Loading...</div>;
@@ -372,22 +688,72 @@ export default function Admin() {
         <span className="admin-topbar-user">{user.name}</span>
       </div>
 
+      {/* Tab navigation */}
+      <nav className="admin-tabs">
+        {[
+          { id: "overview", label: "Overview" },
+          { id: "courses", label: "Courses" },
+          { id: "articles", label: "Articles" },
+          { id: "sessions", label: "Sessions" },
+        ].map(t => (
+          <button
+            key={t.id}
+            className={`admin-tab-btn${tab === t.id ? " active" : ""}`}
+            onClick={() => setTab(t.id)}
+          >
+            {t.label}
+          </button>
+        ))}
+      </nav>
+
       <div className="admin-content">
-        {view === "list" && (
-          <CourseList
-            courses={courses}
-            onNew={() => { setEditingId(null); setView("new"); }}
-            onSelect={(id) => { setEditingId(id); setView("edit"); }}
-            onDelete={handleDelete}
-          />
+        {/* Overview Tab */}
+        {tab === "overview" && <OverviewTab />}
+
+        {/* Courses Tab */}
+        {tab === "courses" && (
+          <>
+            {courseView === "list" && (
+              <CourseList
+                courses={courses}
+                onNew={() => { setEditingCourseId(null); setCourseView("new"); }}
+                onSelect={(id) => { setEditingCourseId(id); setCourseView("edit"); }}
+                onDelete={handleDeleteCourse}
+              />
+            )}
+            {(courseView === "new" || courseView === "edit") && (
+              <CourseEditor
+                courseId={courseView === "edit" ? editingCourseId : null}
+                onSave={() => { loadCourses(); setCourseView("list"); }}
+                onCancel={() => setCourseView("list")}
+              />
+            )}
+          </>
         )}
-        {(view === "new" || view === "edit") && (
-          <CourseEditor
-            courseId={view === "edit" ? editingId : null}
-            onSave={() => { loadCourses(); setView("list"); }}
-            onCancel={() => setView("list")}
-          />
+
+        {/* Articles Tab */}
+        {tab === "articles" && (
+          <>
+            {articleView === "list" && (
+              <ArticleList
+                articles={articles}
+                onNew={() => { setEditingArticle(null); setArticleView("new"); }}
+                onSelect={(a) => { setEditingArticle(a); setArticleView("edit"); }}
+                onDelete={handleDeleteArticle}
+              />
+            )}
+            {(articleView === "new" || articleView === "edit") && (
+              <ArticleEditor
+                article={articleView === "edit" ? editingArticle : null}
+                onSave={() => { loadArticles(); setArticleView("list"); }}
+                onCancel={() => setArticleView("list")}
+              />
+            )}
+          </>
         )}
+
+        {/* Sessions Tab */}
+        {tab === "sessions" && <SessionsTab />}
       </div>
     </div>
   );
