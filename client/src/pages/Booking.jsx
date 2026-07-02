@@ -4,8 +4,6 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import BookingModal from "../components/BookingModal";
 import RazorpayButton from "../components/RazorpayButton";
-import { useUser } from "../context/UserProvider";
-import { useTriggerGoogleLogin } from "../utils/googleLoginHelper";
 import "../styles/Booking.css";
 
 const PACKAGES = [
@@ -79,9 +77,6 @@ const FAQS = [
 ];
 
 export default function Booking() {
-  const { user, setUser } = useUser();
-  const login = useTriggerGoogleLogin(setUser);
-
   const [modalOpen, setModalOpen] = useState(false);
   const [initialSessionType, setInitialSessionType] = useState("one-on-one");
   const [openFAQ, setOpenFAQ] = useState(null);
@@ -173,8 +168,7 @@ export default function Booking() {
           {showPay && (
             <div className="pay-section">
               <h3>Pay for your session</h3>
-              {user ? (
-                <>
+              <>
                   <div className="form-group">
                     <label htmlFor="pay-amount" className="form-label">
                       Amount (₹)
@@ -211,17 +205,6 @@ export default function Booking() {
                     </div>
                   </div>
                 </>
-              ) : (
-                <div className="booking-login-prompt">
-                  <p>Please log in to continue with your payment.</p>
-                  <button
-                    className="booking-login-btn"
-                    onClick={() => login()}
-                  >
-                    Log in with Google
-                  </button>
-                </div>
-              )}
             </div>
           )}
         </div>

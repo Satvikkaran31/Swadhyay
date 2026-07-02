@@ -17,6 +17,7 @@ import courseRoutes from "./routes/courseRoutes.js";
 import enrollmentRoutes from "./routes/enrollmentRoutes.js";
 import progressRoutes from "./routes/progressRoutes.js";
 import articleRoutes from "./routes/articleRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 import { ensureAuthenticated } from "./controllers/auth.js";
 import { handleInquiry, inquiryLimiter } from "./controllers/Inquiry.js";
 dotenv.config();
@@ -85,6 +86,7 @@ app.use("/api/courses", courseRoutes);
 app.use("/api/enrollments", enrollmentRoutes);
 app.use("/api/progress", progressRoutes);
 app.use("/api/articles", articleRoutes);
+app.use("/api/users", userRoutes);
 app.post("/api/contact-us", inquiryLimiter, handleInquiry)
 // Serve frontend build (from Vite)
 app.use(express.static(path.join(__dirname, "../client/dist")));
