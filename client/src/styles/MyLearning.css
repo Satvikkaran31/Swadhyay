@@ -152,5 +152,5 @@
 
 @media (max-width: 600px) {
   .my-learning-grid { grid-template-columns: 1fr; }
-  .my-learning-page h1 { font-size: 1.8rem; }
+  .my-learning-hero h1 { font-size: 1.8rem; }
 }

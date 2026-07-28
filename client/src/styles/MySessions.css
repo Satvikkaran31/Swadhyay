@@ -1,0 +1,141 @@
+.my-sessions-hero {
+  padding: 4rem 2rem 2rem;
+  text-align: center;
+}
+
+.my-sessions-hero h1 {
+  font-size: 2.4rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.my-sessions-page {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 5rem;
+}
+
+.my-sessions-group-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted, #888);
+  margin: 2rem 0 0.75rem;
+}
+
+.my-sessions-list { display: flex; flex-direction: column; gap: 1rem; }
+
+.my-session-card {
+  background: var(--card-bg, #fff);
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 14px;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  transition: box-shadow 0.2s;
+}
+
+.session-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.07); }
+
+.session-card.cancelled { opacity: 0.55; }
+
+.my-session-card-left { flex: 1; }
+
+.session-type {
+  font-weight: 700;
+  font-size: 1rem;
+  margin-bottom: 0.3rem;
+  color: var(--text-primary);
+}
+
+.session-time {
+  font-size: 0.9rem;
+  color: var(--text-muted, #888);
+  margin-bottom: 0.5rem;
+}
+
+.session-badges { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+.session-badge {
+  display: inline-block;
+  padding: 0.2rem 0.7rem;
+  border-radius: 99px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.session-badge.upcoming { background: #dcfce7; color: #166534; }
+.session-badge.past     { background: #f3f4f6; color: #6b7280; }
+.session-badge.cancelled-badge { background: #fee2e2; color: #991b1b; }
+
+.session-meet-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #1A2B3C;
+  color: #fff;
+  padding: 0.5rem 1.1rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: opacity 0.2s;
+}
+
+.session-meet-btn:hover { opacity: 0.85; }
+
+.session-cancel-btn {
+  background: none;
+  border: 1px solid #fca5a5;
+  color: #dc2626;
+  padding: 0.45rem 1rem;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+
+.session-cancel-btn:hover { background: #fee2e2; }
+
+.my-session-card-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: flex-end;
+  flex-shrink: 0;
+}
+
+.my-sessions-status {
+  text-align: center;
+  padding: 4rem 1rem;
+  color: var(--text-muted, #888);
+}
+
+.my-sessions-book-btn {
+  margin-top: 1rem;
+  display: inline-block;
+  background: #1A2B3C;
+  color: #fff;
+  padding: 0.7rem 1.5rem;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+@media (max-width: 600px) {
+  .my-session-card { flex-direction: column; }
+  .my-session-card-actions { flex-direction: row; align-items: center; }
+}
+
+@media (prefers-color-scheme: dark) {
+  .my-session-card { background: #1e2a35; border-color: #2d3f50; }
+  .session-badge.past { background: #2d3f50; color: #9ca3af; }
+  .session-badge.upcoming { background: #14532d; color: #86efac; }
+}

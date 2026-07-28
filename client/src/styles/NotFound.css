@@ -1,0 +1,75 @@
+.nf-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--primary-bg, #ECF5EE);
+  padding: 2rem;
+}
+
+.nf-inner {
+  text-align: center;
+  max-width: 480px;
+}
+
+.nf-code {
+  font-size: 7rem;
+  font-weight: 800;
+  line-height: 1;
+  color: rgba(26, 43, 60, 0.08);
+  letter-spacing: -0.05em;
+  margin-bottom: 1rem;
+  font-family: var(--font-primary, "Poppins", sans-serif);
+}
+
+.nf-title {
+  font-family: var(--font-hero-title, "Playwrite HU", cursive);
+  font-size: 2rem;
+  font-weight: 400;
+  color: var(--gradient-start, #1D2A2D);
+  margin-bottom: 0.75rem;
+}
+
+.nf-desc {
+  font-size: 1rem;
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.nf-links {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.nf-btn-primary {
+  background: var(--button-primary, #1A2B3C);
+  color: #fff;
+  padding: 0.75rem 1.75rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: opacity 0.2s;
+}
+
+.nf-btn-primary:hover { opacity: 0.85; }
+
+.nf-btn-secondary {
+  background: transparent;
+  color: var(--button-primary, #1A2B3C);
+  padding: 0.75rem 1.75rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border: 1.5px solid var(--button-primary, #1A2B3C);
+  transition: background 0.2s, color 0.2s;
+}
+
+.nf-btn-secondary:hover {
+  background: var(--button-primary, #1A2B3C);
+  color: #fff;
+}

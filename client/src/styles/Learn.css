@@ -58,9 +58,17 @@
   white-space: nowrap;
 }
 
-.learn-progress-bar {
+.learn-progress-track {
   height: 6px;
   width: 80px;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 3px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.learn-progress-bar {
+  height: 100%;
   background: var(--accent-green);
   border-radius: 3px;
   transition: width 0.3s ease;
@@ -262,8 +270,82 @@
   flex-shrink: 0;
 }
 
+/* ── Certificate banner ───────────────────────────────────────── */
+.learn-cert-banner {
+  margin-top: 1.5rem;
+  background: linear-gradient(135deg, #1A2B3C, #2d4a63);
+  color: #fff;
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.learn-cert-link {
+  background: #fff;
+  color: #1A2B3C;
+  padding: 0.5rem 1.25rem;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: opacity 0.2s;
+}
+
+.learn-cert-link:hover { opacity: 0.85; }
+
 /* ── Responsive ──────────────────────────────────────────────── */
 @media (max-width: 768px) {
-  .learn-sidebar { display: none; }
   .learn-main { padding: 1rem; }
+
+  .learn-sidebar-toggle { display: block; }
+
+  .learn-sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: min(320px, 85vw);
+    z-index: 500;
+    box-shadow: -4px 0 24px rgba(0, 0, 0, 0.18);
+    transform: translateX(100%);
+    transition: transform 0.27s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+  }
+
+  .learn-sidebar.open {
+    transform: translateX(0);
+  }
+
+  .learn-sidebar-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.38);
+    z-index: 499;
+    animation: sidebarFadeIn 0.2s ease;
+  }
+
+  @keyframes sidebarFadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  .learn-topbar {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .learn-course-title {
+    order: 3;
+    width: 100%;
+    font-size: 0.85rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .learn-progress-track { width: 50px; }
 }

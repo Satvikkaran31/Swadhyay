@@ -1,53 +1,197 @@
-
-
-body {
-    background-color: var(--primary-bg);
-    font-family: var(--font-primary);
+/* ── Hero ─────────────────────────────────────────────────────────── */
+.whoami-hero {
+  padding: 5rem 2rem 3rem;
+  background: var(--primary-bg);
 }
 
-
-
-/* --- Work In Progress Page Styles --- */
-.wip-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    min-height: calc(100dvh - 10dvh);
-    padding: 2rem;
+.whoami-hero-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 4rem;
 }
 
-.wip-content {
-    max-width: 600px;
+.whoami-hero-text { flex: 1; }
+
+.whoami-eyebrow {
+  display: inline-block;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #1A2B3C;
+  margin-bottom: 1rem;
+  opacity: 0.65;
 }
 
-.wip-image {
-    width: 100%;
-    max-width: 450px;
-    height: auto;
-    margin-bottom: 2rem;
-    border: none;
-    box-shadow: none;
+.whoami-hero-text h1 {
+  font-size: 2.8rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--text-primary, #1A2B3C);
+  margin-bottom: 1.25rem;
+  font-family: var(--font-primary);
 }
 
-.wip-text {
-    font-family: var(--font-handwriting);
-    font-size: 3rem;
-    color: var(--text-secondary);
-    margin-bottom: 0.5rem;
+.whoami-hero-lead {
+  font-size: 1.1rem;
+  line-height: 1.75;
+  color: var(--text-secondary, #4b5563);
+  max-width: 540px;
 }
 
-.wip-subtext {
-    font-family: var(--font-primary);
-    font-size: 1.2rem;
-    color: var(--text-dark-alt);
+.whoami-hero-image {
+  flex-shrink: 0;
+  width: 320px;
 }
 
+.whoami-hero-image img {
+  width: 100%;
+  border-radius: 20px;
+  object-fit: cover;
+  aspect-ratio: 4/5;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.12);
+}
+
+/* ── Stats bar ────────────────────────────────────────────────────── */
+.whoami-stats {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0;
+  background: #1A2B3C;
+  padding: 2.5rem 2rem;
+}
+
+.whoami-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 3rem;
+  border-right: 1px solid rgba(255,255,255,0.15);
+}
+
+.whoami-stat:last-child { border-right: none; }
+
+.whoami-stat-number {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+}
+
+.whoami-stat-label {
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.65);
+  margin-top: 0.35rem;
+  text-align: center;
+}
+
+/* ── Bio sections ─────────────────────────────────────────────────── */
+.whoami-sections {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 4rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 3.5rem;
+}
+
+.whoami-section h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1A2B3C;
+  margin-bottom: 1rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 2px solid #1A2B3C20;
+}
+
+.whoami-section p {
+  font-size: 1.02rem;
+  line-height: 1.8;
+  color: var(--text-secondary, #374151);
+  margin-bottom: 0.9rem;
+}
+
+.whoami-section p:last-child { margin-bottom: 0; }
+
+/* ── Credentials grid ─────────────────────────────────────────────── */
+.whoami-credentials {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.whoami-credential-card {
+  background: var(--card-bg, #f9fafb);
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.whoami-cred-label {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #1A2B3C;
+}
+
+.whoami-cred-desc {
+  font-size: 0.82rem;
+  color: var(--text-secondary, #6b7280);
+  line-height: 1.4;
+}
+
+/* ── Quote block ──────────────────────────────────────────────────── */
+.whoami-quote-block {
+  background: linear-gradient(135deg, #1A2B3C 0%, #2d4a63 100%);
+  border-radius: 20px;
+  padding: 3rem;
+  text-align: center;
+  color: #fff;
+}
+
+.whoami-quote-block blockquote {
+  font-size: 1.5rem;
+  font-style: italic;
+  font-family: Georgia, serif;
+  line-height: 1.6;
+  margin: 0 0 0.75rem;
+}
+
+.whoami-quote-block cite {
+  font-size: 0.9rem;
+  opacity: 0.75;
+  display: block;
+  margin-bottom: 1.5rem;
+}
+
+.whoami-quote-body {
+  font-size: 1rem;
+  line-height: 1.75;
+  opacity: 0.9;
+  max-width: 620px;
+  margin: 0 auto;
+}
+
+/* ── Responsive ───────────────────────────────────────────────────── */
 @media (max-width: 768px) {
-    .wip-text {
-        font-size: 2.5rem;
-    }
-    .wip-subtext {
-        font-size: 1rem;
-    }
+  .whoami-hero-inner { flex-direction: column; gap: 2rem; }
+  .whoami-hero-image { width: 100%; max-width: 320px; align-self: center; }
+  .whoami-hero-text h1 { font-size: 2rem; }
+  .whoami-stat { padding: 1rem 1.5rem; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.15); width: 100%; }
+  .whoami-stat:last-child { border-bottom: none; }
+  .whoami-quote-block { padding: 2rem 1.5rem; }
+  .whoami-quote-block blockquote { font-size: 1.2rem; }
+}
+
+@media (prefers-color-scheme: dark) {
+  .whoami-credential-card { background: #1e2a35; border-color: #2d3f50; }
+  .whoami-section h2 { color: #e2e8f0; border-bottom-color: rgba(255,255,255,0.1); }
+  .whoami-section p { color: #94a3b8; }
+  .whoami-cred-label { color: #e2e8f0; }
 }
