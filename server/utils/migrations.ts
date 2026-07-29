@@ -215,6 +215,15 @@ const migrations = [
           'Neha is a certified executive and life coach who has worked with leaders, young professionals, and organisations across India. Her coaching integrates evidence-based practices with deep human presence — helping clients move from clarity of mind to clarity of self.',
           true
    WHERE NOT EXISTS (SELECT 1 FROM instructor_profiles WHERE is_primary = true)`,
+
+  // ── Lesson types: 'video' (default) or 'text' (reading/reflection lesson) ──
+  `ALTER TABLE lessons ADD COLUMN IF NOT EXISTS type TEXT NOT NULL DEFAULT 'video' CHECK (type IN ('video', 'text'))`,
+
+  // ── Rich text / markdown content for text-type lessons ───────────────────────
+  `ALTER TABLE lessons ADD COLUMN IF NOT EXISTS content TEXT`,
+
+  // ── Module-level description (shown under module title in curriculum) ─────────
+  `ALTER TABLE modules ADD COLUMN IF NOT EXISTS description TEXT`,
 ];
 
 export async function runMigrations() {

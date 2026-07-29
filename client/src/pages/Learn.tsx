@@ -1,9 +1,16 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useUser } from "../context/UserProvider";
+import { marked } from "marked";
+import DOMPurify from "dompurify";
 import "../styles/Learn.css";
 
 const API = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+
+function renderMarkdown(md: string | null | undefined): string {
+  if (!md) return "";
+  return DOMPurify.sanitize(marked.parse(md) as string);
+}
 
 function toEmbedUrl(url: string | null | undefined) {
   if (!url) return null;
@@ -177,20 +184,38 @@ export default function Learn() {
         {/* ── MAIN ────────────────────────────────────────────────── */}
         <div className="lms-main">
 
-          {/* Video */}
-          {embedUrl ? (
-            <div className="lms-video-wrap">
-              <iframe
-                key={activeLesson.id}
-                src={embedUrl}
-                title={activeLesson.title}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
-            </div>
-          ) : (
-            <div className="lms-no-video">
-              <span>No video for this lesson yet.</span>
+          {/* Video lesson */}
+          {activeLesson?.type !== 'text' && (
+            embedUrl ? (
+              <div className="lms-video-wrap">
+                <iframe
+                  key={activeLesson.id}
+                  src={embedUrl}
+                  title={activeLesson.title}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </div>
+            ) : (
+              <div className="lms-no-video">
+                <span>No video for this lesson yet.</span>
+              </div>
+            )
+          )}
+
+          {/* Text / reading lesson */}
+          {activeLesson?.type === 'text' && (
+            <div className="lms-text-lesson">
+              {activeLesson.content ? (
+                <div
+                  className="lms-text-prose"
+                  dangerouslySetInnerHTML={{ __html: renderMarkdown(activeLesson.content) }}
+                />
+              ) : (
+                <div className="lms-no-video">
+                  <span>No content for this lesson yet.</span>
+                </div>
+              )}
             </div>
           )}
 
@@ -201,6 +226,9 @@ export default function Learn() {
                 Lesson {currentIdx + 1} of {allLessons.length}
               </span>
               <h2 className="lms-lesson-title">{activeLesson?.title}</h2>
+              <span className={`lms-lesson-type-badge lms-lesson-type-${activeLesson?.type ?? 'video'}`}>
+                {activeLesson?.type === 'text' ? '☰ Reading' : '▷ Video'}
+              </span>
             </div>
             <button
               className={`lms-complete-btn${isCompleted ? " done" : ""}`}
@@ -309,7 +337,10 @@ export default function Learn() {
             <div key={mod.id} className="lms-module">
               <div className="lms-module-title">
                 <span className="lms-module-num">{String(mi + 1).padStart(2, "0")}</span>
-                {mod.title}
+                <div className="lms-module-title-text">
+                  <span>{mod.title}</span>
+                  {mod.description && <span className="lms-module-desc">{mod.description}</span>}
+                </div>
               </div>
               {mod.lessons?.map((lesson: any) => {
                 const done = completedIds.has(lesson.id);
@@ -325,6 +356,9 @@ export default function Learn() {
                   >
                     <span className={`lms-check${done ? " checked" : ""}`}>
                       {done ? "✓" : "○"}
+                    </span>
+                    <span className="lms-lesson-type-icon">
+                      {lesson.type === 'text' ? '☰' : '▷'}
                     </span>
                     <span className="lms-lesson-name">{lesson.title}</span>
                     {lesson.duration && (

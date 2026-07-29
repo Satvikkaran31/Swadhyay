@@ -110,6 +110,13 @@
 
 .cd-hero-stat-icon { color: #8FE0D4; }
 
+.cd-hero-last-updated {
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+  color: #8FE0D4;
+  margin-top: 12px;
+}
+
 /* ── Hero rings / right visual ────────────────────────────────────── */
 .cd-hero-rings-wrap {
   position: relative;
@@ -391,6 +398,15 @@
   margin-top: 2px;
 }
 
+.cd-mod-description {
+  font-size: 13px;
+  color: #6B7A6F;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 400;
+  margin-top: 3px;
+  line-height: 1.4;
+}
+
 .cd-mod-arrow {
   margin-left: auto;
   font-size: 24px;
@@ -435,6 +451,18 @@
   color: #9AB0A6;
   font-size: 13px;
   white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.cd-lesson-type-tag {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .06em;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(95,200,184,.12);
+  color: #0E766B;
   flex-shrink: 0;
 }
 
@@ -770,6 +798,84 @@
   font-family: 'Poppins', sans-serif;
   font-size: 13px;
   margin-top: 8px;
+}
+
+/* ── Rating summary / distribution ───────────────────────────────── */
+.cd-rating-summary {
+  display: flex;
+  gap: 32px;
+  align-items: center;
+  background: rgba(18,54,43,.06);
+  border-radius: 16px;
+  padding: 24px 28px;
+  margin-bottom: 32px;
+}
+.cd-rating-big {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.cd-rating-score {
+  font-family: 'Poppins', sans-serif;
+  font-size: 52px;
+  font-weight: 300;
+  color: #12362B;
+  line-height: 1;
+}
+.cd-rating-stars-display {
+  font-size: 18px;
+  color: #0E9C8A;
+  letter-spacing: 2px;
+}
+.cd-rating-label {
+  font-family: 'Poppins', sans-serif;
+  font-size: 12px;
+  color: #6B7A6F;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.cd-rating-bars {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.cd-rating-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.cd-rating-bar-track {
+  flex: 1;
+  height: 8px;
+  background: rgba(18,54,43,.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.cd-rating-bar-fill {
+  height: 100%;
+  background: #5FC8B8;
+  border-radius: 4px;
+  transition: width .4s ease;
+}
+.cd-rating-bar-star {
+  font-size: 12px;
+  color: #0E9C8A;
+  width: 56px;
+  text-align: right;
+}
+.cd-rating-bar-count {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  color: #6B7A6F;
+  width: 20px;
+  text-align: right;
+}
+@media (max-width: 640px) {
+  .cd-rating-summary { flex-direction: column; align-items: flex-start; gap: 20px; }
 }
 
 /* ── INSTRUCTOR BAND ──────────────────────────────────────────────── */

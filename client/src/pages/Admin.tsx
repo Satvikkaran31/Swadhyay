@@ -18,12 +18,12 @@ async function apiFetch(path, opts: RequestInit = {}) {
   return res.json();
 }
 
-function emptyLesson(): { id?: number; title: string; video_url: string; duration: string; is_preview: boolean } {
-  return { title: "", video_url: "", duration: "", is_preview: false };
+function emptyLesson(): { id?: number; title: string; video_url: string; duration: string; is_preview: boolean; type: string; content: string } {
+  return { title: "", video_url: "", duration: "", is_preview: false, type: "video", content: "" };
 }
 
-function emptyModule(): { id?: number; title: string; lessons: ReturnType<typeof emptyLesson>[] } {
-  return { title: "", lessons: [emptyLesson()] };
+function emptyModule(): { id?: number; title: string; description: string; lessons: ReturnType<typeof emptyLesson>[] } {
+  return { title: "", description: "", lessons: [emptyLesson()] };
 }
 
 function emptyCourse() {
@@ -313,6 +313,10 @@ function CourseEditor({ courseId, onSave, onCancel }) {
     isDirty.current = true;
     setForm(f => { const mods = [...f.modules]; mods[mi] = { ...mods[mi], title: val }; return { ...f, modules: mods }; });
   };
+  const setModuleField = (mi: number, field: string, val: string) => {
+    isDirty.current = true;
+    setForm(f => { const mods = [...f.modules]; mods[mi] = { ...mods[mi], [field]: val }; return { ...f, modules: mods }; });
+  };
   const addModule = () => { isDirty.current = true; setForm(f => ({ ...f, modules: [...f.modules, emptyModule()] })); };
   const removeModule = (mi: number) => { isDirty.current = true; setForm(f => ({ ...f, modules: f.modules.filter((_, i) => i !== mi) })); };
   const moveModule = (mi: number, dir: number) => {
@@ -388,11 +392,14 @@ function CourseEditor({ courseId, onSave, onCancel }) {
           modules: form.modules.map((mod, mi) => ({
             ...(mod.id ? { id: mod.id } : {}),
             title: mod.title,
+            description: (mod as any).description || null,
             position: mi,
             lessons: mod.lessons.map((lesson, li) => ({
               ...(lesson.id ? { id: lesson.id } : {}),
               title: lesson.title,
+              type: (lesson as any).type || "video",
               video_url: lesson.video_url || null,
+              content: (lesson as any).content || null,
               duration: lesson.duration ? Number(lesson.duration) : null,
               position: li,
               is_preview: Boolean(lesson.is_preview),
@@ -550,6 +557,15 @@ function CourseEditor({ courseId, onSave, onCancel }) {
 
               {!isCollapsed && (
                 <div className="admin-lessons">
+                  <div className="admin-form-group" style={{ marginBottom: "1rem" }}>
+                    <label>Module Description (optional)</label>
+                    <textarea
+                      rows={2}
+                      value={(mod as any).description || ""}
+                      onChange={e => setModuleField(mi, "description", e.target.value)}
+                      placeholder="Brief description of what this module covers…"
+                    />
+                  </div>
                   {mod.lessons.map((lesson, li) => (
                     <div key={li} className="admin-lesson-block">
                       <div className="admin-lesson-left">
@@ -565,15 +581,39 @@ function CourseEditor({ courseId, onSave, onCancel }) {
                             <label>Lesson Title</label>
                             <input value={lesson.title} onChange={e => setLessonField(mi, li, "title", e.target.value)} placeholder="Lesson title" />
                           </div>
-                          <div className="admin-form-group">
-                            <label>Video URL (YouTube / Vimeo)</label>
-                            <input value={lesson.video_url || ""} onChange={e => setLessonField(mi, li, "video_url", e.target.value)} placeholder="https://youtube.com/watch?v=…" />
+                          <div className="admin-form-group narrow">
+                            <label>Lesson Type</label>
+                            <select
+                              value={(lesson as any).type || "video"}
+                              onChange={e => setLessonField(mi, li, "type", e.target.value)}
+                            >
+                              <option value="video">▷ Video</option>
+                              <option value="text">☰ Text / Reading</option>
+                            </select>
                           </div>
                           <div className="admin-form-group narrow">
                             <label>Duration (sec)</label>
                             <input type="number" min="0" value={lesson.duration || ""} onChange={e => setLessonField(mi, li, "duration", e.target.value)} placeholder="e.g. 360" />
                           </div>
                         </div>
+                        {((lesson as any).type === "text") && (
+                          <div className="admin-form-group">
+                            <label>Content (Markdown)</label>
+                            <textarea
+                              rows={10}
+                              value={(lesson as any).content || ""}
+                              onChange={e => setLessonField(mi, li, "content", e.target.value)}
+                              placeholder={"Write lesson content in Markdown…\n\n# Heading\nRegular paragraph text\n\n- Bullet point"}
+                              style={{ fontFamily: "IBM Plex Mono, monospace", fontSize: 13 }}
+                            />
+                          </div>
+                        )}
+                        {(!(lesson as any).type || (lesson as any).type === "video") && (
+                          <div className="admin-form-group">
+                            <label>Video URL (YouTube or Vimeo)</label>
+                            <input value={lesson.video_url || ""} onChange={e => setLessonField(mi, li, "video_url", e.target.value)} placeholder="https://youtube.com/watch?v=…" />
+                          </div>
+                        )}
                         <div className="admin-lesson-footer">
                           <label className="admin-checkbox-label">
                             <input type="checkbox" checked={lesson.is_preview} onChange={e => setLessonField(mi, li, "is_preview", e.target.checked)} />

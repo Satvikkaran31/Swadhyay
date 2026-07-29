@@ -30,6 +30,7 @@ function reshapeCourseRows(rows, { includeResources = false, includeVideoUrls = 
     is_published: r.is_published, created_at: r.created_at, updated_at: r.updated_at,
     series_id: r.series_id,
     series: r.series_title ? { id: r.series_id, title: r.series_title, slug: r.series_slug } : null,
+    enrollment_count: r.enrollment_count ?? 0,
     modules: [],
   };
   const moduleMap = new Map();
@@ -37,7 +38,7 @@ function reshapeCourseRows(rows, { includeResources = false, includeVideoUrls = 
   for (const row of rows) {
     if (!row.m_id) continue;
     if (!moduleMap.has(row.m_id)) {
-      const mod = { id: row.m_id, title: row.m_title, position: row.m_pos, lessons: [] };
+      const mod = { id: row.m_id, title: row.m_title, description: row.m_desc ?? null, position: row.m_pos, lessons: [] };
       moduleMap.set(row.m_id, mod);
       course.modules.push(mod);
     }
@@ -47,6 +48,8 @@ function reshapeCourseRows(rows, { includeResources = false, includeVideoUrls = 
       const lesson: Record<string, any> = {
         id: row.l_id, title: row.l_title, duration: row.l_duration,
         position: row.l_pos, is_preview: row.l_is_preview,
+        type: row.l_type ?? 'video',
+        content: (includeVideoUrls || includeResources) ? (row.l_content ?? null) : undefined,
         video_url: showVideo ? row.l_video_url : undefined,
       };
       if (includeResources) lesson.resources = [];
@@ -60,6 +63,10 @@ function reshapeCourseRows(rows, { includeResources = false, includeVideoUrls = 
       }
     }
   }
+  course.total_duration = course.modules.reduce(
+    (sum: number, m: any) => sum + m.lessons.reduce((s: number, l: any) => s + (l.duration ?? 0), 0),
+    0
+  );
   return course;
 }
 
@@ -96,9 +103,10 @@ export async function getCourse(req, res) {
          c.what_youll_learn, c.requirements, c.level, c.language,
          c.thumbnail_url, c.price, c.is_published, c.created_at, c.updated_at,
          c.series_id, s.title AS series_title, s.slug AS series_slug,
-         m.id AS m_id, m.title AS m_title, m.position AS m_pos,
-         l.id AS l_id, l.title AS l_title, l.video_url AS l_video_url,
-         l.duration AS l_duration, l.position AS l_pos, l.is_preview AS l_is_preview
+         (SELECT COUNT(*)::int FROM enrollments WHERE course_id = c.id) AS enrollment_count,
+         m.id AS m_id, m.title AS m_title, m.description AS m_desc, m.position AS m_pos,
+         l.id AS l_id, l.title AS l_title, l.type AS l_type, l.content AS l_content,
+         l.video_url AS l_video_url, l.duration AS l_duration, l.position AS l_pos, l.is_preview AS l_is_preview
        FROM courses c
        LEFT JOIN series s ON s.id = c.series_id
        LEFT JOIN modules m ON m.course_id = c.id
@@ -143,9 +151,9 @@ export async function getCourseLearning(req, res) {
       `SELECT
          c.id, c.slug, c.title, c.description, c.thumbnail_url, c.price,
          c.is_published, c.created_at, c.updated_at,
-         m.id AS m_id, m.title AS m_title, m.position AS m_pos,
-         l.id AS l_id, l.title AS l_title, l.video_url AS l_video_url,
-         l.duration AS l_duration, l.position AS l_pos, l.is_preview AS l_is_preview
+         m.id AS m_id, m.title AS m_title, m.description AS m_desc, m.position AS m_pos,
+         l.id AS l_id, l.title AS l_title, l.type AS l_type, l.content AS l_content,
+         l.video_url AS l_video_url, l.duration AS l_duration, l.position AS l_pos, l.is_preview AS l_is_preview
        FROM courses c
        LEFT JOIN modules m ON m.course_id = c.id
        LEFT JOIN lessons l ON l.module_id = m.id
@@ -290,45 +298,45 @@ export async function batchSaveCourse(req, res) {
       if (mods[mi].id) existingMods.push({ ...mods[mi], pos: mi });
       else newMods.push({ ...mods[mi], pos: mi });
     }
-    const existingLessons: Array<{ id: number; title: string; video_url: string|null; duration: number|null; pos: number; is_preview: boolean }> = [];
+    const existingLessons: Array<{ id: number; title: string; type: string; content: string|null; video_url: string|null; duration: number|null; pos: number; is_preview: boolean }> = [];
 
     for (let mi = 0; mi < mods.length; mi++) {
       for (let li = 0; li < (mods[mi].lessons ?? []).length; li++) {
         const l = mods[mi].lessons[li];
         if (l.id) {
-          existingLessons.push({ id: l.id, title: l.title, video_url: l.video_url || null, duration: l.duration ? Number(l.duration) : null, pos: li, is_preview: Boolean(l.is_preview) });
+          existingLessons.push({ id: l.id, title: l.title, type: l.type || 'video', content: l.content ?? null, video_url: l.video_url || null, duration: l.duration ? Number(l.duration) : null, pos: li, is_preview: Boolean(l.is_preview) });
         }
       }
     }
 
     if (existingMods.length) {
-      const offset = existingMods.length * 3;
-      const vals = existingMods.map((_, i) => `($${i * 3 + 1}::int, $${i * 3 + 2}::text, $${i * 3 + 3}::int)`).join(',');
+      const offset = existingMods.length * 4;
+      const vals = existingMods.map((_, i) => `($${i * 4 + 1}::int, $${i * 4 + 2}::text, $${i * 4 + 3}::text, $${i * 4 + 4}::int)`).join(',');
       await client.query(
-        `UPDATE modules AS m SET title = v.title, position = v.pos
-         FROM (VALUES ${vals}) AS v(id, title, pos)
+        `UPDATE modules AS m SET title = v.title, description = v.desc, position = v.pos
+         FROM (VALUES ${vals}) AS v(id, title, desc, pos)
          WHERE m.id = v.id AND m.course_id = $${offset + 1}`,
-        [...existingMods.flatMap(m => [m.id, m.title, m.pos]), courseId]
+        [...existingMods.flatMap(m => [m.id, m.title, m.description ?? null, m.pos]), courseId]
       );
     }
 
     if (existingLessons.length) {
-      const offset = existingLessons.length * 6;
-      const vals = existingLessons.map((_, i) => `($${i * 6 + 1}::int, $${i * 6 + 2}::text, $${i * 6 + 3}::text, $${i * 6 + 4}::int, $${i * 6 + 5}::int, $${i * 6 + 6}::boolean)`).join(',');
+      const offset = existingLessons.length * 8;
+      const vals = existingLessons.map((_, i) => `($${i * 8 + 1}::int, $${i * 8 + 2}::text, $${i * 8 + 3}::text, $${i * 8 + 4}::text, $${i * 8 + 5}::text, $${i * 8 + 6}::int, $${i * 8 + 7}::int, $${i * 8 + 8}::boolean)`).join(',');
       await client.query(
-        `UPDATE lessons AS l SET title = v.title, video_url = v.video_url, duration = v.duration, position = v.pos, is_preview = v.is_preview
-         FROM (VALUES ${vals}) AS v(id, title, video_url, duration, pos, is_preview)
+        `UPDATE lessons AS l SET title = v.title, type = v.type, content = v.content, video_url = v.video_url, duration = v.duration, position = v.pos, is_preview = v.is_preview
+         FROM (VALUES ${vals}) AS v(id, title, type, content, video_url, duration, pos, is_preview)
          WHERE l.id = v.id
            AND l.module_id IN (SELECT id FROM modules WHERE course_id = $${offset + 1})`,
-        [...existingLessons.flatMap(l => [l.id, l.title, l.video_url, l.duration, l.pos, l.is_preview]), courseId]
+        [...existingLessons.flatMap(l => [l.id, l.title, l.type, l.content, l.video_url, l.duration, l.pos, l.is_preview]), courseId]
       );
     }
 
     const modulePosToId = new Map<number, number>(existingMods.map(m => [m.pos, m.id]));
     for (const mod of newMods) {
       const { rows } = await client.query(
-        `INSERT INTO modules (course_id, title, position) VALUES ($1, $2, $3) RETURNING id`,
-        [courseId, mod.title, mod.pos]
+        `INSERT INTO modules (course_id, title, description, position) VALUES ($1, $2, $3, $4) RETURNING id`,
+        [courseId, mod.title, mod.description ?? null, mod.pos]
       );
       modulePosToId.set(mod.pos, rows[0].id);
     }
@@ -345,8 +353,8 @@ export async function batchSaveCourse(req, res) {
           keptLessonIds.push(lesson.id);
         } else {
           const { rows } = await client.query(
-            `INSERT INTO lessons (module_id, title, video_url, duration, position, is_preview) VALUES ($1,$2,$3,$4,$5,$6) RETURNING id`,
-            [modId, lesson.title, lesson.video_url || null, lesson.duration ? Number(lesson.duration) : null, li, Boolean(lesson.is_preview)]
+            `INSERT INTO lessons (module_id, title, type, content, video_url, duration, position, is_preview) VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING id`,
+            [modId, lesson.title, lesson.type || 'video', lesson.content ?? null, lesson.video_url || null, lesson.duration ? Number(lesson.duration) : null, li, Boolean(lesson.is_preview)]
           );
           keptLessonIds.push(rows[0].id);
         }
@@ -388,12 +396,12 @@ export async function deleteCourse(req, res) {
 }
 
 export async function createModule(req, res) {
-  const { course_id, title, position = 0 } = req.body;
+  const { course_id, title, description, position = 0 } = req.body;
   if (!course_id || !title) return res.status(400).json({ error: 'course_id and title are required' });
   try {
     const { rows } = await pool.query(
-      `INSERT INTO modules (course_id, title, position) VALUES ($1, $2, $3) RETURNING *`,
-      [course_id, title, position]
+      `INSERT INTO modules (course_id, title, description, position) VALUES ($1, $2, $3, $4) RETURNING *`,
+      [course_id, title, description ?? null, position]
     );
     res.status(201).json(rows[0]);
   } catch {
@@ -403,12 +411,12 @@ export async function createModule(req, res) {
 
 export async function updateModule(req, res) {
   const { id } = req.params;
-  const { title, position } = req.body;
+  const { title, description, position } = req.body;
   try {
     const { rows } = await pool.query(
-      `UPDATE modules SET title = COALESCE($1, title), position = COALESCE($2, position)
-       WHERE id = $3 RETURNING *`,
-      [title, position, id]
+      `UPDATE modules SET title = COALESCE($1, title), description = COALESCE($2, description), position = COALESCE($3, position)
+       WHERE id = $4 RETURNING *`,
+      [title, description, position, id]
     );
     if (!rows.length) return res.status(404).json({ error: 'Module not found' });
     res.json(rows[0]);
@@ -427,16 +435,18 @@ export async function deleteModule(req, res) {
 }
 
 export async function createLesson(req, res) {
-  const { module_id, title, video_url, duration, position = 0, is_preview = false } = req.body;
+  const { module_id, title, type = 'video', content = null, video_url, duration, position = 0, is_preview = false } = req.body;
   if (!module_id || !title) return res.status(400).json({ error: 'module_id and title are required' });
+  const ALLOWED_TYPES = ['video', 'text'];
+  if (type && !ALLOWED_TYPES.includes(type)) return res.status(400).json({ error: 'Lesson type must be video or text' });
   if (!isAllowedVideoUrl(video_url)) {
     return res.status(400).json({ error: 'Video URL must be from YouTube or Vimeo' });
   }
   try {
     const { rows } = await pool.query(
-      `INSERT INTO lessons (module_id, title, video_url, duration, position, is_preview)
-       VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-      [module_id, title, video_url, duration, position, is_preview]
+      `INSERT INTO lessons (module_id, title, type, content, video_url, duration, position, is_preview)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
+      [module_id, title, type, content, video_url, duration, position, is_preview]
     );
     res.status(201).json(rows[0]);
   } catch {
@@ -446,7 +456,7 @@ export async function createLesson(req, res) {
 
 export async function updateLesson(req, res) {
   const { id } = req.params;
-  const { title, video_url, duration, position, is_preview } = req.body;
+  const { title, type, content, video_url, duration, position, is_preview } = req.body;
   if (!isAllowedVideoUrl(video_url)) {
     return res.status(400).json({ error: 'Video URL must be from YouTube or Vimeo' });
   }
@@ -454,12 +464,14 @@ export async function updateLesson(req, res) {
     const { rows } = await pool.query(
       `UPDATE lessons
        SET title      = COALESCE($1, title),
-           video_url  = COALESCE($2, video_url),
-           duration   = COALESCE($3, duration),
-           position   = COALESCE($4, position),
-           is_preview = COALESCE($5, is_preview)
-       WHERE id = $6 RETURNING *`,
-      [title, video_url, duration, position, is_preview, id]
+           type       = COALESCE($2, type),
+           content    = COALESCE($3, content),
+           video_url  = COALESCE($4, video_url),
+           duration   = COALESCE($5, duration),
+           position   = COALESCE($6, position),
+           is_preview = COALESCE($7, is_preview)
+       WHERE id = $8 RETURNING *`,
+      [title, type, content, video_url, duration, position, is_preview, id]
     );
     if (!rows.length) return res.status(404).json({ error: 'Lesson not found' });
     res.json(rows[0]);
@@ -643,9 +655,9 @@ export async function getAdminCourse(req, res) {
          c.what_youll_learn, c.requirements, c.level, c.language,
          c.thumbnail_url, c.price, c.is_published, c.series_id,
          c.created_at, c.updated_at,
-         m.id AS m_id, m.title AS m_title, m.position AS m_pos,
-         l.id AS l_id, l.title AS l_title, l.video_url AS l_video_url,
-         l.duration AS l_duration, l.position AS l_pos, l.is_preview AS l_is_preview,
+         m.id AS m_id, m.title AS m_title, m.description AS m_desc, m.position AS m_pos,
+         l.id AS l_id, l.title AS l_title, l.type AS l_type, l.content AS l_content,
+         l.video_url AS l_video_url, l.duration AS l_duration, l.position AS l_pos, l.is_preview AS l_is_preview,
          r.id AS r_id, r.title AS r_title, r.url AS r_url, r.type AS r_type
        FROM courses c
        LEFT JOIN modules m ON m.course_id = c.id

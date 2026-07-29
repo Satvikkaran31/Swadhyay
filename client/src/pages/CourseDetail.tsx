@@ -208,6 +208,14 @@ export default function CourseDetail() {
     ? reviews.reduce((s, r) => s + r.rating, 0) / reviews.length
     : null;
 
+  const ratingDist = [5,4,3,2,1].map(star => ({
+    star,
+    count: reviews.filter(r => r.rating === star).length,
+    pct: reviews.length > 0
+      ? Math.round(reviews.filter(r => r.rating === star).length / reviews.length * 100)
+      : 0,
+  }));
+
   if (loading) return <CourseSkeleton />;
   if (!course) return null;
 
@@ -249,6 +257,12 @@ export default function CourseDetail() {
                   {fmtDuration(course.total_duration)}
                 </div>
               )}
+              {course.enrollment_count > 0 && (
+                <div className="cd-hero-stat">
+                  <span className="cd-hero-stat-icon">◎</span>
+                  {course.enrollment_count.toLocaleString("en-IN")} enrolled
+                </div>
+              )}
               {avgRating !== null && (
                 <div className="cd-hero-stat">
                   <span className="cd-hero-stat-icon">★</span>
@@ -256,6 +270,11 @@ export default function CourseDetail() {
                 </div>
               )}
             </div>
+            {course.updated_at && (
+              <div className="cd-hero-last-updated">
+                Last updated {new Date(course.updated_at).toLocaleDateString("en-IN", { month: "long", year: "numeric" })}
+              </div>
+            )}
           </div>
 
           <div className="rv cd-hero-rings-wrap">
@@ -354,8 +373,15 @@ export default function CourseDetail() {
                           <span className="cd-mod-num">{num}</span>
                           <div style={{ flex: 1 }}>
                             <div className="cd-mod-title">{mod.title}</div>
+                            {mod.description && (
+                              <div className="cd-mod-description">{mod.description}</div>
+                            )}
                             <div className="cd-mod-meta-text">
                               {mod.lessons?.length ?? 0} lesson{mod.lessons?.length !== 1 ? "s" : ""}
+                              {(() => {
+                                const modSecs = mod.lessons?.reduce((s: number, l: any) => s + (l.duration ?? 0), 0) ?? 0;
+                                return modSecs > 0 ? ` · ${fmtDuration(modSecs)}` : "";
+                              })()}
                             </div>
                           </div>
                           <span
@@ -375,14 +401,23 @@ export default function CourseDetail() {
                         >
                           {mod.lessons?.map((lesson: any) => (
                             <div key={lesson.id} className="cd-lesson">
-                              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <polygon points="5 3 19 12 5 21 5 3"/>
-                              </svg>
+                              {lesson.type === 'text' ? (
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                  <line x1="3" y1="6" x2="21" y2="6"/>
+                                  <line x1="3" y1="12" x2="21" y2="12"/>
+                                  <line x1="3" y1="18" x2="15" y2="18"/>
+                                </svg>
+                              ) : (
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                  <polygon points="5 3 19 12 5 21 5 3"/>
+                                </svg>
+                              )}
                               <span className="cd-lesson-title">{lesson.title}</span>
-                              {lesson.is_preview && lesson.video_url && (
-                                <button className="cd-preview-chip" onClick={() => setPreviewLesson(lesson)}>
-                                  Preview
-                                </button>
+                              {lesson.type === 'text' && (
+                                <span className="cd-lesson-type-tag">Reading</span>
+                              )}
+                              {lesson.is_preview && lesson.video_url && lesson.type !== 'text' && (
+                                <button className="cd-preview-chip" onClick={() => setPreviewLesson(lesson)}>Preview</button>
                               )}
                               {lesson.duration && (
                                 <span className="cd-lesson-dur">
@@ -500,6 +535,29 @@ export default function CourseDetail() {
                 {reviewSubmitting ? "Submitting…" : "Submit Review"}
               </button>
               {reviewError && <p className="cd-review-error">{reviewError}</p>}
+            </div>
+          )}
+
+          {reviews.length > 0 && (
+            <div className="cd-rating-summary">
+              <div className="cd-rating-big">
+                <span className="cd-rating-score">{avgRating?.toFixed(1)}</span>
+                <div className="cd-rating-stars-display">
+                  {"★".repeat(Math.round(avgRating ?? 0))}{"☆".repeat(5 - Math.round(avgRating ?? 0))}
+                </div>
+                <span className="cd-rating-label">Course rating</span>
+              </div>
+              <div className="cd-rating-bars">
+                {ratingDist.map(({ star, count, pct }) => (
+                  <div key={star} className="cd-rating-bar-row">
+                    <div className="cd-rating-bar-track">
+                      <div className="cd-rating-bar-fill" style={{ width: `${pct}%` }} />
+                    </div>
+                    <span className="cd-rating-bar-star">{"★".repeat(star)}</span>
+                    <span className="cd-rating-bar-count">{count}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
 
