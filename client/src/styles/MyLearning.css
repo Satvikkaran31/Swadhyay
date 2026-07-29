@@ -1,156 +1,178 @@
-/* ── Dark hero ───────────────────────────────────────────────── */
-.my-learning-hero {
+/* ── Hero ─────────────────────────────────────────────────────── */
+.ml-hero {
   background:
-    repeating-linear-gradient(
-      to right,
-      rgba(0,0,0,0.2), rgba(0,0,0,0.2) 1px,
-      transparent 1px, transparent 3em
-    ),
-    repeating-linear-gradient(
-      to bottom,
-      rgba(0,0,0,0.2), rgba(0,0,0,0.2) 1px,
-      transparent 1px, transparent 3em
-    ),
-    linear-gradient(to bottom, #1B2B2E, #1E3134);
-  border-bottom-left-radius: var(--border-radius-md);
-  border-bottom-right-radius: var(--border-radius-md);
-  box-shadow: 0 10px 16px -3px rgba(0, 0, 0, 0.8);
-  padding: 6.5rem 2rem 4rem;
-  text-align: center;
-  margin-bottom: 3rem;
+    radial-gradient(100% 90% at 90% -10%, #155E55 0%, rgba(21,94,85,0) 60%),
+    linear-gradient(168deg, #123B2F 0%, #0F2E24 45%, #0C2419 100%);
+  padding-top: 170px;
+  padding-bottom: 64px;
 }
 
-.my-learning-hero h1 {
-  font-family: var(--font-hero-title);
-  font-size: 3rem;
-  font-weight: 400;
-  color: var(--text-primary);
-  margin: 0;
-}
-
-/* ── Page ────────────────────────────────────────────────────── */
-.my-learning-page {
-  max-width: 1100px;
+.ml-hero-inner {
+  max-width: 760px;
   margin: 0 auto;
-  padding: 0 2rem 4rem;
-  min-height: 60vh;
-  font-family: var(--font-primary);
 }
 
-.my-learning-status {
-  text-align: center;
-  padding: 5rem 0;
-  color: #666;
-  font-size: 1rem;
+.ml-hero-h1 {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300;
+  font-size: 60px;
+  color: #F4F1E9;
+  line-height: 1.1;
+  margin: 16px 0 0;
+}
+
+.ml-hero-sub {
+  font-family: 'Poppins', sans-serif;
+  font-size: 18px;
+  color: #B9C6BC;
+  margin-top: 12px;
+}
+
+/* ── Body ─────────────────────────────────────────────────────── */
+.ml-body {
+  background: #F4F1E9;
+  padding: 72px 0 104px;
+}
+
+.ml-body-inner {
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+/* ── Status (loading / empty / not-logged-in) ─────────────────── */
+.ml-status {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.25rem;
+  gap: 20px;
+  padding: 80px 0;
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  color: #6B7A6F;
 }
 
-.my-learning-login-btn,
-.my-learning-browse-btn {
-  background: var(--button-primary);
-  color: #fff;
-  border: none;
-  padding: 0.75rem 2rem;
-  border-radius: var(--border-radius-xsm);
-  font-family: var(--font-primary);
-  font-size: 0.95rem;
-  cursor: pointer;
-  transition: background 0.2s;
+@keyframes ml-spin {
+  to { transform: rotate(360deg); }
 }
 
-.my-learning-login-btn:hover,
-.my-learning-browse-btn:hover {
-  background: var(--gradient-mid);
+.ml-spinner {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid rgba(95, 200, 184, 0.25);
+  border-top-color: #5FC8B8;
+  animation: ml-spin 0.9s linear infinite;
 }
 
-/* ── Grid ────────────────────────────────────────────────────── */
-.my-learning-grid {
+/* ── Grid ─────────────────────────────────────────────────────── */
+.ml-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
 }
 
-/* ── Card ────────────────────────────────────────────────────── */
-.my-learning-card {
+@media (max-width: 900px) {
+  .ml-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .ml-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ml-hero-h1 {
+    font-size: 38px;
+  }
+}
+
+/* ── Card ─────────────────────────────────────────────────────── */
+.ml-card {
   background: #fff;
-  border-radius: var(--border-radius-sm);
+  border: 1px solid rgba(18, 54, 43, 0.12);
+  border-radius: 22px;
   overflow: hidden;
-  box-shadow: var(--shadow-default);
+  box-shadow: 0 8px 30px -12px rgba(18, 54, 43, 0.18);
   display: flex;
   flex-direction: column;
 }
 
-.my-learning-thumb {
+.ml-card-thumb {
   width: 100%;
-  height: 170px;
+  height: 160px;
   object-fit: cover;
+  display: block;
 }
 
-.my-learning-thumb-placeholder {
+.ml-card-thumb-placeholder {
   width: 100%;
-  height: 170px;
-  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+  height: 160px;
+  background: repeating-linear-gradient(
+    135deg,
+    #DCE6DE,
+    #DCE6DE 12px,
+    #D2DECF 12px,
+    #D2DECF 24px
+  );
+  display: block;
 }
 
-.my-learning-card-body {
-  padding: 1.25rem;
+.ml-card-body {
+  padding: 22px;
+  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 14px;
 }
 
-.my-learning-card-body h3 {
-  font-size: 1rem;
+.ml-card-title {
+  font-family: 'Poppins', sans-serif;
   font-weight: 600;
-  color: var(--text-secondary);
-  line-height: 1.4;
+  font-size: 17px;
+  color: #12362B;
+  line-height: 1.35;
 }
 
-.my-learning-progress {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-}
-
-.my-learning-progress-bar {
-  height: 6px;
-  background: #dde6df;
-  border-radius: 3px;
+.ml-card-progress-track {
+  height: 4px;
+  background: rgba(18, 54, 43, 0.1);
+  border-radius: 2px;
   overflow: hidden;
 }
 
-.my-learning-progress-fill {
+.ml-card-progress-fill {
   height: 100%;
-  background: var(--accent-dark-green);
-  border-radius: 3px;
+  background: #5FC8B8;
+  border-radius: 2px;
   transition: width 0.4s ease;
 }
 
-.my-learning-progress span {
-  font-size: 0.78rem;
-  color: #888;
+.ml-card-progress-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  color: #6E8577;
+  margin-top: 6px;
 }
 
-.my-learning-continue-btn {
-  background: var(--button-primary);
+.ml-card-btn {
+  display: block;
+  width: 100%;
+  background: #12362B;
   color: #fff;
   border: none;
-  padding: 0.6rem 1.25rem;
-  border-radius: var(--border-radius-xsm);
-  font-family: var(--font-primary);
-  font-size: 0.875rem;
-  font-weight: 600;
+  border-radius: 999px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  padding: 13px 28px;
   cursor: pointer;
-  transition: background 0.2s;
-  align-self: flex-start;
+  margin-top: auto;
+  text-align: center;
+  transition: opacity 0.2s;
 }
 
-.my-learning-continue-btn:hover { background: var(--gradient-mid); }
-
-@media (max-width: 600px) {
-  .my-learning-grid { grid-template-columns: 1fr; }
-  .my-learning-hero h1 { font-size: 1.8rem; }
+.ml-card-btn:hover {
+  opacity: 0.88;
 }

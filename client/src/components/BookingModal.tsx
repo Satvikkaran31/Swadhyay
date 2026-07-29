@@ -117,12 +117,12 @@ export default function BookingModal({ onClose, initialSessionType = "one-on-one
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-container" onClick={(e) => e.stopPropagation()}>
         <button className="modal-close" onClick={onClose} aria-label="Close">
-          ✖
+          ✕
         </button>
 
         {success && successDetails ? (
           <div className="booking-success">
-            <span className="booking-success-icon">✅</span>
+            <div className="booking-success-icon-wrap">✅</div>
             <h3>Session booked!</h3>
             <p>
               <strong>{successDetails.sessionType}</strong> on{" "}
@@ -146,56 +146,69 @@ export default function BookingModal({ onClose, initialSessionType = "one-on-one
           </div>
         ) : (
           <>
-            <h2>Schedule a Session</h2>
+            <h2 className="modal-heading">Schedule a Session</h2>
             <form onSubmit={handleSubmit}>
+
               {/* Name + Email */}
               <div className="form-row">
-                <input
-                  type="text"
-                  name="name"
-                  value={form.name}
-                  placeholder="Your Name"
-                  onChange={handleChange}
-                  required
-                />
-                <input
-                  type="email"
-                  name="email"
-                  value={form.email}
-                  placeholder="Email"
-                  onChange={handleChange}
-                  required
-                />
+                <div className="modal-field">
+                  <label className="modal-label">Your Name</label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={form.name}
+                    placeholder="Full name"
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <div className="modal-field">
+                  <label className="modal-label">Email</label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={form.email}
+                    placeholder="you@example.com"
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
               </div>
 
               {/* Occupation + Organisation */}
               <div className="form-row">
-                <select
-                  name="occupation"
-                  value={form.occupation}
-                  onChange={handleChange}
-                  required
-                >
-                  <option value="" disabled>Select your occupation</option>
-                  <option value="Working Professional">Working Professional</option>
-                  <option value="Student">Student</option>
-                  <option value="Women Professional">Women Professional</option>
-                  <option value="Other">Other</option>
-                </select>
-                <input
-                  type="text"
-                  name="organization"
-                  value={form.organization}
-                  placeholder="Company / Institution"
-                  onChange={handleChange}
-                  required
-                />
+                <div className="modal-field">
+                  <label className="modal-label">Occupation</label>
+                  <select
+                    name="occupation"
+                    value={form.occupation}
+                    onChange={handleChange}
+                    required
+                  >
+                    <option value="" disabled>Select occupation</option>
+                    <option value="Working Professional">Working Professional</option>
+                    <option value="Student">Student</option>
+                    <option value="Women Professional">Women Professional</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div className="modal-field">
+                  <label className="modal-label">Company / Institution</label>
+                  <input
+                    type="text"
+                    name="organization"
+                    value={form.organization}
+                    placeholder="Where you work or study"
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
               </div>
 
               {/* Session type cards */}
               <div>
                 <p className="modal-section-label">Session type</p>
-                <div className="session-type-cards">
+                <div className="modal-session-type-cards">
                   {SESSION_TYPES.map((st) => (
                     <button
                       key={st.value}
@@ -211,14 +224,17 @@ export default function BookingModal({ onClose, initialSessionType = "one-on-one
               </div>
 
               {/* Date */}
-              <input
-                type="date"
-                name="date"
-                value={form.date}
-                onChange={handleDateChange}
-                min={new Date().toISOString().split("T")[0]}
-                required
-              />
+              <div className="modal-field">
+                <label className="modal-label">Preferred Date</label>
+                <input
+                  type="date"
+                  name="date"
+                  value={form.date}
+                  onChange={handleDateChange}
+                  min={new Date().toISOString().split("T")[0]}
+                  required
+                />
+              </div>
 
               {/* Time slots as pills */}
               <div>
@@ -235,7 +251,7 @@ export default function BookingModal({ onClose, initialSessionType = "one-on-one
                 ) : availableSlots.length === 0 ? (
                   <p className="slots-empty">No slots available on this day.</p>
                 ) : (
-                  <div className="slot-pills">
+                  <div className="modal-slots-grid">
                     {availableSlots.map((slot) => (
                       <button
                         key={slot}

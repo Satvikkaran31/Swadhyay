@@ -1,75 +1,103 @@
+/* ── 404 Not Found page ───────────────────────────────── */
+
 .nf-page {
   min-height: 100vh;
+  background:
+    radial-gradient(100% 90% at 90% -10%, #155E55 0%, rgba(21,94,85,0) 60%),
+    linear-gradient(168deg, #123B2F 0%, #0F2E24 45%, #0C2419 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--primary-bg, #ECF5EE);
-  padding: 2rem;
+  padding: 40px 22px;
+  position: relative;
+  overflow: hidden;
+}
+
+.nf-orb {
+  position: absolute;
+  top: -80px;
+  right: -40px;
+  width: 400px;
+  height: 400px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(95,200,184,.3) 0%, rgba(95,200,184,0) 70%);
+  filter: blur(24px);
+  pointer-events: none;
+  animation: floaty 9s ease-in-out infinite;
 }
 
 .nf-inner {
+  position: relative;
   text-align: center;
-  max-width: 480px;
+  max-width: 560px;
 }
 
-.nf-code {
-  font-size: 7rem;
-  font-weight: 800;
-  line-height: 1;
-  color: rgba(26, 43, 60, 0.08);
-  letter-spacing: -0.05em;
-  margin-bottom: 1rem;
-  font-family: var(--font-primary, "Poppins", sans-serif);
+.nf-eyebrow {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  letter-spacing: .2em;
+  color: #8FE0D4;
+  display: block;
+  margin-bottom: 16px;
 }
 
 .nf-title {
-  font-family: var(--font-hero-title, "Playwrite HU", cursive);
-  font-size: 2rem;
-  font-weight: 400;
-  color: var(--gradient-start, #1D2A2D);
-  margin-bottom: 0.75rem;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300;
+  font-size: 72px;
+  color: #F4F1E9;
+  margin: 0 0 16px;
+  line-height: 1;
 }
 
 .nf-desc {
-  font-size: 1rem;
-  color: #666;
+  font-family: 'Poppins', sans-serif;
+  font-size: 19px;
+  color: #B9C6BC;
   line-height: 1.6;
-  margin-bottom: 2rem;
+  margin: 0 0 36px;
 }
 
 .nf-links {
   display: flex;
-  gap: 1rem;
+  gap: 14px;
   justify-content: center;
   flex-wrap: wrap;
 }
 
 .nf-btn-primary {
-  background: var(--button-primary, #1A2B3C);
-  color: #fff;
-  padding: 0.75rem 1.75rem;
-  border-radius: 8px;
+  background: #5FC8B8;
+  color: #0C241C;
+  font-weight: 700;
+  padding: 14px 28px;
+  border-radius: 999px;
   text-decoration: none;
-  font-weight: 600;
-  font-size: 0.9rem;
-  transition: opacity 0.2s;
+  font-family: 'Poppins', sans-serif;
+  font-size: 15px;
+  transition: opacity .2s;
 }
 
-.nf-btn-primary:hover { opacity: 0.85; }
+.nf-btn-primary:hover { opacity: .88; }
 
-.nf-btn-secondary {
-  background: transparent;
-  color: var(--button-primary, #1A2B3C);
-  padding: 0.75rem 1.75rem;
-  border-radius: 8px;
+.nf-btn-ghost {
+  border: 1.5px solid rgba(255,255,255,.22);
+  color: #CDD7CF;
+  padding: 14px 28px;
+  border-radius: 999px;
   text-decoration: none;
-  font-weight: 600;
-  font-size: 0.9rem;
-  border: 1.5px solid var(--button-primary, #1A2B3C);
-  transition: background 0.2s, color 0.2s;
+  font-family: 'Poppins', sans-serif;
+  font-size: 15px;
+  transition: opacity .2s;
 }
 
-.nf-btn-secondary:hover {
-  background: var(--button-primary, #1A2B3C);
-  color: #fff;
+.nf-btn-ghost:hover { opacity: .8; }
+
+/* Responsive */
+@media (max-width: 920px) {
+  .nf-title { font-size: 48px; }
+}
+
+@media (max-width: 480px) {
+  .nf-title { font-size: 38px; }
+  .nf-desc  { font-size: 16px; }
 }

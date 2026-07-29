@@ -42,12 +42,14 @@ function SeriesSkeleton() {
   return (
     <div className="main">
       <Navbar />
-      <div className="series-detail-hero">
-        <div className="series-detail-hero-inner">
-          <div className="sd-sk-line w30" style={{ marginBottom: "1rem" }} />
-          <div className="sd-sk-line w70" style={{ height: "2.5rem", marginBottom: "1rem" }} />
-          <div className="sd-sk-line w90" />
-          <div className="sd-sk-line w60" style={{ marginTop: "0.5rem" }} />
+      <div className="sd-hero">
+        <div className="sd-hero-inner">
+          <div className="sd-hero-left">
+            <div className="sd-sk-line w30" style={{ marginBottom: '1rem' }} />
+            <div className="sd-sk-line w70" style={{ height: '2.5rem', marginBottom: '1rem' }} />
+            <div className="sd-sk-line w90" />
+            <div className="sd-sk-line w60" style={{ marginTop: '0.5rem' }} />
+          </div>
         </div>
       </div>
       <Footer />
@@ -87,121 +89,151 @@ export default function SeriesDetail() {
     <div className="main">
       <Navbar />
 
-      {/* ── Hero ───────────────────────────────────────────────── */}
-      <div className="series-detail-hero">
-        <div className="series-detail-hero-inner">
-          <nav className="series-breadcrumb">
-            <Link to="/series">Series</Link>
-            <span>›</span>
-            <span>{series.title}</span>
-          </nav>
+      {/* ── Hero ────────────────────────────────────────────────────── */}
+      <section className="sd-hero">
+        <div className="sd-hero-inner">
 
-          <p className="sd-hero-eyebrow">Course Series</p>
-          <h1 className="sd-hero-title">{series.title}</h1>
-          {series.description && <p className="series-detail-desc">{series.description}</p>}
+          {/* Left: copy */}
+          <div className="sd-hero-left">
+            <nav className="sd-breadcrumb">
+              <Link to="/series">Series</Link>
+              <span>›</span>
+              <span>{series.title}</span>
+            </nav>
 
-          <div className="sd-hero-stats">
-            <div className="sd-stat">
-              <span className="sd-stat-num">{courseCount}</span>
-              <span className="sd-stat-label">Course{courseCount !== 1 ? "s" : ""}</span>
-            </div>
-            {totalStudents > 0 && (
-              <>
-                <div className="sd-stat-divider" />
-                <div className="sd-stat">
-                  <span className="sd-stat-num">{totalStudents.toLocaleString("en-IN")}+</span>
-                  <span className="sd-stat-label">Students</span>
-                </div>
-              </>
+            <span className="sd-eyebrow">Course Series</span>
+            <h1 className="sd-hero-title">{series.title}</h1>
+
+            {series.description && (
+              <p className="sd-hero-desc">{series.description}</p>
             )}
+
+            <div className="sd-hero-stats">
+              <div className="sd-stat">
+                <span className="sd-stat-num">{courseCount}</span>
+                <span className="sd-stat-label">Course{courseCount !== 1 ? 's' : ''}</span>
+              </div>
+              {totalStudents > 0 && (
+                <>
+                  <div className="sd-stat-divider" />
+                  <div className="sd-stat">
+                    <span className="sd-stat-num">{totalStudents.toLocaleString('en-IN')}+</span>
+                    <span className="sd-stat-label">Students</span>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
+
+          {/* Right: decorative rings */}
+          <div className="sd-hero-right">
+            <div className="sd-ring sd-ring-1" />
+            <div className="sd-ring sd-ring-2" />
+            <div className="sd-ring sd-ring-3" />
+            <div className="sd-ring-center">
+              <span className="sd-ring-num">{courseCount}</span>
+              <span className="sd-ring-tag">COURSES</span>
+            </div>
+          </div>
+
         </div>
-      </div>
+      </section>
 
-      <div className="series-detail-body">
+      {/* ── Body ────────────────────────────────────────────────────── */}
+      <section className="sd-body">
+        <div className="sd-body-inner">
 
-        {/* Features */}
-        {Array.isArray(series.features) && series.features.length > 0 && (
-          <section className="series-features">
-            <h2>What This Series Offers</h2>
-            <div className="series-features-grid">
-              {series.features.map((f: any, i: number) => (
-                <div key={i} className="series-feature-card">
-                  {f.icon && <span className="series-feature-icon">{f.icon}</span>}
-                  <h3>{f.title}</h3>
-                  {f.desc && <p>{f.desc}</p>}
-                </div>
-              ))}
+          {/* Features */}
+          {Array.isArray(series.features) && series.features.length > 0 && (
+            <div className="sd-features">
+              <h2 className="sd-section-title">What This Series Offers</h2>
+              <div className="sd-features-grid">
+                {series.features.map((f: any, i: number) => (
+                  <div key={i} className="sd-feature-card">
+                    {f.icon && <span className="sd-feature-icon">{f.icon}</span>}
+                    <h3>{f.title}</h3>
+                    {f.desc && <p>{f.desc}</p>}
+                  </div>
+                ))}
+              </div>
             </div>
-          </section>
-        )}
+          )}
 
-        {/* Courses */}
-        {(!series.courses || series.courses.length === 0) ? (
-          <div className="series-no-courses">
-            <p>Courses in this series are coming soon.</p>
-            <Link to="/courses" className="series-back-link">Browse all courses</Link>
-          </div>
-        ) : (
-          <section className="sd-courses-section">
-            <h2>Courses in This Series</h2>
-            <div className="series-courses-list">
-              {series.courses.map((course: any, idx: number) => (
-                <div
-                  key={course.id}
-                  className="series-course-card"
-                  onClick={() => navigate(`/courses/${course.slug}`)}
-                >
-                  <div className="series-course-index">{String(idx + 1).padStart(2, '0')}</div>
-                  <div className="series-course-thumb-wrap">
-                    {course.thumbnail_url ? (
-                      <img src={course.thumbnail_url} alt={course.title} className="series-course-thumb" />
-                    ) : (
-                      <div className="series-course-thumb-placeholder">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" opacity="0.4">
-                          <circle cx="12" cy="12" r="10"/>
-                          <polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/>
-                        </svg>
-                      </div>
-                    )}
-                  </div>
-                  <div className="series-course-info">
-                    <div className="series-course-badges">
-                      {course.level && course.level !== 'all-levels' && (
-                        <span className="series-course-badge">{LEVEL_LABELS[course.level] ?? course.level}</span>
-                      )}
-                      {course.language && course.language !== 'English' && (
-                        <span className="series-course-badge lang">{course.language}</span>
-                      )}
-                    </div>
-                    <h3>{course.title}</h3>
-                    {(course.short_description || course.description) && (
-                      <p className="series-course-desc">{course.short_description || course.description}</p>
-                    )}
-                    <div className="series-course-meta">
-                      {course.total_lessons > 0 && (
-                        <span>{course.total_lessons} lesson{course.total_lessons !== 1 ? 's' : ''}</span>
-                      )}
-                      {course.total_duration > 0 && (
-                        <span>{fmtDuration(course.total_duration)}</span>
-                      )}
-                      <span className="series-course-price">
-                        {course.price === 0 ? 'Free' : `₹${(course.price / 100).toLocaleString('en-IN')}`}
-                      </span>
-                    </div>
-                  </div>
-                  <button
-                    className="series-course-btn"
-                    onClick={e => { e.stopPropagation(); navigate(`/courses/${course.slug}`); }}
+          {/* Courses */}
+          {(!series.courses || series.courses.length === 0) ? (
+            <div className="sd-no-courses">
+              <p>Courses in this series are coming soon.</p>
+              <Link to="/courses" className="sd-back-link">Browse all courses →</Link>
+            </div>
+          ) : (
+            <>
+              <h2 className="sd-section-title">Courses in This Series</h2>
+              <div className="sd-courses-grid">
+                {series.courses.map((course: any) => (
+                  <div
+                    key={course.id}
+                    className="sd-course-card"
+                    onClick={() => navigate(`/courses/${course.slug}`)}
                   >
-                    View Course
-                  </button>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-      </div>
+                    {/* Thumbnail */}
+                    <div className="sd-thumb">
+                      {course.thumbnail_url ? (
+                        <img
+                          src={course.thumbnail_url}
+                          alt={course.title}
+                          className="sd-thumb-img"
+                        />
+                      ) : (
+                        <div className="sd-thumb-placeholder">
+                          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" opacity="0.4">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/>
+                          </svg>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Card body */}
+                    <div className="sd-card-body">
+                      <div className="sd-badge-row">
+                        {course.level && course.level !== 'all-levels' && (
+                          <span className="sd-badge">
+                            {LEVEL_LABELS[course.level] ?? course.level}
+                          </span>
+                        )}
+                        <span className="sd-badge sd-badge--price">
+                          {course.price === 0
+                            ? 'Free'
+                            : `₹${(course.price / 100).toLocaleString('en-IN')}`}
+                        </span>
+                      </div>
+
+                      <h3 className="sd-card-title">{course.title}</h3>
+
+                      {(course.short_description || course.description) && (
+                        <p className="sd-card-desc">
+                          {course.short_description || course.description}
+                        </p>
+                      )}
+
+                      <div className="sd-card-footer">
+                        <Link
+                          to={`/courses/${course.slug}`}
+                          className="sd-view-link"
+                          onClick={e => e.stopPropagation()}
+                        >
+                          View Course →
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+
+        </div>
+      </section>
 
       <Footer />
     </div>

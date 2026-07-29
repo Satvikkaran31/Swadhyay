@@ -40,6 +40,17 @@ export default function MySessions() {
   const [cancelling, setCancelling] = useState<number | null>(null);
   const [confirmId, setConfirmId] = useState<number | null>(null);
 
+  // rv-go entrance animation
+  useEffect(() => {
+    const t0 = document.timeline?.currentTime ?? 0;
+    requestAnimationFrame(() => {
+      const t1 = document.timeline?.currentTime ?? 0;
+      if (t1 > t0) { document.body.classList.add('rv-go'); return; }
+      requestAnimationFrame(() => document.body.classList.add('rv-go'));
+    });
+    return () => { document.body.classList.remove('rv-go'); };
+  }, []);
+
   useEffect(() => {
     if (!authLoading && !user) navigate('/booking');
   }, [authLoading, user]);
@@ -75,121 +86,132 @@ export default function MySessions() {
   const past = sessions.filter(s => sessionStatus(s) === 'past');
   const cancelled = sessions.filter(s => sessionStatus(s) === 'cancelled');
 
-  if (authLoading || loading) {
-    return (
-      <div className="main">
-        <Navbar />
-        <div className="my-sessions-status">Loading your sessions…</div>
-        <Footer />
-      </div>
-    );
-  }
-
   return (
-    <div className="main">
+    <>
       <Navbar />
-      <div className="my-sessions-hero">
-        <h1>My Sessions</h1>
-        <p>Your coaching sessions with Neha</p>
-      </div>
-      <div className="my-sessions-page">
-        {sessions.length === 0 ? (
-          <div className="my-sessions-status">
-            <p>You haven't booked any sessions yet.</p>
-            <Link to="/booking" className="my-sessions-book-btn">Book a Session</Link>
-          </div>
-        ) : (
-          <>
-            {upcoming.length > 0 && (
-              <>
-                <p className="my-sessions-group-title">Upcoming</p>
-                <div className="my-sessions-list">
-                  {upcoming.map(s => (
-                    <div key={s.id} className="my-session-card">
-                      <div className="my-session-card-left">
-                        <div className="session-type">{s.session_type}</div>
-                        <div className="session-time">{formatDateTime(s.session_start)}</div>
-                        <div className="session-badges">
-                          <span className="session-badge upcoming">Upcoming</span>
-                          {s.meeting_type && <span className="session-badge past">{s.meeting_type}</span>}
-                        </div>
-                      </div>
-                      <div className="my-session-card-actions">
-                        {s.meet_link && (
-                          <a href={s.meet_link} target="_blank" rel="noopener noreferrer" className="session-meet-btn">
-                            Join Meet
-                          </a>
-                        )}
-                        {confirmId === s.id ? (
-                          <>
-                            <button
-                              className="session-cancel-btn"
-                              onClick={() => cancelSession(s.id)}
-                              disabled={cancelling === s.id}
-                            >
-                              {cancelling === s.id ? 'Cancelling…' : 'Confirm cancel'}
-                            </button>
-                            <button
-                              className="session-cancel-btn"
-                              style={{ borderColor: '#d1d5db', color: '#6b7280' }}
-                              onClick={() => setConfirmId(null)}
-                            >
-                              Keep
-                            </button>
-                          </>
-                        ) : (
-                          <button className="session-cancel-btn" onClick={() => setConfirmId(s.id)}>
-                            Cancel
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </>
-            )}
 
-            {past.length > 0 && (
-              <>
-                <p className="my-sessions-group-title">Past</p>
-                <div className="my-sessions-list">
-                  {past.map(s => (
-                    <div key={s.id} className="my-session-card">
-                      <div className="my-session-card-left">
-                        <div className="session-type">{s.session_type}</div>
-                        <div className="session-time">{formatDateTime(s.session_start)}</div>
-                        <div className="session-badges">
-                          <span className="session-badge past">Completed</span>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </>
-            )}
+      <section className="ms-hero sw-page-pad">
+        <div className="rv ms-hero-inner">
+          <span className="mono-label mono-label--light">your schedule</span>
+          <h1 className="ms-hero-h1">My Sessions</h1>
+        </div>
+      </section>
 
-            {cancelled.length > 0 && (
-              <>
-                <p className="my-sessions-group-title">Cancelled</p>
-                <div className="my-sessions-list">
-                  {cancelled.map(s => (
-                    <div key={s.id} className="my-session-card cancelled">
-                      <div className="my-session-card-left">
-                        <div className="session-type">{s.session_type}</div>
-                        <div className="session-time">{formatDateTime(s.session_start)}</div>
-                        <div className="session-badges">
-                          <span className="session-badge cancelled-badge">Cancelled</span>
+      <section className="ms-body sw-page-pad">
+        <div className="ms-body-inner">
+          {authLoading || loading ? (
+            <div className="ms-status">
+              <div className="ms-spinner" />
+              <span>Loading your sessions…</span>
+            </div>
+          ) : sessions.length === 0 ? (
+            <div className="ms-status">
+              <p>You haven't booked any sessions yet.</p>
+              <Link to="/booking" className="ms-book-btn">Book a Session</Link>
+            </div>
+          ) : (
+            <>
+              {upcoming.length > 0 && (
+                <div>
+                  <p className="ms-group-title">Upcoming</p>
+                  <div className="ms-list">
+                    {upcoming.map(s => (
+                      <div key={s.id} className="ms-card">
+                        <div className="ms-card-left">
+                          <div className="ms-session-type">{s.session_type}</div>
+                          <div className="ms-session-time">{formatDateTime(s.session_start)}</div>
+                          <div className="ms-session-badges">
+                            <span className="ms-badge-upcoming">Upcoming</span>
+                            {s.meeting_type && (
+                              <span className="ms-badge-past">{s.meeting_type}</span>
+                            )}
+                          </div>
+                        </div>
+                        <div className="ms-card-actions">
+                          {s.meet_link && (
+                            <a
+                              href={s.meet_link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="ms-join-btn"
+                            >
+                              Join Meet
+                            </a>
+                          )}
+                          {confirmId === s.id ? (
+                            <>
+                              <button
+                                className="ms-cancel-confirm-btn"
+                                onClick={() => cancelSession(s.id)}
+                                disabled={cancelling === s.id}
+                              >
+                                {cancelling === s.id ? 'Cancelling…' : 'Confirm cancel'}
+                              </button>
+                              <button
+                                className="ms-keep-btn"
+                                onClick={() => setConfirmId(null)}
+                              >
+                                Keep
+                              </button>
+                            </>
+                          ) : (
+                            <button
+                              className="ms-cancel-btn"
+                              onClick={() => setConfirmId(s.id)}
+                            >
+                              Cancel
+                            </button>
+                          )}
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
-              </>
-            )}
-          </>
-        )}
-      </div>
+              )}
+
+              {past.length > 0 && (
+                <div>
+                  <p className="ms-group-title">Past</p>
+                  <div className="ms-list">
+                    {past.map(s => (
+                      <div key={s.id} className="ms-card">
+                        <div className="ms-card-left">
+                          <div className="ms-session-type">{s.session_type}</div>
+                          <div className="ms-session-time">{formatDateTime(s.session_start)}</div>
+                          <div className="ms-session-badges">
+                            <span className="ms-badge-past">Completed</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {cancelled.length > 0 && (
+                <div>
+                  <p className="ms-group-title">Cancelled</p>
+                  <div className="ms-list">
+                    {cancelled.map(s => (
+                      <div key={s.id} className="ms-card cancelled">
+                        <div className="ms-card-left">
+                          <div className="ms-session-type">{s.session_type}</div>
+                          <div className="ms-session-time">{formatDateTime(s.session_start)}</div>
+                          <div className="ms-session-badges">
+                            <span className="ms-badge-cancelled">Cancelled</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      </section>
+
       <Footer />
-    </div>
+    </>
   );
 }

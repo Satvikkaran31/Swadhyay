@@ -1,67 +1,85 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import FadeInSection from '../components/FadeInSection';
 import { articlesData } from '../utils/articlesData';
 import '../styles/Articles.css';
 
 marked.setOptions({ breaks: true });
+
+const API = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
 function readingTime(content: string): number {
   const words = (content ?? '').trim().split(/\s+/).filter(Boolean).length;
   return Math.max(1, Math.ceil(words / 200));
 }
 
-function ShareButtons({ title }: { title: string }) {
-  const [copied, setCopied] = useState(false);
-  const url = window.location.href;
-  const copy = () => {
-    navigator.clipboard.writeText(url).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
-  };
-  return (
-    <div className="share-buttons">
-      <span className="share-label">Share:</span>
-      <a className="share-btn" href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`} target="_blank" rel="noopener noreferrer">LinkedIn</a>
-      <a className="share-btn" href={`https://wa.me/?text=${encodeURIComponent(title + ' – ' + url)}`} target="_blank" rel="noopener noreferrer">WhatsApp</a>
-      <button className="share-btn" onClick={copy}>{copied ? 'Copied!' : 'Copy link'}</button>
-    </div>
-  );
-}
-
-const API = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
-
-function formatDate(iso) {
+function formatDate(iso: string | undefined): string {
   if (!iso) return '';
   try {
     return new Date(iso).toLocaleDateString('en-IN', {
-      day: 'numeric', month: 'long', year: 'numeric',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
     });
   } catch {
     return iso;
   }
 }
 
+function ShareButtons({ title }: { title: string }) {
+  const [copied, setCopied] = useState(false);
+  const url = window.location.href;
+
+  const copy = () => {
+    navigator.clipboard.writeText(url).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
+  return (
+    <div className="art-share">
+      <span className="art-share-label">Share:</span>
+      <a
+        className="art-share-btn"
+        href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        LinkedIn
+      </a>
+      <a
+        className="art-share-btn"
+        href={`https://wa.me/?text=${encodeURIComponent(title + ' – ' + url)}`}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        WhatsApp
+      </a>
+      <button className="art-share-btn" onClick={copy}>
+        {copied ? 'Copied!' : 'Copy link'}
+      </button>
+    </div>
+  );
+}
+
 export default function ArticleDetail() {
-  const { slug } = useParams();
+  const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
 
-  const [article, setArticle] = useState(null);
+  const [article, setArticle] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
-  const [related, setRelated] = useState([]);
+  const [related, setRelated] = useState<any[]>([]);
 
   useEffect(() => {
     fetch(`${API}/api/articles/${slug}`)
-      .then(async (res) => {
+      .then(async res => {
         if (res.ok) {
           const data = await res.json();
-          // Normalise API shape to match what the render expects
           setArticle({
             title: data.title,
             author: data.author || 'Neha',
@@ -70,24 +88,19 @@ export default function ArticleDetail() {
             content: data.content || '',
             excerpt: data.excerpt || '',
             slug: data.slug,
+            tags: Array.isArray(data.tags) ? data.tags : [],
           });
         } else if (res.status === 404) {
-          // Fall back to static data
           const staticArticle = articlesData.find(a => a.slug === slug);
-          if (staticArticle) {
-            setArticle(staticArticle);
-          } else {
-            setNotFound(true);
-          }
+          if (staticArticle) setArticle(staticArticle);
+          else setNotFound(true);
         } else {
-          // Server error — fall back to static
           const staticArticle = articlesData.find(a => a.slug === slug);
           if (staticArticle) setArticle(staticArticle);
           else setNotFound(true);
         }
       })
       .catch(() => {
-        // Network error — fall back to static
         const staticArticle = articlesData.find(a => a.slug === slug);
         if (staticArticle) setArticle(staticArticle);
         else setNotFound(true);
@@ -103,116 +116,173 @@ export default function ArticleDetail() {
       .catch(() => {});
   }, [slug]);
 
+  useEffect(() => {
+    const trigger = () => document.body.classList.add('rv-go');
+    if ((document.timeline as any)?.currentTime) {
+      trigger();
+    } else {
+      window.addEventListener('load', trigger, { once: true });
+    }
+    return () => window.removeEventListener('load', trigger);
+  }, []);
+
   if (loading) {
     return (
-      <div className="main">
+      <>
         <Navbar />
-        <div className="article-detail-container">
-          <div style={{ textAlign: 'center', padding: '4rem', color: '#888' }}>
-            Loading…
-          </div>
+        <div className="art-empty" style={{ paddingTop: 200, paddingBottom: 120 }}>
+          Loading…
         </div>
         <Footer />
-      </div>
+      </>
     );
   }
 
   if (notFound || !article) {
     return (
-      <div className="main">
+      <>
         <Navbar />
-        <div className="article-detail-container">
-          <div className="article-not-found">
-            <h2>Article not found</h2>
-            <button onClick={() => navigate('/articles')} className="back-btn">
-              ← Back to Articles
-            </button>
-          </div>
+        <div className="art-empty" style={{ paddingTop: 200, paddingBottom: 120 }}>
+          <p style={{ marginBottom: 24 }}>Article not found.</p>
+          <button
+            onClick={() => navigate('/articles')}
+            style={{
+              background: '#12362B',
+              color: '#fff',
+              border: 'none',
+              borderRadius: 999,
+              padding: '13px 28px',
+              fontFamily: 'Poppins, sans-serif',
+              fontWeight: 700,
+              fontSize: 14,
+              cursor: 'pointer',
+            }}
+          >
+            ← Back to Articles
+          </button>
         </div>
         <Footer />
-      </div>
+      </>
     );
   }
 
   const hasEmbedLink = article.link && !article.content;
+  const mins = article.content ? readingTime(article.content) : null;
 
   return (
-    <div className="main">
+    <>
       <Navbar />
-      <FadeInSection>
-        <div className="article-detail-container">
-          <div className="article-detail-header">
-            <button onClick={() => navigate('/articles')} className="back-btn">
-              ← Back to Articles
-            </button>
-            <h1 className="article-detail-title">{article.title}</h1>
-            <div className="article-detail-meta">
-              <span className="article-author">By {article.author}</span>
-              <span className="article-date">{article.date}</span>
-              {article.content && (
-                <span className="article-read-time">{readingTime(article.content)} min read</span>
-              )}
-            </div>
-            <ShareButtons title={article.title} />
-          </div>
 
-          <div className="article-detail-content">
-            {hasEmbedLink ? (
-              <div className="article-embed-container">
-                <iframe
-                  src={article.link}
-                  className="article-embed-iframe"
-                  title={article.title}
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
-              </div>
-            ) : (
-              <>
-                {article.imageUrl && (
-                  <img
-                    src={article.imageUrl}
-                    alt={article.title}
-                    className="article-detail-image"
-                    onError={(e) => {
-                      const img = e.target as HTMLImageElement;
-                      img.onerror = null;
-                      img.src = 'https://placehold.co/800x400/cccccc/ffffff?text=Image+Not+Found';
-                    }}
-                  />
-                )}
-                <div
-                  className="article-detail-text"
-                  dangerouslySetInnerHTML={{
-                    __html: DOMPurify.sanitize(marked.parse(article.content || '') as string)
-                  }}
-                />
-              </>
-            )}
-          </div>
+      <section className="art-detail-hero sw-page-pad">
+        <div className="art-detail-hero-inner rv">
+          <Link to="/articles" className="art-detail-back">← Back to articles</Link>
 
-          {related.length > 0 && (
-            <div className="related-articles">
-              <h3 className="related-articles-title">You might also like</h3>
-              <div className="related-articles-grid">
-                {related.map((a: any) => (
-                  <Link key={a.slug} to={`/article/${a.slug}`} className="related-article-card">
-                    {a.thumbnail_url && (
-                      <img src={a.thumbnail_url} alt={a.title} className="related-article-thumb" />
-                    )}
-                    <div className="related-article-info">
-                      <h4>{a.title}</h4>
-                      {a.excerpt && <p>{a.excerpt}</p>}
-                    </div>
-                  </Link>
-                ))}
-              </div>
+          {article.tags?.length > 0 && (
+            <div className="art-detail-tags">
+              {article.tags.map((t: string) => (
+                <span key={t} className="art-card-tag">{t}</span>
+              ))}
             </div>
           )}
+
+          <h1 className="art-detail-title">{article.title}</h1>
+
+          <div className="art-detail-meta">
+            <span>By {article.author}</span>
+            {article.date && <span>{article.date}</span>}
+            {mins && <span>{mins} min read</span>}
+          </div>
         </div>
-      </FadeInSection>
-      <Footer />
-    </div>
+      </section>
+
+      <section className="art-detail-body sw-page-pad">
+        <div className="art-detail-body-inner rv">
+          {hasEmbedLink ? (
+            <div style={{ display: 'flex', justifyContent: 'center', minHeight: '70vh' }}>
+              <iframe
+                src={article.link}
+                style={{
+                  width: '100%',
+                  maxWidth: 550,
+                  height: '70vh',
+                  border: '1px solid rgba(18,54,43,.12)',
+                  borderRadius: 16,
+                }}
+                title={article.title}
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+          ) : (
+            <>
+              {article.imageUrl && (
+                <img
+                  src={article.imageUrl}
+                  alt={article.title}
+                  className="art-detail-image"
+                  onError={(e) => {
+                    const img = e.target as HTMLImageElement;
+                    img.onerror = null;
+                    img.style.display = 'none';
+                  }}
+                />
+              )}
+              <div
+                className="art-detail-prose"
+                dangerouslySetInnerHTML={{
+                  __html: DOMPurify.sanitize(
+                    marked.parse(article.content || '') as string,
+                  ),
+                }}
+              />
+            </>
+          )}
+
+          <ShareButtons title={article.title} />
+        </div>
+      </section>
+
+      {related.length > 0 && (
+        <section className="art-related sw-page-pad">
+          <div style={{ maxWidth: 1180, margin: '0 auto' }}>
+            <h2 className="art-related-h2">More to read</h2>
+            <div className="art-related-grid">
+              {related.map((a: any) => (
+                <Link
+                  key={a.slug}
+                  to={`/article/${a.slug}`}
+                  style={{ textDecoration: 'none' }}
+                >
+                  <div className="art-card">
+                    {a.thumbnail_url ? (
+                      <img
+                        src={a.thumbnail_url}
+                        alt={a.title}
+                        className="art-card-img"
+                        onError={(e: any) => {
+                          e.target.onerror = null;
+                          e.target.style.display = 'none';
+                        }}
+                      />
+                    ) : (
+                      <div className="art-card-img-placeholder" />
+                    )}
+                    <div className="art-card-body">
+                      <h3 className="art-card-title">{a.title}</h3>
+                      {a.excerpt && (
+                        <p className="art-card-excerpt">{a.excerpt}</p>
+                      )}
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      <Footer compact />
+    </>
   );
 }
