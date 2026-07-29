@@ -2,17 +2,16 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useUser } from "../context/UserProvider";
 import "../styles/Learn.css";
-import "../styles/Notes.css";
 
 const API = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
 
-function toEmbedUrl(url) {
+function toEmbedUrl(url: string | null | undefined) {
   if (!url) return null;
   const ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
   if (ytMatch) return `https://www.youtube.com/embed/${ytMatch[1]}?rel=0&modestbranding=1`;
   const vimeoMatch = url.match(/vimeo\.com\/(\d+)/);
   if (vimeoMatch) return `https://player.vimeo.com/video/${vimeoMatch[1]}`;
-  return null; // Unknown host — don't embed
+  return null;
 }
 
 export default function Learn() {
@@ -20,14 +19,13 @@ export default function Learn() {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useUser();
 
-  const [course, setCourse] = useState(null);
-  const [completedIds, setCompletedIds] = useState(new Set());
-  const [activeLesson, setActiveLesson] = useState(null);
-  const [resources, setResources] = useState([]);
+  const [course, setCourse] = useState<any>(null);
+  const [completedIds, setCompletedIds] = useState(new Set<number>());
+  const [activeLesson, setActiveLesson] = useState<any>(null);
+  const [resources, setResources] = useState<any[]>([]);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [pageLoading, setPageLoading] = useState(true);
 
-  // Notes
   const [noteText, setNoteText] = useState("");
   const [notesOpen, setNotesOpen] = useState(false);
   const [noteSaved, setNoteSaved] = useState(false);
@@ -35,12 +33,10 @@ export default function Learn() {
   const noteSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => () => { if (noteSaveTimer.current) clearTimeout(noteSaveTimer.current); }, []);
 
-  // Redirect if not logged in
   useEffect(() => {
     if (!authLoading && !user) navigate(`/courses/${slug}`);
   }, [authLoading, user]);
 
-  // Load course + enrollment + progress; abort on slug change to prevent stale state
   useEffect(() => {
     if (!user) return;
     const controller = new AbortController();
@@ -75,7 +71,6 @@ export default function Learn() {
     return () => controller.abort();
   }, [user, slug]);
 
-  // Load resources when active lesson changes
   useEffect(() => {
     if (!activeLesson) return;
     fetch(`${API}/api/courses/lessons/${activeLesson.id}/resources`, { credentials: "include" })
@@ -84,7 +79,6 @@ export default function Learn() {
       .catch(() => setResources([]));
   }, [activeLesson]);
 
-  // Load note when lesson changes
   useEffect(() => {
     if (!activeLesson || !user) return;
     setNoteText("");
@@ -122,75 +116,127 @@ export default function Learn() {
         credentials: "include",
         body: JSON.stringify({ lesson_id: activeLesson.id }),
       });
-      if (res.ok) {
-        setCompletedIds(prev => new Set([...prev, activeLesson.id]));
-      }
-    } catch { /* network error — leave UI unchanged */ }
+      if (res.ok) setCompletedIds(prev => new Set([...prev, activeLesson.id]));
+    } catch { /* leave UI unchanged */ }
   };
 
-  const totalLessons = course?.modules?.reduce((acc, m) => acc + (m.lessons?.length || 0), 0) || 0;
+  const totalLessons = course?.modules?.reduce((acc: number, m: any) => acc + (m.lessons?.length || 0), 0) || 0;
   const progressPct = totalLessons > 0 ? Math.round((completedIds.size / totalLessons) * 100) : 0;
 
+  const allLessons = course?.modules?.flatMap((m: any) => m.lessons ?? []) ?? [];
+  const currentIdx = allLessons.findIndex((l: any) => l.id === activeLesson?.id);
+  const prevLesson = currentIdx > 0 ? allLessons[currentIdx - 1] : null;
+  const nextLesson = currentIdx < allLessons.length - 1 ? allLessons[currentIdx + 1] : null;
+
+  const goNext = () => {
+    markComplete();
+    if (nextLesson) setActiveLesson(nextLesson);
+  };
+
   if (pageLoading || authLoading) {
-    return <div className="learn-fullscreen-loader">Loading your course...</div>;
+    return (
+      <div className="lms-loader">
+        <div className="lms-loader-ring" />
+        <span>Loading your course…</span>
+      </div>
+    );
   }
 
   if (!course) return null;
 
+  const embedUrl = toEmbedUrl(activeLesson?.video_url);
+  const isCompleted = completedIds.has(activeLesson?.id);
+
   return (
-    <div className="learn-layout">
-      {/* Top bar */}
-      <div className="learn-topbar">
-        <button className="learn-back-btn" onClick={() => navigate(`/courses/${slug}`)}>
+    <div className="lms-layout">
+
+      {/* ── TOP BAR ───────────────────────────────────────────────── */}
+      <header className="lms-topbar">
+        <button className="lms-back-btn" onClick={() => navigate(`/courses/${slug}`)}>
           ← Back
         </button>
-        <span className="learn-course-title">{course.title}</span>
-        <div className="learn-progress-pill">
-          <div className="learn-progress-track">
-            <div className="learn-progress-bar" style={{ width: `${progressPct}%` }} />
+        <span className="lms-course-title">{course.title}</span>
+        <div className="lms-progress-wrap">
+          <div className="lms-progress-track">
+            <div className="lms-progress-fill" style={{ width: `${progressPct}%` }} />
           </div>
-          <span>{progressPct}%</span>
+          <span className="lms-progress-pct">{progressPct}%</span>
         </div>
-        <button className="learn-sidebar-toggle" onClick={() => setSidebarOpen(p => !p)}>
-          {sidebarOpen ? "✕ Close" : "☰ Outline"}
+        <button
+          className="lms-outline-btn"
+          onClick={() => setSidebarOpen(p => !p)}
+          aria-label="Toggle outline"
+        >
+          {sidebarOpen ? "✕" : "☰"}
         </button>
-      </div>
+      </header>
 
-      <div className="learn-body">
-        {/* Main content */}
-        <div className="learn-main">
-          {activeLesson?.video_url && toEmbedUrl(activeLesson.video_url) ? (
-            <div className="learn-video-wrap">
+      {/* ── BODY ──────────────────────────────────────────────────── */}
+      <div className="lms-body">
+
+        {/* ── MAIN ────────────────────────────────────────────────── */}
+        <div className="lms-main">
+
+          {/* Video */}
+          {embedUrl ? (
+            <div className="lms-video-wrap">
               <iframe
                 key={activeLesson.id}
-                src={toEmbedUrl(activeLesson.video_url)}
+                src={embedUrl}
                 title={activeLesson.title}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
               />
             </div>
           ) : (
-            <div className="learn-no-video">No video for this lesson yet.</div>
+            <div className="lms-no-video">
+              <span>No video for this lesson yet.</span>
+            </div>
           )}
 
-          <div className="learn-lesson-info">
-            <h2>{activeLesson?.title}</h2>
+          {/* Lesson info bar */}
+          <div className="lms-lesson-bar">
+            <div className="lms-lesson-bar-left">
+              <span className="lms-lesson-eyebrow">
+                Lesson {currentIdx + 1} of {allLessons.length}
+              </span>
+              <h2 className="lms-lesson-title">{activeLesson?.title}</h2>
+            </div>
             <button
-              className={`learn-complete-btn ${completedIds.has(activeLesson?.id) ? "completed" : ""}`}
+              className={`lms-complete-btn${isCompleted ? " done" : ""}`}
               onClick={markComplete}
-              disabled={!activeLesson || completedIds.has(activeLesson?.id)}
+              disabled={!activeLesson || isCompleted}
             >
-              {completedIds.has(activeLesson?.id) ? "✓ Completed" : "Mark as Complete"}
+              {isCompleted ? "✓ Completed" : "Mark complete"}
             </button>
           </div>
 
+          {/* Prev / Next navigation */}
+          <div className="lms-nav-row">
+            <button
+              className="lms-nav-btn"
+              onClick={() => prevLesson && setActiveLesson(prevLesson)}
+              disabled={!prevLesson}
+            >
+              ← Previous
+            </button>
+            <button
+              className={`lms-nav-btn lms-nav-next${!nextLesson ? " disabled" : ""}`}
+              onClick={goNext}
+              disabled={!nextLesson}
+            >
+              Next lesson →
+            </button>
+          </div>
+
+          {/* Resources */}
           {resources.length > 0 && (
-            <div className="learn-resources">
-              <h3>Resources</h3>
-              <ul>
-                {resources.map(r => (
+            <div className="lms-resources">
+              <h3 className="lms-resources-title">Resources</h3>
+              <ul className="lms-resources-list">
+                {resources.map((r: any) => (
                   <li key={r.id}>
-                    <a href={r.url} target="_blank" rel="noopener noreferrer">
+                    <a href={r.url} target="_blank" rel="noopener noreferrer" className="lms-resource-link">
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                         <polyline points="7 10 12 15 17 10"/>
@@ -204,39 +250,42 @@ export default function Learn() {
             </div>
           )}
 
-          {/* Notes panel */}
-          <div className="learn-notes-panel">
-            <div
-              className={`learn-notes-header${notesOpen ? " open" : ""}`}
+          {/* Notes */}
+          <div className="lms-notes">
+            <button
+              className={`lms-notes-toggle${notesOpen ? " open" : ""}`}
               onClick={() => setNotesOpen(p => !p)}
             >
               <span>My Notes</span>
-              <span className={`learn-notes-chevron${notesOpen ? " open" : ""}`}>▼</span>
-            </div>
+              <span className="lms-notes-chevron" style={{ transform: notesOpen ? "rotate(180deg)" : "rotate(0)" }}>▾</span>
+            </button>
             {notesOpen && (
-              <div className="learn-notes-body">
+              <div className="lms-notes-body">
                 <textarea
-                  className="learn-notes-textarea"
+                  className="lms-notes-textarea"
                   value={noteText}
                   onChange={e => setNoteText(e.target.value)}
                   placeholder="Jot down your thoughts for this lesson…"
                 />
-                <div className="learn-notes-footer">
-                  <span className="learn-notes-status">{noteSaved ? "Saved ✓" : ""}</span>
-                  <button className="learn-notes-save-btn" onClick={saveNote} disabled={noteSaving}>
-                    {noteSaving ? "Saving…" : "Save"}
+                <div className="lms-notes-footer">
+                  <span className="lms-notes-saved">{noteSaved ? "Saved ✓" : ""}</span>
+                  <button className="lms-notes-save" onClick={saveNote} disabled={noteSaving}>
+                    {noteSaving ? "Saving…" : "Save note"}
                   </button>
                 </div>
               </div>
             )}
           </div>
 
-          {/* Certificate banner when 100% complete */}
+          {/* Certificate banner */}
           {progressPct === 100 && (
-            <div className="learn-cert-banner">
-              <span>🎉 You've completed this course!</span>
-              <Link to={`/courses/${slug}/certificate`} className="learn-cert-link">
-                Get Certificate
+            <div className="lms-cert-banner">
+              <div>
+                <div className="lms-cert-title">You've completed this course</div>
+                <div className="lms-cert-sub">Your certificate is ready to download.</div>
+              </div>
+              <Link to={`/courses/${slug}/certificate`} className="lms-cert-btn">
+                Get Certificate →
               </Link>
             </div>
           )}
@@ -244,38 +293,51 @@ export default function Learn() {
 
         {/* Mobile backdrop */}
         {sidebarOpen && (
-          <div className="learn-sidebar-backdrop" onClick={() => setSidebarOpen(false)} />
+          <div className="lms-sidebar-backdrop" onClick={() => setSidebarOpen(false)} />
         )}
 
-        {/* Sidebar */}
-        <div className={`learn-sidebar${sidebarOpen ? " open" : ""}`}>
-            <div className="learn-sidebar-header">Course Content</div>
-            {course.modules?.map(mod => (
-              <div key={mod.id} className="learn-sidebar-module">
-                <div className="learn-sidebar-module-title">{mod.title}</div>
-                {mod.lessons?.map(lesson => (
+        {/* ── SIDEBAR ───────────────────────────────────────────── */}
+        <aside className={`lms-sidebar${sidebarOpen ? " open" : ""}`}>
+          <div className="lms-sidebar-head">
+            <span className="lms-sidebar-label">Course content</span>
+            <span className="lms-sidebar-progress-text">{completedIds.size}/{totalLessons} complete</span>
+          </div>
+          <div className="lms-sidebar-track">
+            <div className="lms-sidebar-track-fill" style={{ width: `${progressPct}%` }} />
+          </div>
+          {course.modules?.map((mod: any, mi: number) => (
+            <div key={mod.id} className="lms-module">
+              <div className="lms-module-title">
+                <span className="lms-module-num">{String(mi + 1).padStart(2, "0")}</span>
+                {mod.title}
+              </div>
+              {mod.lessons?.map((lesson: any) => {
+                const done = completedIds.has(lesson.id);
+                const active = activeLesson?.id === lesson.id;
+                return (
                   <button
                     key={lesson.id}
-                    className={`learn-sidebar-lesson ${activeLesson?.id === lesson.id ? "active" : ""} ${completedIds.has(lesson.id) ? "done" : ""}`}
+                    className={`lms-lesson-btn${active ? " active" : ""}${done ? " done" : ""}`}
                     onClick={() => {
                       setActiveLesson(lesson);
                       if (window.innerWidth <= 768) setSidebarOpen(false);
                     }}
                   >
-                    <span className="learn-sidebar-check">
-                      {completedIds.has(lesson.id) ? "✓" : "○"}
+                    <span className={`lms-check${done ? " checked" : ""}`}>
+                      {done ? "✓" : "○"}
                     </span>
-                    <span className="learn-sidebar-lesson-title">{lesson.title}</span>
+                    <span className="lms-lesson-name">{lesson.title}</span>
                     {lesson.duration && (
-                      <span className="learn-sidebar-duration">
+                      <span className="lms-lesson-dur">
                         {Math.floor(lesson.duration / 60)}:{String(lesson.duration % 60).padStart(2, "0")}
                       </span>
                     )}
                   </button>
-                ))}
-              </div>
-            ))}
-          </div>
+                );
+              })}
+            </div>
+          ))}
+        </aside>
       </div>
     </div>
   );

@@ -6,12 +6,6 @@ import { useUser } from "../context/UserProvider";
 import { useTriggerGoogleLogin } from "../utils/googleLoginHelper";
 import { useRazorpay } from "../hooks/useRazorpay";
 import "../styles/CourseDetail.css";
-import "../styles/Reviews.css";
-
-const LEVEL_LABELS: Record<string, string> = {
-  beginner: "Beginner", intermediate: "Intermediate",
-  advanced: "Advanced", "all-levels": "All Levels",
-};
 
 const API = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
 
@@ -31,35 +25,22 @@ function fmtDuration(secs: number) {
   return `${m} min`;
 }
 
-function Stars({ rating, size = "0.9rem" }: { rating: number; size?: string }) {
-  const full = Math.round(rating);
-  return (
-    <span className="cd-stars" style={{ fontSize: size }}>
-      {"★".repeat(full)}{"☆".repeat(5 - full)}
-    </span>
-  );
-}
-
 function CourseSkeleton() {
   return (
-    <div className="main">
+    <>
       <Navbar />
-      <div className="cd-hero cd-hero-skeleton">
-        <div className="cd-hero-inner">
-          <div className="cd-hero-left">
-            <div className="cd-sk-line w40" style={{ marginBottom: "1rem" }} />
-            <div className="cd-sk-line w80" style={{ height: "2.5rem", marginBottom: "1rem" }} />
+      <div className="cd-hero cd-hero-skeleton sw-page-pad" style={{ minHeight: "60vh" }}>
+        <div className="cd-hero-grid">
+          <div>
+            <div className="cd-sk-line w40" style={{ marginBottom: 16 }} />
+            <div className="cd-sk-line w80" style={{ height: 40, marginBottom: 16 }} />
             <div className="cd-sk-line w95" />
-            <div className="cd-sk-line w75" style={{ marginTop: "0.4rem" }} />
-            <div className="cd-sk-line w50" style={{ marginTop: "1rem" }} />
-          </div>
-          <div className="cd-cta-card cd-cta-card-skeleton">
-            <div className="cd-sk-block" />
+            <div className="cd-sk-line w75" style={{ marginTop: 8 }} />
+            <div className="cd-sk-line w50" style={{ marginTop: 16 }} />
           </div>
         </div>
       </div>
-      <Footer />
-    </div>
+    </>
   );
 }
 
@@ -79,7 +60,6 @@ export default function CourseDetail() {
   const [previewLesson, setPreviewLesson] = useState<any>(null);
   const [instructor, setInstructor] = useState<any>(null);
 
-  // Reviews
   const [reviews, setReviews] = useState<any[]>([]);
   const [reviewRating, setReviewRating] = useState(0);
   const [reviewText, setReviewText] = useState("");
@@ -97,7 +77,6 @@ export default function CourseDetail() {
 
   useEffect(() => { if (course) loadReviews(); }, [course?.id]);
 
-  // Fetch instructor profile
   useEffect(() => {
     fetch(`${API}/api/instructor`)
       .then(r => r.json())
@@ -152,6 +131,18 @@ export default function CourseDetail() {
       .catch(() => {});
   }, [user?.id, course?.id]);
 
+  useEffect(() => {
+    const t0 = document.timeline?.currentTime ?? 0;
+    let tries = 0;
+    const arm = () => {
+      const t1 = document.timeline?.currentTime ?? 0;
+      if (t1 > t0) { document.body.classList.add("rv-go"); return; }
+      if (++tries < 8) requestAnimationFrame(arm);
+    };
+    requestAnimationFrame(arm);
+    return () => { document.body.classList.remove("rv-go"); };
+  }, []);
+
   const enrollFree = async () => {
     setEnrolling(true);
     setPaymentError(null);
@@ -205,11 +196,14 @@ export default function CourseDetail() {
   const enrollLabel = () => {
     if (enrolling) return "Processing…";
     if (enrolled) return "Continue Learning →";
-    if (course?.price === 0) return "Enroll for Free";
-    return `Enroll — ₹${(course.price / 100).toLocaleString("en-IN")}`;
+    if (course?.price === 0) return "Enroll for free →";
+    return `Enroll — ₹${(course.price / 100).toLocaleString("en-IN")} →`;
   };
 
-  const totalLessons = course?.modules?.reduce((acc: number, m: any) => acc + (m.lessons?.length || 0), 0) ?? 0;
+  const totalLessons = course?.modules?.reduce(
+    (acc: number, m: any) => acc + (m.lessons?.length || 0), 0
+  ) ?? 0;
+
   const avgRating = reviews.length > 0
     ? reviews.reduce((s, r) => s + r.rating, 0) / reviews.length
     : null;
@@ -217,135 +211,73 @@ export default function CourseDetail() {
   if (loading) return <CourseSkeleton />;
   if (!course) return null;
 
-  const priceLabel = course.price === 0
-    ? <span className="cd-price-free">Free</span>
-    : <span>₹{(course.price / 100).toLocaleString("en-IN")}</span>;
+  const isFree = course.price === 0;
+  const priceDisplay = isFree ? "Free" : `₹${(course.price / 100).toLocaleString("en-IN")}`;
 
   return (
-    <div className="main">
+    <>
       <Navbar />
 
-      {/* ── Full-bleed dark hero ──────────────────────────────── */}
-      <div className="cd-hero">
-        <div className="cd-hero-inner">
-          <div className="cd-hero-left">
-            {/* Breadcrumb */}
-            <nav className="cd-breadcrumb">
-              <Link to="/courses">Courses</Link>
-              {course.series && (
-                <>
-                  <span>›</span>
-                  <Link to={`/series/${course.series.slug}`}>{course.series.title}</Link>
-                </>
-              )}
-              <span>›</span>
-              <span>{course.title}</span>
-            </nav>
-
-            {/* Badges */}
-            <div className="cd-badges">
-              {course.level && (
-                <span className="cd-badge">{LEVEL_LABELS[course.level] ?? course.level}</span>
-              )}
-              {course.language && course.language !== "English" && (
-                <span className="cd-badge lang">{course.language}</span>
-              )}
+      {/* ── HERO ──────────────────────────────────────────────────────── */}
+      <section className="cd-hero sw-page-pad">
+        <div className="cd-hero-orb" />
+        <div className="cd-hero-grid">
+          <div className="rv">
+            <Link to="/courses" className="cd-back-link">
+              ← {course.series?.title || "Courses"}
+            </Link>
+            <div className="cd-hero-badges">
+              <span className="cd-badge-primary">
+                {isFree ? "START HERE · FREE" : (course.level?.toUpperCase() ?? "COURSE")}
+              </span>
+              <span className="cd-badge-ghost">SELF-PACED</span>
             </div>
-
-            <h1 className="cd-hero-title">{course.title}</h1>
-            {(course.short_description || course.description) && (
-              <p className="cd-hero-desc">{course.short_description || course.description}</p>
-            )}
-
-            {/* Rating row */}
-            {avgRating !== null && (
-              <div className="cd-hero-rating">
-                <span className="cd-rating-num">{avgRating.toFixed(1)}</span>
-                <Stars rating={avgRating} />
-                <span className="cd-rating-count">({reviews.length} review{reviews.length !== 1 ? "s" : ""})</span>
-                {course.enrollment_count > 0 && (
-                  <>
-                    <span className="cd-dot">·</span>
-                    <span>{course.enrollment_count.toLocaleString("en-IN")} student{course.enrollment_count !== 1 ? "s" : ""}</span>
-                  </>
-                )}
-              </div>
-            )}
-
-            {/* Meta */}
-            <div className="cd-hero-meta">
-              {totalLessons > 0 && <span>{totalLessons} lessons</span>}
+            <h1 className="cd-hero-h1">{course.title}</h1>
+            <p className="cd-hero-desc">
+              {course.short_description || course.description}
+            </p>
+            <div className="cd-hero-stats">
+              {totalLessons > 0 && (
+                <div className="cd-hero-stat">
+                  <span className="cd-hero-stat-icon">▷</span>
+                  {totalLessons} lessons
+                </div>
+              )}
               {course.total_duration > 0 && (
-                <>
-                  <span className="cd-dot">·</span>
-                  <span>{fmtDuration(course.total_duration)}</span>
-                </>
+                <div className="cd-hero-stat">
+                  <span className="cd-hero-stat-icon">◷</span>
+                  {fmtDuration(course.total_duration)}
+                </div>
               )}
-              {course.modules?.length > 0 && (
-                <>
-                  <span className="cd-dot">·</span>
-                  <span>{course.modules.length} module{course.modules.length !== 1 ? "s" : ""}</span>
-                </>
-              )}
-            </div>
-
-            {instructor && (
-              <p className="cd-instructor-line">
-                By <strong>{instructor.name}</strong>
-                {instructor.title && <span className="cd-instructor-role"> · {instructor.title}</span>}
-              </p>
-            )}
-          </div>
-
-          {/* Floating CTA card */}
-          <div className="cd-cta-card">
-            <div className="cd-cta-thumb">
-              {course.thumbnail_url ? (
-                <img src={course.thumbnail_url} alt={course.title} />
-              ) : (
-                <div className="cd-cta-thumb-placeholder">
-                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                    <circle cx="12" cy="12" r="10"/>
-                    <polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/>
-                  </svg>
+              {avgRating !== null && (
+                <div className="cd-hero-stat">
+                  <span className="cd-hero-stat-icon">★</span>
+                  {avgRating.toFixed(1)} ({reviews.length} review{reviews.length !== 1 ? "s" : ""})
                 </div>
               )}
             </div>
-            <div className="cd-cta-body">
-              <div className="cd-cta-price">{priceLabel}</div>
-              <button
-                className="cd-enroll-btn"
-                onClick={handleEnrollClick}
-                disabled={enrolling}
-              >
-                {enrollLabel()}
-              </button>
-              {paymentError && <p className="cd-payment-error">{paymentError}</p>}
-              <p className="cd-cta-note">Full lifetime access · Certificate on completion</p>
-              <ul className="cd-cta-includes">
-                {course.total_duration > 0 && (
-                  <li>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                    {fmtDuration(course.total_duration)} on-demand video
-                  </li>
-                )}
-                <li>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                  Worksheets & exercises
-                </li>
-                <li>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 12h8M12 8v8"/></svg>
-                  Access on all devices
-                </li>
-              </ul>
+          </div>
+
+          <div className="rv cd-hero-rings-wrap">
+            <div className="cd-hero-ring-glow" />
+            <div className="cd-hero-ring cd-ring-1" />
+            <div className="cd-hero-ring cd-ring-2" />
+            <div className="cd-hero-play">▶</div>
+            <div className="cd-chip cd-chip-1" style={{ animation: "floaty 7s ease-in-out infinite" }}>
+              <span className="cd-chip-dot" />
+              {course.modules?.length || 0} modules
+            </div>
+            <div className="cd-chip cd-chip-2" style={{ animation: "floaty 6.5s ease-in-out infinite .8s" }}>
+              <span className="cd-chip-dot" />
+              {priceDisplay}
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* ── Preview video ──────────────────────────────────────── */}
+      {/* ── Preview video ──────────────────────────────────────────────── */}
       {previewLesson && (
-        <div className="cd-preview-wrap">
+        <div className="cd-preview-wrap sw-page-pad">
           <div className="cd-preview-bar">
             <span>Preview: {previewLesson.title}</span>
             <button onClick={() => setPreviewLesson(null)}>✕ Close</button>
@@ -361,162 +293,188 @@ export default function CourseDetail() {
         </div>
       )}
 
-      {/* ── Body ───────────────────────────────────────────────── */}
-      <div className="cd-body">
+      {/* ── BODY SPLIT ─────────────────────────────────────────────────── */}
+      <section className="cd-body-split sw-page-pad">
+        <div className="cd-split-grid">
 
-        {/* Stats bar */}
-        {(avgRating !== null || course.enrollment_count > 0 || totalLessons > 0 || course.total_duration > 0) && (
-          <div className="cd-stats-bar">
-            {avgRating !== null && (
-              <div className="cd-stat">
-                <span className="cd-stat-val">{avgRating.toFixed(1)} <Stars rating={avgRating} size="0.85rem" /></span>
-                <span className="cd-stat-lbl">Rating</span>
-              </div>
-            )}
-            {course.enrollment_count > 0 && (
-              <div className="cd-stat">
-                <span className="cd-stat-val">{course.enrollment_count.toLocaleString("en-IN")}</span>
-                <span className="cd-stat-lbl">Students</span>
-              </div>
-            )}
-            {totalLessons > 0 && (
-              <div className="cd-stat">
-                <span className="cd-stat-val">{totalLessons}</span>
-                <span className="cd-stat-lbl">Lessons</span>
-              </div>
-            )}
-            {course.total_duration > 0 && (
-              <div className="cd-stat">
-                <span className="cd-stat-val">{fmtDuration(course.total_duration)}</span>
-                <span className="cd-stat-lbl">Duration</span>
-              </div>
-            )}
-          </div>
-        )}
+          {/* LEFT */}
+          <div className="rv cd-left-col">
 
-        {/* What You'll Learn */}
-        {Array.isArray(course.what_youll_learn) && course.what_youll_learn.length > 0 && (
-          <section className="cd-learn-box">
-            <h2>What You'll Learn</h2>
-            <ul className="cd-learn-grid">
-              {course.what_youll_learn.map((item: string, i: number) => (
-                <li key={i}><span className="cd-check">✓</span>{item}</li>
-              ))}
-            </ul>
-          </section>
-        )}
-
-        {/* Requirements */}
-        {Array.isArray(course.requirements) && course.requirements.length > 0 && (
-          <section className="cd-requirements">
-            <h2>Requirements</h2>
-            <ul className="cd-req-list">
-              {course.requirements.map((item: string, i: number) => (
-                <li key={i}><span>·</span>{item}</li>
-              ))}
-            </ul>
-          </section>
-        )}
-
-        {/* Instructor */}
-        {instructor && (
-          <section className="cd-instructor-section">
-            <h2>Your Instructor</h2>
-            <div className="cd-instructor-card">
-              {instructor.avatar_url ? (
-                <img src={instructor.avatar_url} alt={instructor.name} className="cd-instructor-avatar" />
-              ) : (
-                <div className="cd-instructor-avatar cd-instructor-avatar-initials">
-                  {instructor.name[0]}
-                </div>
-              )}
-              <div className="cd-instructor-info">
-                <h3>{instructor.name}</h3>
-                {instructor.title && <p className="cd-instructor-title">{instructor.title}</p>}
-                {reviews.length > 0 && (
-                  <div className="cd-instructor-stats">
-                    <span>★ {avgRating?.toFixed(1)} instructor rating</span>
-                    {course.enrollment_count > 0 && (
-                      <>
-                        <span>·</span>
-                        <span>{course.enrollment_count.toLocaleString("en-IN")} student{course.enrollment_count !== 1 ? "s" : ""}</span>
-                      </>
-                    )}
-                  </div>
+            {/* Outcomes */}
+            {Array.isArray(course.what_youll_learn) && course.what_youll_learn.length > 0 && (
+              <div className="cd-outcomes">
+                <h2 className="cd-section-h2">What you'll discover</h2>
+                {course.description && (
+                  <p className="cd-section-p">{course.description}</p>
                 )}
-                {instructor.bio && <p className="cd-instructor-bio">{instructor.bio}</p>}
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* Curriculum */}
-        <section className="cd-curriculum">
-          <div className="cd-curriculum-header">
-            <h2>Course Content</h2>
-            <span className="cd-curriculum-meta">
-              {course.modules?.length} module{course.modules?.length !== 1 ? "s" : ""} · {totalLessons} lessons
-              {course.total_duration > 0 && ` · ${fmtDuration(course.total_duration)}`}
-            </span>
-          </div>
-          {course.modules?.map((mod: any) => (
-            <div key={mod.id} className="cd-module">
-              <button
-                className={`cd-module-header ${openModule === mod.id ? "open" : ""}`}
-                onClick={() => setOpenModule(openModule === mod.id ? null : mod.id)}
-              >
-                <svg
-                  className={`cd-chevron ${openModule === mod.id ? "rotated" : ""}`}
-                  width="14" height="14" viewBox="0 0 12 12" fill="none"
-                >
-                  <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-                <span className="cd-module-title">{mod.title}</span>
-                <span className="cd-module-count">{mod.lessons?.length ?? 0} lessons</span>
-              </button>
-              {openModule === mod.id && (
-                <div className="cd-lessons">
-                  {mod.lessons?.map((lesson: any) => (
-                    <div key={lesson.id} className="cd-lesson">
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <polygon points="5 3 19 12 5 21 5 3"/>
-                      </svg>
-                      <span className="cd-lesson-title">{lesson.title}</span>
-                      {lesson.is_preview && lesson.video_url && (
-                        <button className="cd-preview-chip" onClick={() => setPreviewLesson(lesson)}>
-                          Preview
-                        </button>
-                      )}
-                      {lesson.duration && (
-                        <span className="cd-lesson-dur">
-                          {Math.floor(lesson.duration / 60)}:{String(lesson.duration % 60).padStart(2, "0")}
-                        </span>
-                      )}
+                <div className="cd-outcomes-grid">
+                  {course.what_youll_learn.map((o: string, i: number) => (
+                    <div key={i} className="cd-outcome-card">
+                      <span className="cd-outcome-check">✓</span>
+                      <span className="cd-outcome-text">{o}</span>
                     </div>
                   ))}
                 </div>
-              )}
-            </div>
-          ))}
-        </section>
+              </div>
+            )}
 
-        {/* Reviews */}
-        <section className="cd-reviews">
-          <div className="cd-reviews-header">
-            <h2>Student Reviews</h2>
-            {reviews.length > 0 && avgRating !== null && (
-              <div className="cd-reviews-avg">
-                <span className="cd-avg-num">{avgRating.toFixed(1)}</span>
-                <Stars rating={avgRating} />
-                <span className="cd-avg-count">({reviews.length})</span>
+            {/* Requirements */}
+            {Array.isArray(course.requirements) && course.requirements.length > 0 && (
+              <div className="cd-requirements-new">
+                <h2 className="cd-section-h2">Requirements</h2>
+                <ul className="cd-req-list">
+                  {course.requirements.map((item: string, i: number) => (
+                    <li key={i}>
+                      <span className="cd-req-dot">·</span>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Curriculum */}
+            {course.modules?.length > 0 && (
+              <div className="cd-curriculum-new">
+                <h2 className="cd-section-h2">Course curriculum</h2>
+                <p className="cd-curriculum-meta-row">
+                  {course.modules.length} module{course.modules.length !== 1 ? "s" : ""} · {totalLessons} lessons
+                  {course.total_duration > 0 && ` · ${fmtDuration(course.total_duration)}`}
+                </p>
+                <div className="cd-modules-list">
+                  {course.modules.map((mod: any, i: number) => {
+                    const isOpen = openModule === mod.id;
+                    const num = String(i + 1).padStart(2, "0");
+                    return (
+                      <div key={mod.id} className="cd-mod">
+                        <button
+                          className="cd-mod-header"
+                          onClick={() => setOpenModule(isOpen ? null : mod.id)}
+                        >
+                          <span className="cd-mod-num">{num}</span>
+                          <div style={{ flex: 1 }}>
+                            <div className="cd-mod-title">{mod.title}</div>
+                            <div className="cd-mod-meta-text">
+                              {mod.lessons?.length ?? 0} lesson{mod.lessons?.length !== 1 ? "s" : ""}
+                            </div>
+                          </div>
+                          <span
+                            className="cd-mod-arrow"
+                            style={{
+                              color: isOpen ? "#0E766B" : "#9AB0A6",
+                              transform: isOpen ? "rotate(90deg)" : "rotate(0deg)",
+                            }}
+                          >›</span>
+                        </button>
+                        <div
+                          className="cd-mod-lessons"
+                          style={{
+                            maxHeight: isOpen ? `${(mod.lessons?.length || 0) * 60 + 20}px` : "0",
+                            opacity: isOpen ? 1 : 0,
+                          }}
+                        >
+                          {mod.lessons?.map((lesson: any) => (
+                            <div key={lesson.id} className="cd-lesson">
+                              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <polygon points="5 3 19 12 5 21 5 3"/>
+                              </svg>
+                              <span className="cd-lesson-title">{lesson.title}</span>
+                              {lesson.is_preview && lesson.video_url && (
+                                <button className="cd-preview-chip" onClick={() => setPreviewLesson(lesson)}>
+                                  Preview
+                                </button>
+                              )}
+                              {lesson.duration && (
+                                <span className="cd-lesson-dur">
+                                  {Math.floor(lesson.duration / 60)}:{String(lesson.duration % 60).padStart(2, "0")}
+                                </span>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             )}
           </div>
 
+          {/* RIGHT — sticky enroll card */}
+          <div className="rv cd-right-col">
+            <div className="cd-enroll-card">
+              <div className="cd-enroll-thumb">
+                {course.thumbnail_url ? (
+                  <img src={course.thumbnail_url} alt={course.title} />
+                ) : (
+                  <>
+                    <span className="cd-enroll-thumb-label">{course.title}</span>
+                    <div className="cd-enroll-thumb-play">▶</div>
+                  </>
+                )}
+              </div>
+              <div className="cd-enroll-body">
+                <div className="cd-enroll-price-row">
+                  {isFree ? (
+                    <>
+                      <span className="cd-enroll-price">Free</span>
+                      <span className="cd-enroll-was">₹1,499</span>
+                    </>
+                  ) : (
+                    <span className="cd-enroll-price">{priceDisplay}</span>
+                  )}
+                </div>
+                <p className="cd-enroll-tagline">
+                  {isFree ? "The perfect place to begin your inner work." : "Lifetime access · Certificate on completion"}
+                </p>
+                <button
+                  className="cd-enroll-primary"
+                  onClick={handleEnrollClick}
+                  disabled={enrolling}
+                >
+                  {enrollLabel()}
+                </button>
+                <Link to="/booking" className="cd-enroll-secondary">
+                  Book 1-on-1 instead
+                </Link>
+                {paymentError && <p className="cd-payment-error">{paymentError}</p>}
+                <div className="cd-enroll-divider" />
+                <div className="cd-enroll-includes">
+                  {totalLessons > 0 && (
+                    <div className="cd-enroll-include">
+                      <span className="cd-enroll-include-icon">▷</span>
+                      {totalLessons} on-demand lessons
+                    </div>
+                  )}
+                  <div className="cd-enroll-include">
+                    <span className="cd-enroll-include-icon">❏</span>
+                    Guided reflection workbook (PDF)
+                  </div>
+                  <div className="cd-enroll-include">
+                    <span className="cd-enroll-include-icon">∞</span>
+                    Lifetime access, learn at your pace
+                  </div>
+                  <div className="cd-enroll-include">
+                    <span className="cd-enroll-include-icon">✎</span>
+                    Prompts & exercises for each module
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── TESTIMONIALS / REVIEWS ─────────────────────────────────────── */}
+      <section className="cd-testimonials sw-page-pad">
+        <div className="rv cd-testimonials-inner">
+          <span className="mono-label">From learners</span>
+          <h2 className="cd-testimonials-h2">Quietly, something shifts</h2>
+
           {enrolled && user && (
-            <div className="review-form">
+            <div className="cd-review-form">
               <h3>Leave a review</h3>
-              <div className="star-picker">
+              <div className="cd-star-picker">
                 {[1,2,3,4,5].map(n => (
                   <button
                     key={n}
@@ -535,54 +493,82 @@ export default function CourseDetail() {
                 rows={3}
               />
               <button
-                className="review-submit-btn"
+                className="cd-review-submit"
                 onClick={submitReview}
                 disabled={!reviewRating || reviewSubmitting}
               >
                 {reviewSubmitting ? "Submitting…" : "Submit Review"}
               </button>
-              {reviewError && <p style={{ color: "#c00", fontSize: "0.85rem", marginTop: "0.5rem" }}>{reviewError}</p>}
+              {reviewError && <p className="cd-review-error">{reviewError}</p>}
             </div>
           )}
 
           {reviews.length === 0 ? (
             <p className="cd-reviews-empty">No reviews yet. Be the first!</p>
           ) : (
-            <div className="reviews-list">
+            <div className="cd-reviews-grid">
               {reviews.map((r: any) => (
-                <div key={r.id} className="review-card">
-                  {r.picture
-                    ? <img src={r.picture} alt={r.name} className="review-avatar" referrerPolicy="no-referrer" />
-                    : <div className="review-avatar-placeholder">{(r.name || "?")[0]}</div>
-                  }
-                  <div className="review-body">
-                    <div className="review-meta">
-                      <span className="review-name">{r.name}</span>
-                      <span className="review-stars">{"★".repeat(r.rating)}{"☆".repeat(5 - r.rating)}</span>
-                      <span className="review-date">{new Date(r.created_at).toLocaleDateString("en-IN")}</span>
+                <div key={r.id} className="cd-review-card">
+                  <div className="cd-review-stars">{"★".repeat(r.rating)}{"☆".repeat(5 - r.rating)}</div>
+                  {r.body && <p className="cd-review-quote">"{r.body}"</p>}
+                  <div className="cd-review-author">
+                    {r.picture
+                      ? <img src={r.picture} alt={r.name} className="cd-review-avatar-img" referrerPolicy="no-referrer" />
+                      : <div className="cd-review-avatar-placeholder">{(r.name || "?")[0]}</div>
+                    }
+                    <div>
+                      <div className="cd-review-name">{r.name}</div>
+                      <div className="cd-review-date">{new Date(r.created_at).toLocaleDateString("en-IN")}</div>
                     </div>
-                    {r.body && <p className="review-text">{r.body}</p>}
                   </div>
                 </div>
               ))}
             </div>
           )}
+        </div>
+      </section>
+
+      {/* ── INSTRUCTOR BAND ────────────────────────────────────────────── */}
+      {instructor && (
+        <section className="cd-instructor-band sw-page-pad">
+          <div className="cd-instructor-band-orb" />
+          <div className="rv cd-instructor-band-grid">
+            <div className="cd-instructor-portrait">
+              {instructor.avatar_url && (
+                <img src={instructor.avatar_url} alt={instructor.name} />
+              )}
+              <span className="cd-instructor-portrait-label">portrait — {instructor.name}</span>
+            </div>
+            <div>
+              <span className="mono-label mono-label--light">Your guide</span>
+              <h2 className="cd-instructor-band-name">{instructor.name}</h2>
+              <p className="cd-instructor-band-bio">
+                {instructor.bio || instructor.title}
+              </p>
+              <Link to="/whoami" className="cd-instructor-band-link">
+                More about {instructor.name} →
+              </Link>
+            </div>
+          </div>
         </section>
+      )}
 
-      </div>
-
-      {/* ── Sticky bottom bar ─────────────────────────────────── */}
+      {/* ── STICKY BAR ─────────────────────────────────────────────────── */}
       <div className="cd-sticky-bar">
         <span className="cd-sticky-title">{course.title}</span>
         <div className="cd-sticky-right">
-          <span className="cd-sticky-price">{priceLabel}</span>
-          <button className="cd-enroll-btn sm" onClick={handleEnrollClick} disabled={enrolling}>
-            {enrollLabel()}
+          <span className="cd-sticky-price">{priceDisplay}</span>
+          <button className="cd-sticky-cta" onClick={handleEnrollClick} disabled={enrolling}>
+            {enrolled
+              ? "Continue Learning →"
+              : isFree
+                ? "Enroll free →"
+                : `₹${(course.price / 100).toLocaleString("en-IN")} — Enroll →`}
           </button>
         </div>
       </div>
 
       <Footer />
-    </div>
+    </>
   );
 }
