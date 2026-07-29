@@ -1,101 +1,71 @@
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/Footer.css';
 
-const API = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+interface FooterProps {
+  compact?: boolean; // slim 2-row variant for detail pages
+}
 
-const Footer = () => {
-  const [email, setEmail] = useState('');
-  const [status, setStatus] = useState<'idle' | 'sending' | 'done' | 'error'>('idle');
+export default function Footer({ compact = false }: FooterProps) {
+  const year = new Date().getFullYear();
 
-  const subscribe = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email) return;
-    setStatus('sending');
-    try {
-      const res = await fetch(`${API}/api/newsletter/subscribe`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      });
-      setStatus(res.ok ? 'done' : 'error');
-      if (res.ok) setEmail('');
-    } catch {
-      setStatus('error');
-    }
-  };
+  if (compact) {
+    return (
+      <footer className="footer-compact sw-page-pad">
+        <div className="footer-compact-inner">
+          <span className="footer-logo-text">Swadhyay</span>
+          <div className="footer-compact-links">
+            <Link to="/whoami">About</Link>
+            <Link to="/series">Learning</Link>
+            <Link to="/booking">Schedule</Link>
+            <Link to="/pricing">Pricing</Link>
+          </div>
+        </div>
+        <div className="footer-bottom-row">
+          <span>© {year} Swadhyay. All rights reserved.</span>
+          <span>PCC · ICF Certified · Senior Mentor at Jagriti Yatra</span>
+        </div>
+      </footer>
+    );
+  }
 
   return (
-    <footer className="footer-container" id="contact">
-      <div className="footer-content">
-        <div className="footer-section about">
-          <h3 className="footer-logo">Swadhyay</h3>
-          <p>
-            A space for self-discovery and growth. We are dedicated to helping you unlock your potential and live a more authentic, fulfilling life.
-          </p>
+    <footer className="footer sw-page-pad">
+      <div className="footer-cols">
+        <div className="footer-brand">
+          <span className="footer-logo-text">Swadhyay</span>
+          <p>Coaching for self-mastery and elevated leadership. A space for inner work.</p>
         </div>
-
-        <div className="footer-section links">
-          <h3>Quick Links</h3>
-          <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/courses">Courses</a></li>
-            <li><a href="/articles">Articles</a></li>
-            <li><a href="/booking">Booking</a></li>
-          </ul>
+        <div className="footer-col">
+          <div className="footer-col-head">Explore</div>
+          <div className="footer-col-links">
+            <Link to="/whoami">About</Link>
+            <Link to="/booking">Schedule</Link>
+            <Link to="/series">Learning</Link>
+            <Link to="/pricing">Pricing</Link>
+          </div>
         </div>
-
-        <div className="footer-section certifications">
-          <h3>Certifications</h3>
-          <ul>
-            <li>Professional Certified Coach</li>
-            <li>Advanced Coaching - Coacharya</li>
-            <li>EMCC Global Member</li>
-            <li>Team Coaching - TPRG</li>
-            <li>Asia Pacific Alliance of Coaches</li>
-          </ul>
+        <div className="footer-col">
+          <div className="footer-col-head">Coaching</div>
+          <div className="footer-col-links">
+            <Link to="/booking">One-on-One</Link>
+            <Link to="/booking">EFT</Link>
+            <Link to="/booking">Group</Link>
+            <Link to="/booking">Book a session</Link>
+          </div>
         </div>
-
-        <div className="footer-section contact">
-          <h3>Contact Us</h3>
-          <ul>
-            <li>nehasharma@swadhyay.co</li>
-            <li><a href="https://www.linkedin.com/in/neha-sharma-00b69565?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app">LinkedIn</a></li>
-            <li><a href="mailto:nehasharma@swadhyay.co">Mail</a></li>
-            <li><Link to="/contact-us">Contact</Link></li>
-          </ul>
+        <div className="footer-col">
+          <div className="footer-col-head">Connect</div>
+          <div className="footer-col-links">
+            <a href="https://www.linkedin.com/in/neha-sharma-00b69565" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+            <a href="mailto:nehasharma@swadhyay.co">Email</a>
+            <a href="https://wa.me/919810059991" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+          </div>
         </div>
       </div>
-
-      {/* Newsletter */}
-      <div className="footer-newsletter">
-        <p className="footer-newsletter-label">Stay in the loop — insights on leadership, EFT, and coaching.</p>
-        {status === 'done' ? (
-          <p className="footer-newsletter-success">You're subscribed! Welcome aboard.</p>
-        ) : (
-          <form className="footer-newsletter-form" onSubmit={subscribe}>
-            <input
-              type="email"
-              placeholder="Your email"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              required
-              disabled={status === 'sending'}
-              className="footer-newsletter-input"
-            />
-            <button type="submit" disabled={status === 'sending'} className="footer-newsletter-btn">
-              {status === 'sending' ? 'Subscribing…' : 'Subscribe'}
-            </button>
-            {status === 'error' && <span className="footer-newsletter-error">Something went wrong. Try again.</span>}
-          </form>
-        )}
-      </div>
-
-      <div className="footer-bottom">
-        &copy; {new Date().getFullYear()} Swadhyay | All Rights Reserved
+      <div className="footer-bottom-row">
+        <span>© {year} Swadhyay. All rights reserved.</span>
+        <span>PCC · ICF Certified · Senior Mentor at Jagriti Yatra</span>
       </div>
     </footer>
   );
-};
-
-export default Footer;
+}

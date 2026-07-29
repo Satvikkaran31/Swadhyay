@@ -23,6 +23,7 @@ const Admin        = lazy(() => import("./pages/Admin"));
 const SeriesDetail = lazy(() => import("./pages/SeriesDetail"));
 const SampleCourse = lazy(() => import("./pages/SampleCourse"));
 const SampleSeries = lazy(() => import("./pages/SampleSeries"));
+const Pricing      = lazy(() => import("./pages/Pricing"));
 const SeriesListing = lazy(() => import("./pages/SeriesListing"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
@@ -171,8 +172,12 @@ export default function App() {
               path="/booking" keywords="booking, schedule, learning session, consultation" />
           } />
 
-          {/* /whoami is now a course — redirect to its course landing page */}
-          <Route path="/whoami" element={<Navigate to="/courses/who-am-i" replace />} />
+          <Route path="/whoami" element={
+            <SEORoute component={WhoAmI}
+              title="About — Swadhyay"
+              description="Meet Neha, your ICF PCC-certified coach, and learn the meaning behind Swadhyay."
+              path="/whoami" keywords="about, neha, coach, ICF, swadhyay" />
+          } />
 
           <Route path="/contact-us" element={
             <SEORoute component={Inquiry}
@@ -193,10 +198,18 @@ export default function App() {
 
           {/* Series listing */}
           <Route path="/series" element={
-            <SEORoute component={SeriesListing}
+            <SEORoute component={Courses}
               title="Course Series — Swadhyay"
-              description="Explore curated series of courses designed for deep, structured learning with Neha."
-              path="/series" keywords="series, course series, structured learning, coaching" />
+              description="Explore three curated series — Youth, Leadership &amp; Board, and Board Retreat."
+              path="/series" keywords="series, course series, youth, leadership, coaching" />
+          } />
+
+          {/* Pricing */}
+          <Route path="/pricing" element={
+            <SEORoute component={Pricing}
+              title="Pricing — Swadhyay"
+              description="Simple, honest pricing for one-on-one coaching, EFT sessions and self-paced courses."
+              path="/pricing" keywords="pricing, coaching fees, sessions, courses" />
           } />
 
           {/* Design previews — static sample pages with hardcoded data */}

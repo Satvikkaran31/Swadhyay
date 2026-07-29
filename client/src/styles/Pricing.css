@@ -1,0 +1,277 @@
+/* ── HERO ─────────────────────────────────────────────────────────── */
+.pr-hero {
+  position: relative;
+  background:
+    radial-gradient(100% 90% at 90% -10%, #155E55 0%, rgba(21,94,85,0) 60%),
+    linear-gradient(168deg, #123B2F 0%, #0F2E24 45%, #0C2419 100%);
+  padding-top: 170px;
+  padding-bottom: 80px;
+  overflow: hidden;
+  text-align: center;
+}
+.pr-hero-orb {
+  position: absolute;
+  top: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 340px;
+  height: 340px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(95,200,184,.24), transparent 70%);
+  filter: blur(18px);
+  animation: floaty 9s ease-in-out infinite;
+  pointer-events: none;
+}
+.pr-hero-inner {
+  position: relative;
+  max-width: 720px;
+  margin: 0 auto;
+}
+.pr-hero-h1 {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300;
+  font-size: 70px;
+  line-height: 1.0;
+  letter-spacing: -.01em;
+  color: #F4F1E9;
+  margin: 8px 0 0;
+  text-wrap: pretty;
+}
+.pr-hero-sub {
+  font-family: 'Poppins', sans-serif;
+  font-size: 19px;
+  line-height: 1.6;
+  color: #B9C6BC;
+  max-width: 540px;
+  margin: 20px auto 0;
+}
+
+/* ── PLANS ────────────────────────────────────────────────────────── */
+.pr-plans {
+  background: #F4F1E9;
+  padding-top: 72px;
+  padding-bottom: 40px;
+}
+.pr-plans-grid {
+  max-width: 1180px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+.pr-plan-card {
+  position: relative;
+  border-radius: 24px;
+  padding: 38px 34px;
+  background: #FFF;
+  border: 1px solid rgba(18,54,43,.12);
+  box-shadow: 0 24px 60px -50px rgba(18,54,43,.5);
+}
+.pr-plan-featured {
+  background: #12362B;
+  border-color: #12362B;
+  box-shadow: 0 40px 90px -50px rgba(18,54,43,.7);
+  transform: translateY(-8px);
+}
+.pr-plan-badge {
+  position: absolute;
+  top: 22px;
+  right: 22px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: .08em;
+  color: #0C241C;
+  background: #8FE0D4;
+  padding: 6px 12px;
+  border-radius: 999px;
+}
+.pr-plan-name {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.pr-plan-price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-top: 16px;
+}
+.pr-plan-price {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300;
+  font-size: 52px;
+  line-height: 1;
+}
+.pr-plan-unit {
+  font-family: 'Poppins', sans-serif;
+  font-size: 15px;
+}
+.pr-plan-desc {
+  font-family: 'Poppins', sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+  margin: 12px 0 0;
+  min-height: 44px;
+}
+.pr-plan-cta {
+  display: block;
+  text-align: center;
+  margin-top: 22px;
+  padding: 15px;
+  border-radius: 999px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  text-decoration: none;
+  transition: opacity .2s ease;
+}
+.pr-plan-cta:hover { opacity: .88; }
+.pr-plan-rule {
+  height: 1px;
+  margin: 26px 0;
+}
+.pr-plan-features {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+.pr-plan-feature {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14.5px;
+  line-height: 1.4;
+}
+.pr-plan-check {
+  font-weight: 700;
+  flex: none;
+}
+
+.pr-note {
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  color: #6B7A6F;
+  margin: 26px 0 0;
+}
+
+/* ── COURSES NOTE ─────────────────────────────────────────────────── */
+.pr-courses {
+  background: #F4F1E9;
+  padding-top: 60px;
+  padding-bottom: 40px;
+}
+.pr-courses-grid {
+  max-width: 1180px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+.pr-courses-light,
+.pr-courses-dark {
+  border-radius: 22px;
+  padding: 36px 34px;
+}
+.pr-courses-light { background: #FFF; border: 1px solid rgba(18,54,43,.1); }
+.pr-courses-dark  { background: #0C241C; }
+.pr-courses-kicker {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  display: block;
+}
+.pr-courses-title {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300;
+  font-size: 28px;
+  margin: 10px 0 0;
+}
+.pr-courses-desc {
+  font-family: 'Poppins', sans-serif;
+  font-size: 15.5px;
+  line-height: 1.6;
+  margin: 10px 0 0;
+}
+.pr-courses-link {
+  display: inline-flex;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  margin-top: 16px;
+  text-decoration: none;
+}
+
+/* ── FAQ ──────────────────────────────────────────────────────────── */
+.pr-faq {
+  background: #F4F1E9;
+  padding-top: 64px;
+  padding-bottom: 104px;
+}
+.pr-faq-inner { max-width: 820px; margin: 0 auto; }
+.pr-faq-h2 {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300;
+  font-size: 44px;
+  line-height: 1.05;
+  color: #12362B;
+  margin: 0;
+  text-align: center;
+}
+.pr-faq-list {
+  margin-top: 36px;
+  border-top: 1px solid rgba(18,54,43,.14);
+}
+.pr-faq-item { border-bottom: 1px solid rgba(18,54,43,.14); }
+.pr-faq-q {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  width: 100%;
+  padding: 24px 4px;
+  box-sizing: border-box;
+}
+.pr-faq-q > span:first-child {
+  flex: 1;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  color: #12362B;
+}
+.pr-faq-arrow {
+  font-size: 24px;
+  transition: transform .4s cubic-bezier(.16,1,.3,1), color .3s ease;
+  display: inline-flex;
+}
+.pr-faq-body {
+  overflow: hidden;
+  transition: max-height .5s cubic-bezier(.16,1,.3,1), opacity .4s ease;
+}
+.pr-faq-a {
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  line-height: 1.64;
+  color: #4A4E44;
+  margin: 0;
+  padding: 0 4px 24px;
+}
+
+/* ── Responsive ───────────────────────────────────────────────────── */
+@media (max-width: 920px) {
+  .pr-hero-h1      { font-size: 50px; }
+  .pr-hero         { padding-top: 132px; }
+  .pr-plans-grid   { grid-template-columns: 1fr; }
+  .pr-plan-featured { transform: none; }
+  .pr-courses-grid { grid-template-columns: 1fr; }
+  .pr-faq-h2       { font-size: 36px; }
+  .pr-faq-q > span:first-child { font-size: 16px; }
+}

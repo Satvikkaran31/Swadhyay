@@ -1,197 +1,455 @@
-/* ── Hero ─────────────────────────────────────────────────────────── */
-.whoami-hero {
-  padding: 5rem 2rem 3rem;
-  background: var(--primary-bg);
+/* ── HERO ─────────────────────────────────────────────────────────── */
+.wa-hero {
+  position: relative;
+  background:
+    radial-gradient(100% 90% at 90% -10%, #155E55 0%, rgba(21,94,85,0) 60%),
+    linear-gradient(168deg, #123B2F 0%, #0F2E24 45%, #0C2419 100%);
+  padding-top: 184px;
+  padding-bottom: 96px;
+  overflow: hidden;
 }
-
-.whoami-hero-inner {
-  max-width: 1100px;
+.wa-hero-orb {
+  position: absolute;
+  top: -60px;
+  right: -40px;
+  width: 340px;
+  height: 340px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(95,200,184,.28), transparent 70%);
+  filter: blur(18px);
+  animation: floaty 9s ease-in-out infinite;
+  pointer-events: none;
+}
+.wa-hero-grid {
+  position: relative;
+  max-width: 1180px;
   margin: 0 auto;
-  display: flex;
-  align-items: center;
-  gap: 4rem;
-}
-
-.whoami-hero-text { flex: 1; }
-
-.whoami-eyebrow {
-  display: inline-block;
-  font-size: 0.82rem;
-  font-weight: 700;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: #1A2B3C;
-  margin-bottom: 1rem;
-  opacity: 0.65;
-}
-
-.whoami-hero-text h1 {
-  font-size: 2.8rem;
-  font-weight: 700;
-  line-height: 1.2;
-  color: var(--text-primary, #1A2B3C);
-  margin-bottom: 1.25rem;
-  font-family: var(--font-primary);
-}
-
-.whoami-hero-lead {
-  font-size: 1.1rem;
-  line-height: 1.75;
-  color: var(--text-secondary, #4b5563);
-  max-width: 540px;
-}
-
-.whoami-hero-image {
-  flex-shrink: 0;
-  width: 320px;
-}
-
-.whoami-hero-image img {
-  width: 100%;
-  border-radius: 20px;
-  object-fit: cover;
-  aspect-ratio: 4/5;
-  box-shadow: 0 16px 48px rgba(0,0,0,0.12);
-}
-
-/* ── Stats bar ────────────────────────────────────────────────────── */
-.whoami-stats {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 0;
-  background: #1A2B3C;
-  padding: 2.5rem 2rem;
-}
-
-.whoami-stat {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 0 3rem;
-  border-right: 1px solid rgba(255,255,255,0.15);
-}
-
-.whoami-stat:last-child { border-right: none; }
-
-.whoami-stat-number {
-  font-size: 2.2rem;
-  font-weight: 700;
-  color: #fff;
-  line-height: 1;
-}
-
-.whoami-stat-label {
-  font-size: 0.82rem;
-  color: rgba(255,255,255,0.65);
-  margin-top: 0.35rem;
-  text-align: center;
-}
-
-/* ── Bio sections ─────────────────────────────────────────────────── */
-.whoami-sections {
-  max-width: 820px;
-  margin: 0 auto;
-  padding: 4rem 2rem;
-  display: flex;
-  flex-direction: column;
-  gap: 3.5rem;
-}
-
-.whoami-section h2 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #1A2B3C;
-  margin-bottom: 1rem;
-  padding-bottom: 0.6rem;
-  border-bottom: 2px solid #1A2B3C20;
-}
-
-.whoami-section p {
-  font-size: 1.02rem;
-  line-height: 1.8;
-  color: var(--text-secondary, #374151);
-  margin-bottom: 0.9rem;
-}
-
-.whoami-section p:last-child { margin-bottom: 0; }
-
-/* ── Credentials grid ─────────────────────────────────────────────── */
-.whoami-credentials {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 1rem;
-  margin-top: 0.5rem;
+  grid-template-columns: 1.1fr .9fr;
+  gap: 56px;
+  align-items: center;
+}
+.wa-hero-h1 {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300;
+  font-size: 74px;
+  line-height: 1.0;
+  letter-spacing: -.01em;
+  color: #F4F1E9;
+  margin: 10px 0 0;
+  text-wrap: pretty;
+}
+.wa-hero-sub {
+  font-family: 'Poppins', sans-serif;
+  font-size: 20px;
+  line-height: 1.62;
+  color: #B9C6BC;
+  max-width: 520px;
+  margin: 26px 0 0;
 }
 
-.whoami-credential-card {
-  background: var(--card-bg, #f9fafb);
-  border: 1px solid var(--border, #e5e7eb);
-  border-radius: 12px;
-  padding: 1rem 1.25rem;
+/* ── Hero rings ───────────────────────────────────────────────────── */
+.wa-hero-rings-wrap {
+  position: relative;
+  min-height: 380px;
   display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
+  align-items: center;
+  justify-content: center;
 }
-
-.whoami-cred-label {
-  font-weight: 700;
-  font-size: 0.95rem;
-  color: #1A2B3C;
+.wa-hero-ring {
+  position: absolute;
+  border-radius: 999px;
+  border: 1px solid rgba(143,224,212,.28);
 }
-
-.whoami-cred-desc {
-  font-size: 0.82rem;
-  color: var(--text-secondary, #6b7280);
-  line-height: 1.4;
+.wa-ring-1 { width: 300px; height: 300px; animation: breathe 6.5s ease-in-out infinite; }
+.wa-ring-2 { width: 214px; height: 214px; border-color: rgba(143,224,212,.4); animation: breathe 6.5s ease-in-out infinite .5s; }
+.wa-ring-3 { width: 132px; height: 132px; border-color: rgba(143,224,212,.55); animation: breathe 6.5s ease-in-out infinite 1s; }
+.wa-hero-center {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.16);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
 }
-
-/* ── Quote block ──────────────────────────────────────────────────── */
-.whoami-quote-block {
-  background: linear-gradient(135deg, #1A2B3C 0%, #2d4a63 100%);
-  border-radius: 20px;
-  padding: 3rem;
-  text-align: center;
-  color: #fff;
+.wa-hero-center span {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300;
+  font-size: 52px;
+  line-height: 1;
+  color: #F4F1E9;
 }
-
-.whoami-quote-block blockquote {
-  font-size: 1.5rem;
-  font-style: italic;
-  font-family: Georgia, serif;
-  line-height: 1.6;
-  margin: 0 0 0.75rem;
+.wa-chip {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(255,255,255,.1);
+  border: 1px solid rgba(255,255,255,.18);
+  backdrop-filter: blur(6px);
+  padding: 8px 15px;
+  border-radius: 999px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  color: #F4F1E9;
+  white-space: nowrap;
 }
-
-.whoami-quote-block cite {
-  font-size: 0.9rem;
-  opacity: 0.75;
-  display: block;
-  margin-bottom: 1.5rem;
+.wa-chip-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: #8FE0D4;
+  flex: none;
 }
+.wa-chip-1 { top: 12%; right: 4%; }
+.wa-chip-2 { bottom: 12%; left: 2%; }
 
-.whoami-quote-body {
-  font-size: 1rem;
-  line-height: 1.75;
-  opacity: 0.9;
-  max-width: 620px;
+/* ── MISSION ──────────────────────────────────────────────────────── */
+.wa-mission {
+  background: #F4F1E9;
+  padding-top: 104px;
+  padding-bottom: 104px;
+}
+.wa-mission-grid {
+  max-width: 1180px;
   margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: center;
+}
+.wa-mission-quote {
+  font-family: 'Poppins', sans-serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: 38px;
+  line-height: 1.24;
+  color: #12362B;
+  margin: 20px 0 0;
+  text-wrap: pretty;
+}
+.wa-mission-body {
+  font-family: 'Poppins', sans-serif;
+  font-size: 17px;
+  line-height: 1.68;
+  color: #4A4E44;
+  margin: 28px 0 0;
+}
+.wa-mission-visual {
+  position: relative;
+  height: 440px;
+  border-radius: 26px;
+  overflow: hidden;
+  background: repeating-linear-gradient(135deg, #D8E4DC, #D8E4DC 16px, #CFDDD3 16px, #CFDDD3 32px);
+  box-shadow: 0 40px 90px -60px rgba(18,54,43,.5);
+}
+.wa-visual-caption {
+  position: absolute;
+  bottom: 20px;
+  right: 24px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  color: rgba(18,54,43,.5);
+}
+
+/* ── VALUES ───────────────────────────────────────────────────────── */
+.wa-values {
+  background: #F4F1E9;
+  padding-bottom: 104px;
+}
+.wa-values-inner { max-width: 1180px; margin: 0 auto; }
+.wa-values-h2 {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300;
+  font-size: 48px;
+  line-height: 1.05;
+  color: #12362B;
+  margin: 0;
+}
+.wa-values-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+  margin-top: 36px;
+}
+.wa-value-card {
+  background: #FFF;
+  border: 1px solid rgba(18,54,43,.1);
+  border-radius: 22px;
+  padding: 34px 30px;
+}
+.wa-value-num {
+  width: 48px;
+  height: 48px;
+  border-radius: 13px;
+  background: #E7F1EC;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300;
+  font-size: 22px;
+  color: #0E766B;
+}
+.wa-value-title {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300;
+  font-size: 25px;
+  color: #12362B;
+  margin: 20px 0 0;
+}
+.wa-value-desc {
+  font-family: 'Poppins', sans-serif;
+  font-size: 15.5px;
+  line-height: 1.62;
+  color: #4A4E44;
+  margin: 10px 0 0;
+}
+
+/* ── ABOUT NEHA ───────────────────────────────────────────────────── */
+.wa-neha {
+  position: relative;
+  background:
+    radial-gradient(120% 90% at 12% -10%, #155E55 0%, rgba(21,94,85,0) 55%),
+    #0C241C;
+  padding-top: 112px;
+  padding-bottom: 112px;
+  overflow: hidden;
+}
+.wa-neha-orb {
+  position: absolute;
+  bottom: -80px;
+  right: -40px;
+  width: 360px;
+  height: 360px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(95,200,184,.16), transparent 70%);
+  filter: blur(20px);
+  pointer-events: none;
+}
+.wa-neha-grid {
+  position: relative;
+  max-width: 1180px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: .9fr 1.1fr;
+  gap: 70px;
+  align-items: center;
+}
+.wa-neha-portrait-wrap { position: relative; }
+.wa-portrait-ring {
+  position: absolute;
+  inset: -16px;
+  border-radius: 230px 230px 34px 34px;
+  border: 1px solid rgba(143,224,212,.24);
+  animation: breathe 7s ease-in-out infinite;
+}
+.wa-portrait-img {
+  position: relative;
+  width: 100%;
+  height: 500px;
+  border-radius: 220px 220px 24px 24px;
+  overflow: hidden;
+  background: repeating-linear-gradient(135deg, #234A40, #234A40 15px, #2A5346 15px, #2A5346 30px);
+  border: 1px solid rgba(255,255,255,.1);
+}
+.wa-portrait-caption {
+  position: absolute;
+  bottom: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  color: rgba(246,242,234,.6);
+  white-space: nowrap;
+}
+.wa-portrait-badge {
+  position: absolute;
+  left: -14px;
+  bottom: 64px;
+  background: #FFF;
+  border-radius: 16px;
+  padding: 15px 20px;
+  box-shadow: 0 24px 50px -22px rgba(0,0,0,.6);
+}
+.wa-badge-title {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  color: #12362B;
+}
+.wa-badge-sub {
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+  color: #6B6E63;
+  margin-top: 1px;
+}
+
+.wa-neha-h2 {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300;
+  font-size: 52px;
+  line-height: 1.03;
+  color: #F4F1E9;
+  margin: 12px 0 0;
+}
+.wa-credentials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 18px;
+}
+.wa-cred {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.14);
+  padding: 7px 15px;
+  border-radius: 999px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  font-size: 13px;
+  color: #DDE7DD;
+}
+.wa-cred-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: #8FE0D4;
+  flex: none;
+}
+.wa-neha-bio {
+  font-family: 'Poppins', sans-serif;
+  font-size: 17px;
+  line-height: 1.7;
+  color: #B9C6BC;
+  margin: 24px 0 0;
+}
+.wa-blockquote {
+  margin: 26px 0 0;
+  padding: 0 0 0 22px;
+  border-left: 2px solid #5FC8B8;
+  font-family: 'Poppins', sans-serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: 22px;
+  line-height: 1.42;
+  color: #EAF1EA;
+}
+.wa-stats {
+  display: flex;
+  gap: 36px;
+  margin-top: 36px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.wa-stat-val {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300;
+  font-size: 34px;
+  color: #F4F1E9;
+}
+.wa-stat-label {
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+  color: #8FA394;
+  margin-top: 2px;
+}
+.wa-stat-divider {
+  width: 1px;
+  height: 48px;
+  background: rgba(255,255,255,.16);
+}
+.wa-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  color: #0C241C;
+  background: #5FC8B8;
+  padding: 16px 30px;
+  border-radius: 999px;
+  margin-top: 34px;
+  text-decoration: none;
+  transition: background .2s ease;
+}
+.wa-cta:hover { background: #4fb4a4; color: #0C241C; }
+
+/* ── CTA SECTION ──────────────────────────────────────────────────── */
+.wa-cta-section {
+  background: #F4F1E9;
+  padding-top: 104px;
+  padding-bottom: 104px;
+}
+.wa-cta-card {
+  max-width: 1180px;
+  margin: 0 auto;
+  position: relative;
+  background:
+    radial-gradient(95% 110% at 88% -5%, #155E55 0%, rgba(21,94,85,0) 60%),
+    linear-gradient(160deg, #123B2F 0%, #0E2A21 55%, #0C2419 100%);
+  border-radius: 32px;
+  padding: 80px 72px;
+  overflow: hidden;
+}
+.wa-cta-orb {
+  position: absolute;
+  top: -60px;
+  right: 8%;
+  width: 280px;
+  height: 280px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(95,200,184,.3), transparent 70%);
+  filter: blur(16px);
+  animation: floaty 8s ease-in-out infinite;
+  pointer-events: none;
+}
+.wa-cta-copy { position: relative; max-width: 640px; }
+.wa-cta-h2 {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300;
+  font-size: 54px;
+  line-height: 1.03;
+  color: #F4F1E9;
+  margin: 8px 0 0;
+}
+.wa-cta-sub {
+  font-family: 'Poppins', sans-serif;
+  font-size: 19px;
+  line-height: 1.6;
+  color: #B9C6BC;
+  margin: 18px 0 0;
+}
+.wa-cta-btns {
+  display: flex;
+  gap: 16px;
+  margin-top: 34px;
+  flex-wrap: wrap;
 }
 
 /* ── Responsive ───────────────────────────────────────────────────── */
-@media (max-width: 768px) {
-  .whoami-hero-inner { flex-direction: column; gap: 2rem; }
-  .whoami-hero-image { width: 100%; max-width: 320px; align-self: center; }
-  .whoami-hero-text h1 { font-size: 2rem; }
-  .whoami-stat { padding: 1rem 1.5rem; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.15); width: 100%; }
-  .whoami-stat:last-child { border-bottom: none; }
-  .whoami-quote-block { padding: 2rem 1.5rem; }
-  .whoami-quote-block blockquote { font-size: 1.2rem; }
-}
-
-@media (prefers-color-scheme: dark) {
-  .whoami-credential-card { background: #1e2a35; border-color: #2d3f50; }
-  .whoami-section h2 { color: #e2e8f0; border-bottom-color: rgba(255,255,255,0.1); }
-  .whoami-section p { color: #94a3b8; }
-  .whoami-cred-label { color: #e2e8f0; }
+@media (max-width: 920px) {
+  .wa-hero-h1       { font-size: 52px; }
+  .wa-hero          { padding-top: 132px; }
+  .wa-hero-grid     { grid-template-columns: 1fr; }
+  .wa-hero-rings-wrap { display: none; }
+  .wa-mission-grid  { grid-template-columns: 1fr; }
+  .wa-mission-visual { height: 220px; }
+  .wa-mission-quote { font-size: 28px; }
+  .wa-values-grid   { grid-template-columns: 1fr; }
+  .wa-values-h2     { font-size: 36px; }
+  .wa-neha-grid     { grid-template-columns: 1fr; }
+  .wa-neha-h2       { font-size: 38px; }
+  .wa-portrait-img  { height: 340px; }
+  .wa-cta-h2        { font-size: 38px; }
+  .wa-cta-card      { padding: 56px 32px; }
 }

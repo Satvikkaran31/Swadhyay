@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Caveat:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;background:#F4F1E9;font-family:'Poppins',sans-serif;color:#24261F;-webkit-font-smoothing:antialiased;}
+  a{color:#16362E;text-decoration:none;}
+  a:hover{color:#5FC8B8;}
+  ::selection{background:#5FC8B8;color:#FFF;}
+  @keyframes rvIn{from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:none;}}
+  .rv{opacity:1;transform:none;}
+  .rv-go .rv{animation:rvIn .8s cubic-bezier(.16,1,.3,1) both;}
+  @media (prefers-reduced-motion:reduce){.rv-go .rv{animation:none;}}
+  @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
+  @keyframes breathe{0%,100%{transform:scale(1);opacity:.55}50%{transform:scale(1.08);opacity:.9}}
+  [data-nav-mobile]{display:none;}
+  @media (max-width:1080px){[data-nav-desktop]{display:none!important;}[data-nav-mobile]{display:flex!important;}}
+  @media (max-width:920px){
+    [data-split]{grid-template-columns:1fr!important;}
+    [data-pad]{padding-left:22px!important;padding-right:22px!important;}
+    [data-hero]{padding-top:132px!important;}
+    [data-h1]{font-size:46px!important;}
+    [data-sticky]{position:static!important;}
+  }
+
+  .navpill,.navlogo{background:transparent;border:1px solid transparent;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;transition:background .45s ease,border-color .45s ease,box-shadow .45s ease,backdrop-filter .45s ease,-webkit-backdrop-filter .45s ease;}
+  body.nav-scrolled .navpill{background:rgba(15,32,27,.6);border-color:rgba(255,255,255,.14);box-shadow:0 16px 46px -20px rgba(15,32,27,.75);backdrop-filter:blur(20px) saturate(160%);-webkit-backdrop-filter:blur(20px) saturate(160%);}
+  body.nav-scrolled .navlogo{background:rgba(15,32,27,.72);border-color:rgba(255,255,255,.14);box-shadow:0 14px 40px -18px rgba(15,32,27,.7);backdrop-filter:blur(18px) saturate(150%);-webkit-backdrop-filter:blur(18px) saturate(150%);}
+</style>
+<script>(function(){function u(){document.body.classList.toggle('nav-scrolled',(window.scrollY||window.pageYOffset||0)>12);}window.addEventListener('scroll',u,{passive:true});u();setTimeout(u,60);})();</script>
+</helmet>
+
+<div style="width:100%;overflow-x:clip;">
+
+  <!-- DESKTOP NAV -->
+  <div data-nav-desktop style="position:fixed;top:22px;left:0;right:0;z-index:60;display:flex;justify-content:center;pointer-events:none;padding:0 26px;">
+    <a href="Swadhyay Home.dc.html" class="navlogo" style="pointer-events:auto;position:absolute;left:26px;top:0;display:flex;align-items:center;padding:7px 24px;border-radius:999px;font-family:'Caveat';font-weight:700;font-size:27px;color:#F6F2EA;line-height:1;">Swadhyay</a>
+    <div class="navpill" style="pointer-events:auto;display:flex;align-items:center;gap:30px;padding:6px 8px 6px 30px;border-radius:999px;">
+      <nav style="display:flex;align-items:center;gap:26px;font-family:'Poppins';font-weight:600;font-size:17px;white-space:nowrap;">
+        <a href="Swadhyay Home.dc.html" style="color:#CDD7CF;">Home</a>
+        <a href="Swadhyay About.dc.html" style="color:#CDD7CF;">About</a>
+        <a href="Swadhyay Schedule.dc.html" style="color:#CDD7CF;">Schedule</a>
+        <a href="Swadhyay Series.dc.html" style="color:#F6F2EA;background:rgba(255,255,255,.12);padding:8px 16px;border-radius:999px;">Learning</a>
+        <a href="Swadhyay Pricing.dc.html" style="color:#CDD7CF;">Pricing</a>
+      </nav>
+      <a href="Swadhyay Schedule.dc.html" style="font-family:'Poppins';font-weight:700;font-size:17px;color:#FFF;background:#5FC8B8;padding:10px 24px;border-radius:999px;white-space:nowrap;box-shadow:0 8px 24px -8px rgba(95,200,184,.7);">Book a session</a>
+    </div>
+  </div>
+
+  <!-- MOBILE NAV -->
+  <div data-nav-mobile style="position:fixed;top:16px;left:16px;right:16px;z-index:60;flex-direction:column;">
+    <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(15,32,27,.82);backdrop-filter:blur(18px) saturate(150%);-webkit-backdrop-filter:blur(18px) saturate(150%);border:1px solid rgba(255,255,255,.14);padding:10px 12px 10px 22px;border-radius:999px;box-shadow:0 14px 40px -18px rgba(15,32,27,.7);">
+      <a href="Swadhyay Home.dc.html" style="font-family:'Caveat';font-weight:700;font-size:26px;color:#F6F2EA;line-height:1;">Swadhyay</a>
+      <button onClick="{{ toggleMenu }}" style="border:none;background:#5FC8B8;width:42px;height:42px;border-radius:999px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;">
+        <span style="width:16px;height:2px;background:#FFF;border-radius:2px;"></span>
+        <span style="width:16px;height:2px;background:#FFF;border-radius:2px;"></span>
+        <span style="width:16px;height:2px;background:#FFF;border-radius:2px;"></span>
+      </button>
+    </div>
+    <sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+      <div style="margin-top:10px;background:rgba(15,32,27,.94);backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.14);border-radius:26px;padding:16px 22px 22px;display:flex;flex-direction:column;gap:4px;box-shadow:0 20px 50px -18px rgba(0,0,0,.6);">
+        <a href="Swadhyay Home.dc.html" onClick="{{ closeMenu }}" style="font-family:'Poppins';font-weight:600;font-size:18px;color:#CDD7CF;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.08);">Home</a>
+        <a href="Swadhyay About.dc.html" onClick="{{ closeMenu }}" style="font-family:'Poppins';font-weight:600;font-size:18px;color:#CDD7CF;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.08);">About</a>
+        <a href="Swadhyay Schedule.dc.html" onClick="{{ closeMenu }}" style="font-family:'Poppins';font-weight:600;font-size:18px;color:#CDD7CF;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.08);">Schedule</a>
+        <a href="Swadhyay Series.dc.html" onClick="{{ closeMenu }}" style="font-family:'Poppins';font-weight:600;font-size:18px;color:#F6F2EA;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.08);">Learning</a>
+        <a href="Swadhyay Pricing.dc.html" onClick="{{ closeMenu }}" style="font-family:'Poppins';font-weight:600;font-size:18px;color:#CDD7CF;padding:12px 0;">Pricing</a>
+        <a href="Swadhyay Schedule.dc.html" onClick="{{ closeMenu }}" style="font-family:'Poppins';font-weight:700;font-size:16px;color:#FFF;background:#5FC8B8;padding:14px;border-radius:999px;text-align:center;margin-top:12px;">Book a session →</a>
+      </div>
+    </sc-if>
+  </div>
+
+  <!-- HERO -->
+  <section data-hero data-pad style="position:relative;background:radial-gradient(100% 90% at 90% -10%,#155E55 0%,rgba(21,94,85,0) 60%),linear-gradient(168deg,#123B2F 0%,#0F2E24 45%,#0C2419 100%);padding:170px 72px 84px;overflow:hidden;">
+    <div style="position:absolute;top:-60px;right:-40px;width:340px;height:340px;border-radius:999px;background:radial-gradient(circle,rgba(95,200,184,.26),transparent 70%);filter:blur(18px);animation:floaty 9s ease-in-out infinite;"></div>
+    <div data-col style="position:relative;max-width:1180px;margin:0 auto;display:grid;grid-template-columns:1.1fr .9fr;gap:56px;align-items:center;">
+      <div class="rv">
+        <a href="Swadhyay Series.dc.html" style="font-family:'Poppins';font-weight:600;font-size:14px;color:#8FE0D4;">← Youth Series</a>
+        <div style="display:flex;gap:10px;margin:18px 0 0;flex-wrap:wrap;">
+          <span style="font-family:'Poppins';font-weight:700;font-size:12px;letter-spacing:.06em;color:#0C241C;background:#8FE0D4;padding:7px 14px;border-radius:999px;">START HERE · FREE</span>
+          <span style="font-family:'Poppins';font-weight:600;font-size:12px;letter-spacing:.06em;color:#CDD7CF;border:1px solid rgba(255,255,255,.24);padding:7px 14px;border-radius:999px;">SELF-PACED</span>
+        </div>
+        <h1 data-h1 style="font-family:'Poppins',sans-serif;font-weight:300;font-size:66px;line-height:1.0;letter-spacing:-.01em;color:#F4F1E9;margin:16px 0 0;text-wrap:pretty;">Who Am I?</h1>
+        <p style="font-family:'Poppins';font-size:19px;line-height:1.6;color:#B9C6BC;max-width:500px;margin:20px 0 0;">A guided self-discovery journey to uncover your values, strengths and authentic identity — the foundation for everything that follows.</p>
+        <div style="display:flex;gap:28px;margin-top:30px;flex-wrap:wrap;">
+          <div style="display:flex;align-items:center;gap:9px;font-family:'Poppins';font-size:15px;color:#CDD7CF;"><span style="color:#8FE0D4;">▷</span> 18 lessons</div>
+          <div style="display:flex;align-items:center;gap:9px;font-family:'Poppins';font-size:15px;color:#CDD7CF;"><span style="color:#8FE0D4;">◷</span> 4.5 hours</div>
+          <div style="display:flex;align-items:center;gap:9px;font-family:'Poppins';font-size:15px;color:#CDD7CF;"><span style="color:#8FE0D4;">★</span> 4.9 (210 reviews)</div>
+        </div>
+      </div>
+      <div class="rv" style="position:relative;min-height:400px;display:flex;align-items:center;justify-content:center;">
+        <div style="position:absolute;width:300px;height:300px;border-radius:999px;background:radial-gradient(circle,rgba(95,200,184,.22),transparent 68%);"></div>
+        <div style="position:absolute;width:300px;height:300px;border-radius:999px;border:1px solid rgba(143,224,212,.28);animation:breathe 6.5s ease-in-out infinite;"></div>
+        <div style="position:absolute;width:214px;height:214px;border-radius:999px;border:1px solid rgba(143,224,212,.4);animation:breathe 6.5s ease-in-out infinite .5s;"></div>
+        <div style="position:relative;width:150px;height:150px;border-radius:999px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;">
+          <span style="color:#F4F1E9;font-size:38px;margin-left:6px;">▶</span>
+        </div>
+        <div style="position:absolute;top:14%;right:2%;"><div style="animation:floaty 7s ease-in-out infinite;"><span style="display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(6px);padding:8px 15px;border-radius:999px;font-family:'Poppins';font-weight:600;font-size:13px;color:#F4F1E9;"><span style="width:6px;height:6px;border-radius:999px;background:#8FE0D4;"></span>4 modules</span></div></div>
+        <div style="position:absolute;bottom:14%;left:0;"><div style="animation:floaty 6.5s ease-in-out infinite .8s;"><span style="display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(6px);padding:8px 15px;border-radius:999px;font-family:'Poppins';font-weight:600;font-size:13px;color:#F4F1E9;"><span style="width:6px;height:6px;border-radius:999px;background:#8FE0D4;"></span>Free</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BODY SPLIT -->
+  <section data-pad style="padding:72px 72px 96px;background:#F4F1E9;">
+    <div data-split style="max-width:1180px;margin:0 auto;display:grid;grid-template-columns:1.5fr .95fr;gap:56px;align-items:start;">
+
+      <!-- LEFT: content -->
+      <div class="rv">
+        <h2 style="font-family:'Poppins',sans-serif;font-weight:300;font-size:34px;color:#12362B;margin:0;">What you'll discover</h2>
+        <p style="font-family:'Poppins';font-size:17px;line-height:1.7;color:#4A4E44;margin:16px 0 0;">This course is a quiet, structured turn inward. Through guided reflection and simple daily practices, you'll build a clear picture of who you are — your values, your patterns, and the self you want to grow into.</p>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:28px;">
+          <sc-for list="{{ outcomes }}" as="o" hint-placeholder-count="4">
+            <div style="display:flex;align-items:flex-start;gap:12px;background:#FFF;border:1px solid rgba(18,54,43,.1);border-radius:14px;padding:16px 18px;">
+              <span style="flex:none;width:24px;height:24px;border-radius:7px;background:#0E9C8A;color:#FFF;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;">✓</span>
+              <span style="font-family:'Poppins';font-size:15px;line-height:1.45;color:#2A362D;">{{ o }}</span>
+            </div>
+          </sc-for>
+        </div>
+
+        <h2 style="font-family:'Poppins',sans-serif;font-weight:300;font-size:34px;color:#12362B;margin:48px 0 0;">Course curriculum</h2>
+        <p style="font-family:'Poppins';font-size:15px;color:#6B7A6F;margin:6px 0 0;">{{ moduleCount }} modules · 18 lessons · 4.5 hours</p>
+        <div style="margin-top:22px;border-radius:18px;overflow:hidden;border:1px solid rgba(18,54,43,.12);">
+          <sc-for list="{{ modules }}" as="m" hint-placeholder-count="4">
+            <div style="background:#FFF;border-bottom:1px solid rgba(18,54,43,.1);">
+              <button onClick="{{ m.toggle }}" style="all:unset;cursor:pointer;display:flex;align-items:center;gap:18px;width:100%;padding:22px 24px;box-sizing:border-box;">
+                <span style="font-family:'Poppins',sans-serif;font-weight:300;font-size:22px;color:#0E766B;min-width:34px;">{{ m.num }}</span>
+                <div style="flex:1;">
+                  <div style="font-family:'Poppins';font-weight:700;font-size:17px;color:#12362B;">{{ m.title }}</div>
+                  <div style="font-family:'Poppins';font-size:13px;color:#6B7A6F;margin-top:2px;">{{ m.meta }}</div>
+                </div>
+                <span style="{{ m.arrowStyle }}">›</span>
+              </button>
+              <div style="{{ m.bodyStyle }}">
+                <p style="font-family:'Poppins';font-size:15px;line-height:1.6;color:#4A4E44;margin:0;padding:0 24px 22px 76px;">{{ m.desc }}</p>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <!-- RIGHT: sticky enroll card -->
+      <div class="rv" data-sticky style="position:sticky;top:120px;">
+        <div style="background:#FFF;border:1px solid rgba(18,54,43,.12);border-radius:24px;overflow:hidden;box-shadow:0 40px 90px -60px rgba(18,54,43,.55);">
+          <div style="position:relative;height:190px;background:repeating-linear-gradient(135deg,#DCE6DE,#DCE6DE 15px,#D2DECF 15px,#D2DECF 30px);">
+            <span style="position:absolute;bottom:14px;right:18px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:rgba(18,54,43,.5);">preview — Who Am I?</span>
+            <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:64px;height:64px;border-radius:999px;background:rgba(255,255,255,.92);display:flex;align-items:center;justify-content:center;box-shadow:0 12px 30px -10px rgba(0,0,0,.4);"><span style="color:#0E766B;font-size:22px;margin-left:4px;">▶</span></div>
+          </div>
+          <div style="padding:28px 26px 30px;">
+            <div style="display:flex;align-items:baseline;gap:10px;">
+              <span style="font-family:'Poppins',sans-serif;font-weight:300;font-size:44px;color:#12362B;">Free</span>
+              <span style="font-family:'Poppins';font-size:15px;color:#6B7A6F;text-decoration:line-through;">₹1,499</span>
+            </div>
+            <p style="font-family:'Poppins';font-size:14px;color:#6B7A6F;margin:4px 0 0;">The perfect place to begin your inner work.</p>
+            <a href="Swadhyay Schedule.dc.html" style="display:block;text-align:center;font-family:'Poppins';font-weight:700;font-size:16px;color:#FFF;background:#12362B;padding:16px;border-radius:999px;margin-top:22px;">Enroll for free →</a>
+            <a href="Swadhyay Schedule.dc.html" style="display:block;text-align:center;font-family:'Poppins';font-weight:700;font-size:15px;color:#0E766B;padding:13px;border-radius:999px;border:1.5px solid rgba(14,118,107,.3);margin-top:10px;">Book 1-on-1 instead</a>
+            <div style="height:1px;background:rgba(18,54,43,.1);margin:24px 0;"></div>
+            <div style="display:flex;flex-direction:column;gap:13px;">
+              <sc-for list="{{ includes }}" as="i" hint-placeholder-count="4">
+                <div style="display:flex;align-items:center;gap:12px;font-family:'Poppins';font-size:14.5px;color:#2A362D;"><span style="color:#0E766B;">{{ i.icon }}</span>{{ i.label }}</div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section data-pad style="padding:92px 72px;background:#EEF4EF;">
+    <div class="rv" style="max-width:1180px;margin:0 auto;">
+      <span style="font-family:'IBM Plex Mono',monospace;font-weight:500;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#0E766B;">From learners</span>
+      <h2 style="font-family:'Poppins',sans-serif;font-weight:300;font-size:40px;line-height:1.05;color:#12362B;margin:10px 0 0;">Quietly, something shifts</h2>
+      <div data-split style="display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:36px;">
+        <sc-for list="{{ testimonials }}" as="t" hint-placeholder-count="2">
+          <div style="background:#FFF;border:1px solid rgba(18,54,43,.1);border-radius:22px;padding:32px 30px;">
+            <div style="font-family:'Poppins';font-weight:600;font-size:15px;color:#C1852B;letter-spacing:.04em;">★★★★★</div>
+            <p style="font-family:'Poppins',sans-serif;font-style:italic;font-weight:300;font-size:20px;line-height:1.5;color:#12362B;margin:16px 0 0;">“{{ t.quote }}”</p>
+            <div style="display:flex;align-items:center;gap:12px;margin-top:22px;">
+              <div style="width:40px;height:40px;border-radius:999px;background:#D2DECF;"></div>
+              <div><div style="font-family:'Poppins';font-weight:700;font-size:14px;color:#12362B;">{{ t.name }}</div><div style="font-family:'Poppins';font-size:13px;color:#6B7A6F;">{{ t.role }}</div></div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <!-- INSTRUCTOR BAND -->
+  <section data-pad style="position:relative;padding:96px 72px;background:radial-gradient(120% 90% at 88% -10%,#155E55 0%,rgba(21,94,85,0) 55%),linear-gradient(160deg,#123B2F 0%,#0C2419 70%);overflow:hidden;">
+    <div style="position:absolute;bottom:-70px;left:-30px;width:320px;height:320px;border-radius:999px;background:radial-gradient(circle,rgba(95,200,184,.16),transparent 70%);filter:blur(20px);"></div>
+    <div class="rv" data-split style="position:relative;max-width:1080px;margin:0 auto;display:grid;grid-template-columns:.7fr 1.3fr;gap:52px;align-items:center;">
+      <div style="position:relative;height:300px;border-radius:180px 180px 22px 22px;overflow:hidden;background:repeating-linear-gradient(135deg,#234A40,#234A40 14px,#2A5346 14px,#2A5346 28px);border:1px solid rgba(255,255,255,.1);">
+        <span style="position:absolute;bottom:18px;left:50%;transform:translateX(-50%);font-family:'IBM Plex Mono',monospace;font-size:12px;color:rgba(246,242,234,.6);">portrait — Neha</span>
+      </div>
+      <div>
+        <span style="font-family:'IBM Plex Mono',monospace;font-weight:500;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#8FE0D4;">Your guide</span>
+        <h2 style="font-family:'Poppins',sans-serif;font-weight:300;font-size:40px;line-height:1.04;color:#F4F1E9;margin:10px 0 0;">Neha Verma</h2>
+        <p style="font-family:'Poppins';font-size:17px;line-height:1.68;color:#B9C6BC;margin:16px 0 0;max-width:560px;">ICF-certified coach and Senior Mentor at Jagriti Yatra, with 700+ hours guiding people through reflective change. She built this course from the same practice she uses in one-on-one coaching — slow, honest, and grounded in swadhyay.</p>
+        <a href="Swadhyay About.dc.html" style="display:inline-flex;align-items:center;gap:8px;font-family:'Poppins';font-weight:700;font-size:15px;color:#8FE0D4;margin-top:22px;">More about Neha →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer data-pad style="background:#0C241C;padding:74px 72px 40px;">
+    <div style="max-width:1280px;margin:0 auto;display:flex;justify-content:space-between;flex-wrap:wrap;gap:24px;align-items:center;">
+      <span style="font-family:'Caveat';font-weight:700;font-size:33px;color:#F6F2EA;">Swadhyay</span>
+      <div style="display:flex;gap:26px;font-family:'Poppins';font-size:15px;flex-wrap:wrap;">
+        <a href="Swadhyay About.dc.html" style="color:#B9C6BC;">About</a>
+        <a href="Swadhyay Series.dc.html" style="color:#B9C6BC;">Learning</a>
+        <a href="Swadhyay Schedule.dc.html" style="color:#B9C6BC;">Schedule</a>
+        <a href="Swadhyay Pricing.dc.html" style="color:#B9C6BC;">Pricing</a>
+      </div>
+    </div>
+    <div style="max-width:1280px;margin:40px auto 0;padding-top:24px;border-top:1px solid rgba(255,255,255,.1);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-family:'Poppins';font-size:13px;color:#6E8577;">
+      <span>© 2026 Swadhyay. All rights reserved.</span>
+      <span>PCC · ICF Certified · Senior Mentor at Jagriti Yatra</span>
+    </div>
+  </footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { menuOpen: false, openModule: 0 };
+
+  testimonials = [
+    { quote: 'I expected another self-help course. Instead I finally understood why I make the choices I do. It\u2019s quiet, but it changed how I show up.', name: 'Aarav M.', role: 'Final-year student' },
+    { quote: 'The reflection prompts are deceptively simple. Weeks later I\u2019m still using the daily practice from module four.', name: 'Sneha R.', role: 'First-time job seeker' },
+  ];
+
+  outcomes = [
+    'Name the values that actually drive you',
+    'Recognise your recurring thought patterns',
+    'Separate your true voice from others\' expectations',
+    'Build a simple daily reflection practice',
+  ];
+
+  includes = [
+    { icon: '▷', label: '18 on-demand video lessons' },
+    { icon: '❏', label: 'Guided reflection workbook (PDF)' },
+    { icon: '∞', label: 'Lifetime access, learn at your pace' },
+    { icon: '✎', label: 'Prompts & exercises for each module' },
+  ];
+
+  modulesData = [
+    { num: '01', title: 'The invitation inward', meta: '4 lessons · 55 min', desc: 'Why self-study matters, and how to create a quiet, honest space for reflection before you begin.' },
+    { num: '02', title: 'Mapping your values', meta: '5 lessons · 70 min', desc: 'Uncover what truly matters to you — and notice where your daily life does and doesn\'t reflect it.' },
+    { num: '03', title: 'Patterns & stories', meta: '5 lessons · 75 min', desc: 'Spot the recurring narratives and beliefs shaping your choices, and question the ones that no longer serve you.' },
+    { num: '04', title: 'Becoming', meta: '4 lessons · 70 min', desc: 'Turn insight into a clear, compassionate vision of the self you want to grow into — with a practice to sustain it.' },
+  ];
+
+  arrowStyle(open) {
+    return { marginLeft: 'auto', fontSize: '24px', color: open ? '#0E766B' : '#9AB0A6',
+      transition: 'transform .4s cubic-bezier(.16,1,.3,1)', transform: open ? 'rotate(90deg)' : 'rotate(0deg)', display: 'inline-flex' };
+  }
+  bodyStyle(open) {
+    return { overflow: 'hidden', maxHeight: open ? '160px' : '0px', opacity: open ? 1 : 0,
+      transition: 'max-height .5s cubic-bezier(.16,1,.3,1),opacity .4s ease' };
+  }
+
+  renderVals() {
+    return {
+      menuOpen: this.state.menuOpen,
+      toggleMenu: () => this.setState(s => ({ menuOpen: !s.menuOpen })),
+      closeMenu: () => this.setState({ menuOpen: false }),
+      outcomes: this.outcomes,
+      testimonials: this.testimonials,
+      includes: this.includes,
+      moduleCount: this.modulesData.length,
+      modules: this.modulesData.map((m, i) => ({
+        ...m,
+        toggle: () => this.setState(s => ({ openModule: s.openModule === i ? -1 : i })),
+        arrowStyle: this.arrowStyle(this.state.openModule === i),
+        bodyStyle: this.bodyStyle(this.state.openModule === i),
+      })),
+    };
+  }
+
+  componentDidMount() {
+    const t0 = document.timeline.currentTime || 0;
+    let tries = 0;
+    const arm = () => {
+      const t1 = document.timeline.currentTime || 0;
+      if (t1 > t0) { document.body.classList.add('rv-go'); return; }
+      if (++tries < 8) requestAnimationFrame(arm);
+    };
+    requestAnimationFrame(arm);
+  }
+}
+</script>
+</body>
+</html>
