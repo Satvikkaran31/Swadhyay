@@ -1,14 +1,13 @@
+import "dotenv/config"; // must be first import — loads .env before any module reads process.env
+
 import * as Sentry from "@sentry/node";
 import express from "express";
-import dotenv from "dotenv";
 import cors from "cors";
 import bodyParser from "body-parser";
 import session from "express-session";
 import pgSession from "connect-pg-simple";
 import path from "path";
 import { fileURLToPath } from "url";
-
-dotenv.config(); // single dotenv.config() for the whole server
 
 import pool from "./utils/db.js";
 import { runMigrations } from "./utils/migrations.js";
