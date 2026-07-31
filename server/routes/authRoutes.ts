@@ -5,6 +5,7 @@ import pool from '../utils/db.js';
 
 const ALLOWED_REDIRECT_URIS = [
   'http://localhost:3000',
+  'http://localhost:5173',
   'https://swadhyay.co',
   'https://swadhyay-pa3f.onrender.com',
 ];
