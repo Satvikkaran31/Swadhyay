@@ -54,6 +54,7 @@ const PGStore = pgSession(session);
 const allowed_origins = [
   "https://swadhyay-pa3f.onrender.com",
   "http://localhost:3000",
+  "http://localhost:5173",
   "https://swadhyay.co",
 ];
 app.use(cors({ origin: allowed_origins, credentials: true }));
