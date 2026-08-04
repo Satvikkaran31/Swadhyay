@@ -33,6 +33,7 @@ export default function Learn() {
   const [resources, setResources] = useState<any[]>([]);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [sidebarTab, setSidebarTab] = useState<"content" | "notes">("content");
+  const [openModules, setOpenModules] = useState(new Set<number>());
   const [pageLoading, setPageLoading] = useState(true);
 
   const [noteText, setNoteText] = useState("");
@@ -64,12 +65,21 @@ export default function Learn() {
         setCourse(data);
 
         let resumeLesson = null;
+        let resumeModuleId: number | null = null;
         outer: for (const mod of data.modules ?? []) {
           for (const lesson of mod.lessons ?? []) {
-            if (!completedSet.has(lesson.id)) { resumeLesson = lesson; break outer; }
+            if (!completedSet.has(lesson.id)) {
+              resumeLesson = lesson;
+              resumeModuleId = mod.id;
+              break outer;
+            }
           }
         }
-        setActiveLesson(resumeLesson ?? data.modules?.[0]?.lessons?.[0] ?? null);
+        const fallbackLesson = data.modules?.[0]?.lessons?.[0] ?? null;
+        const fallbackModuleId = data.modules?.[0]?.id ?? null;
+        setActiveLesson(resumeLesson ?? fallbackLesson);
+        // Expand all modules initially (Coursera-style — collapsed only on demand)
+        setOpenModules(new Set((data.modules ?? []).map((m: any) => m.id)));
       } catch (err: any) {
         if (err.name !== "AbortError") setPageLoading(false);
         return;
@@ -342,50 +352,113 @@ export default function Learn() {
             </div>
           </div>
 
-          {/* Content tab — module/lesson list */}
+          {/* Content tab — module/lesson accordion */}
           {sidebarTab === "content" && (
             <div className="lms-sidebar-content">
-              {course.modules?.map((mod: any, mi: number) => (
-                <div key={mod.id} className="lms-module">
-                  <div className="lms-module-title">
-                    <span className="lms-module-num">{String(mi + 1).padStart(2, "0")}</span>
-                    <div className="lms-module-title-text">
-                      <span>{mod.title}</span>
-                      {mod.description && (
-                        <span className="lms-module-desc">{mod.description}</span>
-                      )}
+              {course.modules?.map((mod: any, mi: number) => {
+                const isOpen = openModules.has(mod.id);
+                const modDone = (mod.lessons ?? []).filter((l: any) => completedIds.has(l.id)).length;
+                const modTotal = mod.lessons?.length ?? 0;
+                const modAllDone = modDone === modTotal && modTotal > 0;
+                return (
+                  <div key={mod.id} className={`lms-module${isOpen ? " open" : ""}`}>
+                    {/* Module header — clickable accordion */}
+                    <button
+                      className="lms-module-header"
+                      onClick={() => setOpenModules(prev => {
+                        const next = new Set(prev);
+                        isOpen ? next.delete(mod.id) : next.add(mod.id);
+                        return next;
+                      })}
+                    >
+                      <div className="lms-module-header-left">
+                        <span className={`lms-module-done-ring${modAllDone ? " done" : ""}`}>
+                          {modAllDone ? (
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                              <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                          ) : (
+                            <span>{String(mi + 1)}</span>
+                          )}
+                        </span>
+                        <div className="lms-module-header-text">
+                          <span className="lms-module-header-title">{mod.title}</span>
+                          <span className="lms-module-header-meta">
+                            {modDone}/{modTotal} complete
+                          </span>
+                        </div>
+                      </div>
+                      <svg
+                        className="lms-module-chevron"
+                        width="16" height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
+                        style={{ transform: isOpen ? "rotate(180deg)" : "rotate(0deg)" }}
+                      >
+                        <polyline points="6 9 12 15 18 9"/>
+                      </svg>
+                    </button>
+
+                    {/* Lesson list — slides open/closed */}
+                    <div
+                      className="lms-module-lessons-wrap"
+                      style={{ maxHeight: isOpen ? `${modTotal * 64 + 8}px` : "0" }}
+                    >
+                      {mod.lessons?.map((lesson: any) => {
+                        const done = completedIds.has(lesson.id);
+                        const active = activeLesson?.id === lesson.id;
+                        return (
+                          <button
+                            key={lesson.id}
+                            ref={active ? activeLessonRef : null}
+                            className={`lms-lesson-btn${active ? " active" : ""}${done ? " done" : ""}`}
+                            onClick={() => {
+                              setActiveLesson(lesson);
+                              if (window.innerWidth <= 768) setSidebarOpen(false);
+                            }}
+                          >
+                            {/* Left: completion indicator */}
+                            <span className={`lms-lesson-check${done ? " done" : ""}${active && !done ? " active" : ""}`}>
+                              {done ? (
+                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5">
+                                  <polyline points="20 6 9 17 4 12"/>
+                                </svg>
+                              ) : null}
+                            </span>
+
+                            {/* Middle: type icon + title */}
+                            <div className="lms-lesson-body">
+                              <div className="lms-lesson-row">
+                                <span className="lms-lesson-type-icon">
+                                  {lesson.type === "text" ? (
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                      <line x1="3" y1="6" x2="21" y2="6"/>
+                                      <line x1="3" y1="12" x2="21" y2="12"/>
+                                      <line x1="3" y1="18" x2="15" y2="18"/>
+                                    </svg>
+                                  ) : (
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                                      <polygon points="5 3 19 12 5 21 5 3"/>
+                                    </svg>
+                                  )}
+                                </span>
+                                <span className="lms-lesson-name">{lesson.title}</span>
+                              </div>
+                              {lesson.duration && (
+                                <span className="lms-lesson-dur">
+                                  {Math.floor(lesson.duration / 60)}m {String(lesson.duration % 60).padStart(2, "0")}s
+                                </span>
+                              )}
+                            </div>
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
-                  {mod.lessons?.map((lesson: any) => {
-                    const done = completedIds.has(lesson.id);
-                    const active = activeLesson?.id === lesson.id;
-                    return (
-                      <button
-                        key={lesson.id}
-                        ref={active ? activeLessonRef : null}
-                        className={`lms-lesson-btn${active ? " active" : ""}${done ? " done" : ""}`}
-                        onClick={() => {
-                          setActiveLesson(lesson);
-                          if (window.innerWidth <= 768) setSidebarOpen(false);
-                        }}
-                      >
-                        <span className={`lms-check${done ? " checked" : ""}`}>
-                          {done ? "✓" : "○"}
-                        </span>
-                        <span className="lms-lesson-type-icon">
-                          {lesson.type === "text" ? "☰" : "▷"}
-                        </span>
-                        <span className="lms-lesson-name">{lesson.title}</span>
-                        {lesson.duration && (
-                          <span className="lms-lesson-dur">
-                            {Math.floor(lesson.duration / 60)}:{String(lesson.duration % 60).padStart(2, "0")}
-                          </span>
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
 
