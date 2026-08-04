@@ -203,10 +203,20 @@ export default function Learn() {
       </header>
 
       {/* ── BODY ──────────────────────────────────────────────────── */}
-      <div className="lms-body">
+      <div className={`lms-body${sidebarOpen ? "" : " sidebar-closed"}`}>
 
         {/* ── MAIN ────────────────────────────────────────────────── */}
         <div className="lms-main">
+
+          {/* Lesson title header — always visible, confirms which lesson is active */}
+          {activeLesson && (
+            <div className="lms-lesson-header">
+              <div className="lms-lesson-header-type">
+                {activeLesson.type === "text" ? "Reading" : "Video"}
+              </div>
+              <div className="lms-lesson-header-title">{activeLesson.title}</div>
+            </div>
+          )}
 
           {/* Video lesson */}
           {isVideo && (
@@ -321,7 +331,7 @@ export default function Learn() {
         </div>
 
         {/* Mobile backdrop — only rendered on small screens */}
-        {sidebarOpen && window.innerWidth <= 768 && (
+        {sidebarOpen && window.innerWidth < 769 && (
           <div className="lms-sidebar-backdrop" onClick={() => setSidebarOpen(false)} />
         )}
 

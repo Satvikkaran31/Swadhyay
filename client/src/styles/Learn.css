@@ -126,19 +126,46 @@
 /* ── Body (main + sidebar) ────────────────────────────────── */
 .lms-body {
   flex: 1;
-  display: flex;
   overflow: hidden;
   min-height: 0;
+  position: relative;
 }
 
 /* ── Main content area ────────────────────────────────────── */
 .lms-main {
-  flex: 1;
+  position: absolute;
+  inset: 0;
+  right: 360px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  min-width: 0;
   background: #0c1a15;
+  transition: right 0.25s ease;
+}
+.lms-body.sidebar-closed .lms-main {
+  right: 0;
+}
+
+/* ── Lesson title header ──────────────────────────────────── */
+.lms-lesson-header {
+  padding: 18px 28px 14px;
+  flex-shrink: 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  background: #0e1e17;
+}
+.lms-lesson-header-type {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #4caf7d;
+  margin-bottom: 4px;
+}
+.lms-lesson-header-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #e8f2ee;
+  line-height: 1.3;
 }
 
 /* ── Video ────────────────────────────────────────────────── */
@@ -147,9 +174,9 @@
   position: relative;
   width: 100%;
   aspect-ratio: 16 / 9;
-  /* on tall viewports, cap height so strip stays visible */
-  max-height: calc(100dvh - 52px - 56px);
-  max-width: calc((100dvh - 52px - 56px) * 16 / 9);
+  /* cap height: viewport − topbar − lesson-header − strip */
+  max-height: calc(100dvh - 52px - 62px - 56px);
+  max-width: calc((100dvh - 52px - 62px - 56px) * 16 / 9);
   background: #000;
   align-self: flex-start;
 }
@@ -417,26 +444,27 @@
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.55);
-  z-index: 19;
-}
-@media (min-width: 769px) {
-  .lms-sidebar-backdrop { display: none; }
+  z-index: 39;
 }
 
-/* ── Sidebar ──────────────────────────────────────────────── */
+/* ── Sidebar — position: fixed on both mobile and desktop ─── */
 .lms-sidebar {
+  position: fixed;
+  top: 52px;
+  right: 0;
+  bottom: 0;
   width: 360px;
-  min-width: 360px;
   display: flex;
   flex-direction: column;
   background: #111c17;
   border-left: 1px solid rgba(255, 255, 255, 0.1);
   overflow: hidden;
-  flex-shrink: 0;
-  transition: width 0.25s ease, min-width 0.25s ease;
-  /* Positioned so it beats any fixed-position overlays in the stacking order */
-  position: relative;
-  z-index: 20;
+  z-index: 40;
+  transform: translateX(100%);
+  transition: transform 0.25s ease;
+}
+.lms-sidebar.open {
+  transform: translateX(0);
 }
 
 /* Sidebar header: tabs + progress */
@@ -785,22 +813,9 @@
    Responsive — Mobile (≤ 768px)
    ═══════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
-  .lms-sidebar {
-    position: fixed;
-    top: 52px;
-    right: 0;
-    bottom: 0;
-    width: 88vw;
-    max-width: 360px;
-    min-width: 0;
-    z-index: 20;
-    transform: translateX(100%);
-    transition: transform 0.25s ease;
-    border-left: 1px solid rgba(255,255,255,0.1);
-  }
-  .lms-sidebar.open {
-    transform: translateX(0);
-  }
+  /* On mobile, sidebar slides over full content (no margin needed) */
+  .lms-main { right: 0 !important; }
+  .lms-sidebar { width: 88vw; max-width: 360px; }
 
   .lms-progress-wrap { display: none; }
   .lms-course-title { max-width: 160px; }
@@ -821,13 +836,6 @@
     max-width: 100%;
     aspect-ratio: 16 / 9;
   }
-}
 
-@media (min-width: 769px) {
-  .lms-sidebar:not(.open) {
-    width: 0;
-    min-width: 0;
-    border-left: none;
-    overflow: hidden;
-  }
+  .lms-lesson-header { padding: 16px 18px 12px; }
 }
