@@ -1101,3 +1101,108 @@
   .cd-sticky-title       { display: none; }
   .cd-lesson             { padding-left: 24px; }
 }
+
+/* ── Preview modal ─────────────────────────────────────────────── */
+.cd-preview-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.88);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  animation: cd-overlay-in 0.18s ease;
+}
+
+@keyframes cd-overlay-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.cd-preview-modal {
+  width: 100%;
+  max-width: 900px;
+  background: #0f1f19;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.6);
+  animation: cd-modal-in 0.22s cubic-bezier(.2,.8,.4,1);
+}
+
+@keyframes cd-modal-in {
+  from { opacity: 0; transform: scale(0.94) translateY(12px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.cd-preview-modal-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.cd-preview-modal-eyebrow {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #4caf7d;
+  background: rgba(76,175,125,0.12);
+  padding: 2px 7px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.cd-preview-modal-title {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 600;
+  color: #c8d8d2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cd-preview-modal-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #9ab5ac;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s, color 0.15s;
+}
+.cd-preview-modal-close:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #e0e7e5;
+}
+
+.cd-preview-modal-video {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  background: #000;
+}
+
+.cd-preview-modal-video iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
+
+@media (max-width: 600px) {
+  .cd-preview-modal-overlay { padding: 10px; }
+  .cd-preview-modal { border-radius: 12px; }
+}

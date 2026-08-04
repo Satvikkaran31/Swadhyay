@@ -32,10 +32,10 @@ export default function Learn() {
   const [activeLesson, setActiveLesson] = useState<any>(null);
   const [resources, setResources] = useState<any[]>([]);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarTab, setSidebarTab] = useState<"content" | "notes">("content");
   const [pageLoading, setPageLoading] = useState(true);
 
   const [noteText, setNoteText] = useState("");
-  const [notesOpen, setNotesOpen] = useState(false);
   const [noteSaved, setNoteSaved] = useState(false);
   const [noteSaving, setNoteSaving] = useState(false);
   const noteSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -116,7 +116,7 @@ export default function Learn() {
       });
       setNoteSaved(true);
       if (noteSaveTimer.current) clearTimeout(noteSaveTimer.current);
-      noteSaveTimer.current = setTimeout(() => setNoteSaved(false), 2000);
+      noteSaveTimer.current = setTimeout(() => setNoteSaved(false), 2500);
     } finally {
       setNoteSaving(false);
     }
@@ -161,6 +161,7 @@ export default function Learn() {
 
   const embedUrl = toEmbedUrl(activeLesson?.video_url);
   const isCompleted = completedIds.has(activeLesson?.id);
+  const isVideo = activeLesson?.type !== "text";
 
   return (
     <div className="lms-layout">
@@ -179,7 +180,7 @@ export default function Learn() {
             <span className="lms-progress-pct">{progressPct}%</span>
           </div>
           {isAdmin && (
-            <a href="/admin" className="lms-admin-btn">⚙ Edit</a>
+            <a href="/admin" className="lms-admin-btn">⚙</a>
           )}
           <button
             className="lms-outline-btn"
@@ -198,7 +199,7 @@ export default function Learn() {
         <div className="lms-main">
 
           {/* Video lesson */}
-          {activeLesson?.type !== 'text' && (
+          {isVideo && (
             embedUrl ? (
               <div className="lms-video-wrap">
                 <iframe
@@ -211,126 +212,100 @@ export default function Learn() {
               </div>
             ) : (
               <div className="lms-no-video">
-                <span>No video for this lesson yet.</span>
+                <div className="lms-no-video-inner">
+                  <div className="lms-no-video-icon">▷</div>
+                  <span>Video coming soon</span>
+                </div>
               </div>
             )
           )}
 
           {/* Text / reading lesson */}
-          {activeLesson?.type === 'text' && (
-            <div className="lms-text-lesson">
-              {activeLesson.content ? (
+          {!isVideo && (
+            <div className="lms-text-area">
+              {activeLesson?.content ? (
                 <div
                   className="lms-text-prose"
                   dangerouslySetInnerHTML={{ __html: renderMarkdown(activeLesson.content) }}
                 />
               ) : (
                 <div className="lms-no-video">
-                  <span>No content for this lesson yet.</span>
+                  <div className="lms-no-video-inner">
+                    <div className="lms-no-video-icon">☰</div>
+                    <span>Content coming soon</span>
+                  </div>
                 </div>
               )}
             </div>
           )}
 
-          {/* Lesson info bar */}
-          <div className="lms-lesson-bar">
-            <div className="lms-lesson-bar-left">
-              <span className="lms-lesson-eyebrow">
-                Lesson {currentIdx + 1} of {allLessons.length}
-              </span>
-              <h2 className="lms-lesson-title">{activeLesson?.title}</h2>
-              <span className={`lms-lesson-type-badge lms-lesson-type-${activeLesson?.type ?? 'video'}`}>
-                {activeLesson?.type === 'text' ? '☰ Reading' : '▷ Video'}
-              </span>
-            </div>
-            <button
-              className={`lms-complete-btn${isCompleted ? " done" : ""}`}
-              onClick={markComplete}
-              disabled={!activeLesson || isCompleted}
-            >
-              {isCompleted ? "✓ Completed" : "Mark complete"}
-            </button>
-          </div>
-
-          {/* Prev / Next navigation */}
-          <div className="lms-nav-row">
-            <button
-              className="lms-nav-btn lms-nav-prev"
-              onClick={() => prevLesson && setActiveLesson(prevLesson)}
-              disabled={!prevLesson}
-            >
-              ← Previous
-            </button>
-            <div className="lms-nav-center-info">
-              <span className="lms-nav-position">{currentIdx + 1} / {allLessons.length}</span>
-            </div>
-            <button
-              className={`lms-nav-btn lms-nav-next${!nextLesson ? " disabled" : ""}`}
-              onClick={goNext}
-              disabled={!nextLesson}
-            >
-              {isCompleted ? "Next →" : "Complete & Next →"}
-            </button>
-          </div>
-
-          {/* Resources */}
-          {resources.length > 0 && (
-            <div className="lms-resources">
-              <h3 className="lms-resources-title">Resources</h3>
-              <ul className="lms-resources-list">
-                {resources.map((r: any) => (
-                  <li key={r.id}>
-                    <a href={r.url} target="_blank" rel="noopener noreferrer" className="lms-resource-link">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                        <polyline points="7 10 12 15 17 10"/>
-                        <line x1="12" y1="15" x2="12" y2="3"/>
-                      </svg>
-                      {r.title}
-                    </a>
-                  </li>
-                ))}
-              </ul>
+          {/* Certificate strip (100% completion) */}
+          {progressPct === 100 && (
+            <div className="lms-cert-strip">
+              <span>🎓 You've completed this course</span>
+              <Link to={`/courses/${slug}/certificate`} className="lms-cert-strip-btn">
+                Get Certificate →
+              </Link>
             </div>
           )}
 
-          {/* Notes */}
-          <div className="lms-notes">
+          {/* ── Control strip ─────────────────────────────────── */}
+          <div className="lms-strip">
             <button
-              className={`lms-notes-toggle${notesOpen ? " open" : ""}`}
-              onClick={() => setNotesOpen(p => !p)}
+              className="lms-strip-prev"
+              onClick={() => prevLesson && setActiveLesson(prevLesson)}
+              disabled={!prevLesson}
+              aria-label="Previous lesson"
             >
-              <span>My Notes</span>
-              <span className="lms-notes-chevron" style={{ transform: notesOpen ? "rotate(180deg)" : "rotate(0)" }}>▾</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <polyline points="15 18 9 12 15 6" />
+              </svg>
+              <span className="lms-strip-prev-label">Prev</span>
             </button>
-            {notesOpen && (
-              <div className="lms-notes-body">
-                <textarea
-                  className="lms-notes-textarea"
-                  value={noteText}
-                  onChange={e => setNoteText(e.target.value)}
-                  placeholder="Jot down your thoughts for this lesson…"
-                />
-                <div className="lms-notes-footer">
-                  <span className="lms-notes-saved">{noteSaved ? "Saved ✓" : ""}</span>
-                  <button className="lms-notes-save" onClick={saveNote} disabled={noteSaving}>
-                    {noteSaving ? "Saving…" : "Save note"}
-                  </button>
-                </div>
-              </div>
-            )}
+
+            <div className="lms-strip-center">
+              <span className="lms-strip-pos">{currentIdx + 1} / {allLessons.length}</span>
+              <span className="lms-strip-sep">·</span>
+              <span className="lms-strip-type-icon">
+                {activeLesson?.type === "text" ? "☰" : "▷"}
+              </span>
+              <span className="lms-strip-title">{activeLesson?.title}</span>
+            </div>
+
+            <button
+              className={`lms-strip-done${isCompleted ? " checked" : ""}`}
+              onClick={markComplete}
+              disabled={!activeLesson || isCompleted}
+            >
+              {isCompleted ? "✓ Done" : "Mark done"}
+            </button>
+
+            <button
+              className="lms-strip-next"
+              onClick={goNext}
+              disabled={!nextLesson}
+            >
+              <span className="lms-strip-next-label">{isCompleted ? "Next" : "Next"}</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <polyline points="9 18 15 12 9 6" />
+              </svg>
+            </button>
           </div>
 
-          {/* Certificate banner */}
-          {progressPct === 100 && (
-            <div className="lms-cert-banner">
-              <div>
-                <div className="lms-cert-title">You've completed this course</div>
-                <div className="lms-cert-sub">Your certificate is ready to download.</div>
-              </div>
-              <Link to={`/courses/${slug}/certificate`} className="lms-cert-btn">
-                Get Certificate →
-              </Link>
+          {/* Resources row */}
+          {resources.length > 0 && (
+            <div className="lms-resources-row">
+              <span className="lms-resources-label">Resources</span>
+              {resources.map((r: any) => (
+                <a key={r.id} href={r.url} target="_blank" rel="noopener noreferrer" className="lms-resource-chip">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="7 10 12 15 17 10"/>
+                    <line x1="12" y1="15" x2="12" y2="3"/>
+                  </svg>
+                  {r.title}
+                </a>
+              ))}
             </div>
           )}
         </div>
@@ -340,54 +315,102 @@ export default function Learn() {
           <div className="lms-sidebar-backdrop" onClick={() => setSidebarOpen(false)} />
         )}
 
-        {/* ── SIDEBAR ───────────────────────────────────────────── */}
+        {/* ── SIDEBAR ───────────────────────────────────────── */}
         <aside className={`lms-sidebar${sidebarOpen ? " open" : ""}`}>
-          <div className="lms-sidebar-head">
-            <span className="lms-sidebar-label">Course content</span>
-            <span className="lms-sidebar-progress-text">{completedIds.size}/{totalLessons} complete</span>
-          </div>
-          <div className="lms-sidebar-track">
-            <div className="lms-sidebar-track-fill" style={{ width: `${progressPct}%` }} />
-          </div>
-          {course.modules?.map((mod: any, mi: number) => (
-            <div key={mod.id} className="lms-module">
-              <div className="lms-module-title">
-                <span className="lms-module-num">{String(mi + 1).padStart(2, "0")}</span>
-                <div className="lms-module-title-text">
-                  <span>{mod.title}</span>
-                  {mod.description && <span className="lms-module-desc">{mod.description}</span>}
-                </div>
-              </div>
-              {mod.lessons?.map((lesson: any) => {
-                const done = completedIds.has(lesson.id);
-                const active = activeLesson?.id === lesson.id;
-                return (
-                  <button
-                    key={lesson.id}
-                    ref={active ? activeLessonRef : null}
-                    className={`lms-lesson-btn${active ? " active" : ""}${done ? " done" : ""}`}
-                    onClick={() => {
-                      setActiveLesson(lesson);
-                      if (window.innerWidth <= 768) setSidebarOpen(false);
-                    }}
-                  >
-                    <span className={`lms-check${done ? " checked" : ""}`}>
-                      {done ? "✓" : "○"}
-                    </span>
-                    <span className="lms-lesson-type-icon">
-                      {lesson.type === 'text' ? '☰' : '▷'}
-                    </span>
-                    <span className="lms-lesson-name">{lesson.title}</span>
-                    {lesson.duration && (
-                      <span className="lms-lesson-dur">
-                        {Math.floor(lesson.duration / 60)}:{String(lesson.duration % 60).padStart(2, "0")}
-                      </span>
-                    )}
-                  </button>
-                );
-              })}
+
+          {/* Tab bar + progress */}
+          <div className="lms-sidebar-header">
+            <div className="lms-sidebar-tabs">
+              <button
+                className={`lms-stab${sidebarTab === "content" ? " active" : ""}`}
+                onClick={() => setSidebarTab("content")}
+              >
+                Lessons
+              </button>
+              <button
+                className={`lms-stab${sidebarTab === "notes" ? " active" : ""}`}
+                onClick={() => setSidebarTab("notes")}
+              >
+                Notes
+              </button>
             </div>
-          ))}
+            <div className="lms-sidebar-prog">
+              <div className="lms-sidebar-track">
+                <div className="lms-sidebar-track-fill" style={{ width: `${progressPct}%` }} />
+              </div>
+              <span className="lms-sidebar-prog-text">{completedIds.size}/{totalLessons}</span>
+            </div>
+          </div>
+
+          {/* Content tab — module/lesson list */}
+          {sidebarTab === "content" && (
+            <div className="lms-sidebar-content">
+              {course.modules?.map((mod: any, mi: number) => (
+                <div key={mod.id} className="lms-module">
+                  <div className="lms-module-title">
+                    <span className="lms-module-num">{String(mi + 1).padStart(2, "0")}</span>
+                    <div className="lms-module-title-text">
+                      <span>{mod.title}</span>
+                      {mod.description && (
+                        <span className="lms-module-desc">{mod.description}</span>
+                      )}
+                    </div>
+                  </div>
+                  {mod.lessons?.map((lesson: any) => {
+                    const done = completedIds.has(lesson.id);
+                    const active = activeLesson?.id === lesson.id;
+                    return (
+                      <button
+                        key={lesson.id}
+                        ref={active ? activeLessonRef : null}
+                        className={`lms-lesson-btn${active ? " active" : ""}${done ? " done" : ""}`}
+                        onClick={() => {
+                          setActiveLesson(lesson);
+                          if (window.innerWidth <= 768) setSidebarOpen(false);
+                        }}
+                      >
+                        <span className={`lms-check${done ? " checked" : ""}`}>
+                          {done ? "✓" : "○"}
+                        </span>
+                        <span className="lms-lesson-type-icon">
+                          {lesson.type === "text" ? "☰" : "▷"}
+                        </span>
+                        <span className="lms-lesson-name">{lesson.title}</span>
+                        {lesson.duration && (
+                          <span className="lms-lesson-dur">
+                            {Math.floor(lesson.duration / 60)}:{String(lesson.duration % 60).padStart(2, "0")}
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Notes tab */}
+          {sidebarTab === "notes" && (
+            <div className="lms-notes-panel">
+              <div className="lms-notes-panel-header">
+                <span>Notes — {activeLesson?.title}</span>
+                {noteSaved && <span className="lms-notes-saved-badge">Saved ✓</span>}
+              </div>
+              <textarea
+                className="lms-notes-textarea"
+                value={noteText}
+                onChange={e => setNoteText(e.target.value)}
+                placeholder="Jot down your thoughts, questions, or key takeaways for this lesson…"
+              />
+              <button
+                className="lms-notes-save-btn"
+                onClick={saveNote}
+                disabled={noteSaving}
+              >
+                {noteSaving ? "Saving…" : "Save note"}
+              </button>
+            </div>
+          )}
         </aside>
       </div>
     </div>

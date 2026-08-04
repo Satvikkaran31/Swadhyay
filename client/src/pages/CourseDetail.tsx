@@ -299,20 +299,38 @@ export default function CourseDetail() {
         </div>
       </section>
 
-      {/* ── Preview video ──────────────────────────────────────────────── */}
+      {/* ── Preview modal ──────────────────────────────────────────────── */}
       {previewLesson && (
-        <div className="cd-preview-wrap sw-page-pad">
-          <div className="cd-preview-bar">
-            <span>Preview: {previewLesson.title}</span>
-            <button onClick={() => setPreviewLesson(null)}>✕ Close</button>
-          </div>
-          <div className="cd-video-ratio">
-            <iframe
-              src={toEmbedUrl(previewLesson.video_url) ?? ""}
-              title={previewLesson.title}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
+        <div
+          className="cd-preview-modal-overlay"
+          onClick={() => setPreviewLesson(null)}
+          role="dialog"
+          aria-modal="true"
+          aria-label={`Preview: ${previewLesson.title}`}
+        >
+          <div className="cd-preview-modal" onClick={e => e.stopPropagation()}>
+            <div className="cd-preview-modal-header">
+              <div className="cd-preview-modal-eyebrow">Preview</div>
+              <div className="cd-preview-modal-title">{previewLesson.title}</div>
+              <button
+                className="cd-preview-modal-close"
+                onClick={() => setPreviewLesson(null)}
+                aria-label="Close preview"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <line x1="18" y1="6" x2="6" y2="18"/>
+                  <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              </button>
+            </div>
+            <div className="cd-preview-modal-video">
+              <iframe
+                src={toEmbedUrl(previewLesson.video_url) ?? ""}
+                title={previewLesson.title}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
           </div>
         </div>
       )}
