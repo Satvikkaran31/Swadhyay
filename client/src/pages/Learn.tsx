@@ -31,7 +31,7 @@ export default function Learn() {
   const [completedIds, setCompletedIds] = useState(new Set<number>());
   const [activeLesson, setActiveLesson] = useState<any>(null);
   const [resources, setResources] = useState<any[]>([]);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(() => window.innerWidth > 768);
   const [sidebarTab, setSidebarTab] = useState<"content" | "notes">("content");
   const [openModules, setOpenModules] = useState(new Set<number>());
   const [pageLoading, setPageLoading] = useState(true);
@@ -297,7 +297,7 @@ export default function Learn() {
               onClick={markComplete}
               disabled={!activeLesson || isCompleted}
             >
-              {isCompleted ? "✓ Done" : "Mark done"}
+              {isCompleted ? "✓ Done" : "Done"}
             </button>
 
             <button
@@ -305,7 +305,7 @@ export default function Learn() {
               onClick={goNext}
               disabled={!nextLesson}
             >
-              <span className="lms-strip-next-label">{isCompleted ? "Next" : "Next"}</span>
+              <span className="lms-strip-next-label">Next</span>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <polyline points="9 18 15 12 9 6" />
               </svg>

@@ -443,8 +443,11 @@
 /* ── Sidebar backdrop (mobile only) ──────────────────────── */
 .lms-sidebar-backdrop {
   position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.55);
+  top: 52px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
   z-index: 39;
 }
 
@@ -814,29 +817,78 @@
    Responsive — Mobile (≤ 768px)
    ═══════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
-  /* On mobile, sidebar slides over full content (no margin needed) */
-  .lms-main { right: 0 !important; }
+
+  /* ── Sidebar overlays content — main always full-width ── */
+  .lms-main { right: 0 !important; transition: none; }
   .lms-sidebar { width: 88vw; max-width: 360px; }
 
+  /* ── Topbar ─────────────────────────────────────────── */
+  .lms-topbar { gap: 8px; padding: 0 12px; }
+  .lms-back-btn { padding: 5px 8px; font-size: 12px; gap: 4px; }
   .lms-progress-wrap { display: none; }
-  .lms-course-title { max-width: 160px; }
+  .lms-course-title { font-size: 13px; }
+  .lms-outline-btn { width: 36px; height: 36px; font-size: 17px; }
+  .lms-admin-btn { width: 28px; height: 28px; font-size: 13px; }
 
-  .lms-text-area { padding: 20px 18px; }
+  /* ── Lesson header ──────────────────────────────────── */
+  .lms-lesson-header {
+    padding: 10px 14px 8px;
+  }
+  .lms-lesson-header-type { font-size: 10px; margin-bottom: 2px; }
+  .lms-lesson-header-title { font-size: 14px; }
 
-  .lms-strip { padding: 0 8px; gap: 4px; }
-  .lms-strip-prev-label,
-  .lms-strip-next-label { display: none; }
-  .lms-strip-pos { display: none; }
-  .lms-strip-sep { display: none; }
-  .lms-strip-center { padding: 0 4px; }
-
-  .lms-cert-strip { flex-direction: column; gap: 8px; text-align: center; }
-
+  /* ── Video — cap height on landscape so strip stays visible ── */
   .lms-video-wrap {
-    max-height: none;
+    max-height: calc(100dvh - 52px - 48px - 44px);
     max-width: 100%;
-    aspect-ratio: 16 / 9;
   }
 
-  .lms-lesson-header { padding: 16px 18px 12px; }
+  /* ── No-content placeholder ─────────────────────────── */
+  .lms-no-video-icon { font-size: 28px; }
+
+  /* ── Text area ──────────────────────────────────────── */
+  .lms-text-area { padding: 18px 16px; }
+  .lms-text-prose { font-size: 15px; }
+  .lms-text-prose h1 { font-size: 20px; }
+  .lms-text-prose h2 { font-size: 17px; }
+  .lms-text-prose h3 { font-size: 15px; }
+
+  /* ── Control strip ──────────────────────────────────── */
+  .lms-strip {
+    padding: 0 8px;
+    gap: 4px;
+    height: 48px;
+    min-height: 48px;
+  }
+  .lms-strip-prev,
+  .lms-strip-next {
+    padding: 0 10px;
+    min-width: 40px;
+    min-height: 40px;
+    justify-content: center;
+  }
+  .lms-strip-prev-label,
+  .lms-strip-next-label { display: none; }
+  .lms-strip-pos,
+  .lms-strip-sep,
+  .lms-strip-type-icon { display: none; }
+  .lms-strip-center { padding: 0 4px; gap: 4px; }
+  .lms-strip-title { font-size: 12px; }
+  .lms-strip-done {
+    padding: 0 10px;
+    font-size: 12px;
+    min-height: 40px;
+  }
+
+  /* ── Certificate strip ──────────────────────────────── */
+  .lms-cert-strip { flex-direction: column; gap: 8px; text-align: center; padding: 8px 16px; }
+  .lms-cert-strip-btn { font-size: 12px; padding: 6px 14px; }
+
+  /* ── Resources ──────────────────────────────────────── */
+  .lms-resources-row { padding: 8px 12px; }
+
+  /* ── Notes panel ────────────────────────────────────── */
+  .lms-notes-panel-header { padding: 10px 12px 6px; }
+  .lms-notes-textarea { padding: 10px 12px; font-size: 13px; }
+  .lms-notes-save-btn { margin: 0 12px 12px; padding: 8px; }
 }
