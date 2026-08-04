@@ -1,5 +1,5 @@
 import express from 'express';
-import graphClient from '../controllers/graphClients.js';
+import getGraphClient from '../controllers/graphClients.js';
 import { DateTime } from 'luxon';
 
 const router = express.Router();
@@ -45,7 +45,7 @@ router.get('/', async (req, res) => {
  const endOfDay = encodeURIComponent(endOfDayISO);
 
  try {
-  const events = await graphClient
+  const events = await getGraphClient()
    .api(`/users/${process.env.ADMIN_EMAIL}/calendarView`)
    .header("Prefer", 'outlook.timezone="Asia/Kolkata"')
    .query({ startDateTime: startOfDay, endDateTime: endOfDay })
