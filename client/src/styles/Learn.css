@@ -73,6 +73,29 @@
   white-space: nowrap;
 }
 
+.lms-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.lms-admin-btn {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  font-weight: 500;
+  color: #5FC8B8;
+  background: rgba(95,200,184,.12);
+  border: 1px solid rgba(95,200,184,.28);
+  padding: 6px 12px;
+  border-radius: 999px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background .2s;
+  flex-shrink: 0;
+}
+.lms-admin-btn:hover { background: rgba(95,200,184,.22); color: #7fdfd2; }
+
 .lms-progress-wrap {
   display: flex;
   align-items: center;
@@ -241,10 +264,24 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 32px;
+  gap: 12px;
+  padding: 14px 32px;
   background: #FAFAF6;
   border-bottom: 1px solid rgba(18,54,43,.08);
   flex-shrink: 0;
+}
+
+.lms-nav-center-info {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.lms-nav-position {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  color: #9AB0A6;
+  letter-spacing: .04em;
 }
 
 .lms-nav-btn {
@@ -255,10 +292,18 @@
   font-size: 14px;
   color: #0E766B;
   transition: opacity .2s ease;
+  white-space: nowrap;
 }
 
-.lms-nav-btn:hover:not(:disabled) { opacity: .75; }
-.lms-nav-btn:disabled { color: #B9C6BC; cursor: default; }
+.lms-nav-prev {
+  border: 1.5px solid rgba(14,118,107,.3);
+  padding: 9px 18px;
+  border-radius: 999px;
+  color: #0E766B;
+  transition: background .2s, border-color .2s;
+}
+.lms-nav-prev:hover:not(:disabled) { background: rgba(14,118,107,.06); border-color: #0E766B; }
+.lms-nav-btn:disabled { color: #B9C6BC; border-color: rgba(18,54,43,.12) !important; cursor: default; }
 
 .lms-nav-next {
   background: #12362B;
@@ -601,7 +646,9 @@
 
   .lms-lesson-bar { padding: 18px 20px; }
   .lms-lesson-title { font-size: 18px; }
-  .lms-nav-row { padding: 14px 20px; }
+  .lms-nav-row { padding: 12px 16px; }
+  .lms-nav-position { display: none; }
+  .lms-nav-center-info { display: none; }
   .lms-resources { margin: 16px 20px 0; }
   .lms-notes { margin: 16px 20px; }
   .lms-cert-banner { margin: 16px 20px 24px; }

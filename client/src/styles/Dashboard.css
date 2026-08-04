@@ -1,0 +1,471 @@
+/* ── Dashboard ─────────────────────────────────────────────────────── */
+
+/* Hero */
+.dash-hero {
+  background: #0C241C;
+  padding-top: 120px;
+  padding-bottom: 56px;
+}
+.dash-hero-inner {
+  display: flex;
+  align-items: center;
+  gap: 36px;
+  flex-wrap: wrap;
+}
+
+/* Avatar */
+.dash-avatar-wrap {
+  flex-shrink: 0;
+}
+.dash-avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid rgba(95,200,184,.45);
+  box-shadow: 0 0 0 6px rgba(95,200,184,.12);
+}
+.dash-avatar-fallback {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: #0E766B;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 38px;
+  color: #fff;
+  border: 3px solid rgba(95,200,184,.45);
+}
+
+/* Hero info */
+.dash-hero-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.dash-hero-name {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: clamp(26px, 4vw, 40px);
+  color: #F4F1E9;
+  margin: 4px 0 0;
+  line-height: 1.1;
+}
+.dash-hero-email {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 14px;
+  color: rgba(244,241,233,.55);
+  margin: 0;
+}
+.dash-hero-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+.dash-role-badge {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: #5FC8B8;
+  background: rgba(95,200,184,.15);
+  border: 1px solid rgba(95,200,184,.3);
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+.dash-role-admin {
+  color: #f0c86a;
+  background: rgba(240,200,106,.12);
+  border-color: rgba(240,200,106,.3);
+}
+
+/* Stats */
+.dash-stats-row {
+  background: #f0ece2;
+  padding-top: 36px;
+  padding-bottom: 36px;
+  border-bottom: 1px solid rgba(12,36,28,.1);
+}
+.dash-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+.dash-stat-card {
+  background: #fff;
+  border: 1px solid rgba(12,36,28,.1);
+  border-radius: 16px;
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.dash-stat-number {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 36px;
+  color: #0C241C;
+  line-height: 1;
+}
+.dash-stat-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: #5a7268;
+}
+
+/* Body */
+.dash-body {
+  background: #F4F1E9;
+  padding-top: 56px;
+  padding-bottom: 80px;
+}
+.dash-body-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* Section */
+.dash-section {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.dash-section-hd {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+}
+.dash-section-title {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: clamp(20px, 3vw, 28px);
+  color: #0C241C;
+  margin: 0;
+}
+.dash-subsection-title {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  color: #5a7268;
+  margin: 8px 0 0;
+}
+.dash-section-link {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  color: #0E766B;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color .2s;
+}
+.dash-section-link:hover { color: #0E9C8A; }
+.dash-section-loading {
+  display: flex;
+  justify-content: center;
+  padding: 40px 0;
+}
+
+/* Empty state */
+.dash-empty {
+  background: #fff;
+  border: 1px dashed rgba(12,36,28,.2);
+  border-radius: 20px;
+  padding: 40px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+.dash-empty-text {
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  color: #5a7268;
+  margin: 0;
+}
+.dash-empty-cta {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  color: #fff;
+  background: #0E766B;
+  padding: 12px 28px;
+  border-radius: 999px;
+  text-decoration: none;
+  transition: background .2s;
+}
+.dash-empty-cta:hover { background: #0E9C8A; }
+
+/* Course grid */
+.dash-course-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+.dash-course-card {
+  background: #fff;
+  border: 1px solid rgba(12,36,28,.1);
+  border-radius: 20px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow .25s, transform .25s;
+}
+.dash-course-card:hover {
+  box-shadow: 0 12px 36px -12px rgba(12,36,28,.2);
+  transform: translateY(-2px);
+}
+.dash-course-done {
+  opacity: .85;
+}
+.dash-course-thumb {
+  width: 100%;
+  aspect-ratio: 16/9;
+  object-fit: cover;
+}
+.dash-course-thumb-placeholder {
+  width: 100%;
+  aspect-ratio: 16/9;
+  background: linear-gradient(135deg, #0C241C 0%, #0E766B 100%);
+}
+.dash-course-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+}
+.dash-done-badge {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: .05em;
+  color: #0E766B;
+  font-weight: 600;
+}
+.dash-course-title {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  color: #0C241C;
+  line-height: 1.35;
+}
+.dash-course-progress-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.dash-course-progress-track {
+  height: 6px;
+  background: rgba(12,36,28,.1);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.dash-course-progress-fill {
+  height: 100%;
+  background: #0E9C8A;
+  border-radius: 999px;
+  transition: width .4s ease;
+}
+.dash-course-progress-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: #7a8e88;
+}
+.dash-course-btn {
+  margin-top: auto;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  color: #fff;
+  background: #0E766B;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background .2s;
+  text-align: center;
+}
+.dash-course-btn:hover { background: #0E9C8A; }
+.dash-course-btn--ghost {
+  background: transparent;
+  color: #0E766B;
+  border: 1.5px solid #0E766B;
+}
+.dash-course-btn--ghost:hover { background: rgba(14,118,107,.08); }
+.dash-course-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.dash-cert-link {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  color: #0E766B;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  white-space: nowrap;
+}
+
+/* Sessions */
+.dash-sessions-list {
+  background: #fff;
+  border: 1px solid rgba(12,36,28,.1);
+  border-radius: 20px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.dash-sessions-sublabel {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: #7a8e88;
+  margin: 12px 0 8px;
+}
+.dash-sessions-sublabel:first-child { margin-top: 0; }
+.dash-session-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(12,36,28,.07);
+}
+.dash-session-row:last-child { border-bottom: none; padding-bottom: 0; }
+.dash-session-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: rgba(12,36,28,.2);
+}
+.dash-session-dot--upcoming {
+  background: #0E9C8A;
+  box-shadow: 0 0 0 3px rgba(14,156,138,.2);
+}
+.dash-session-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.dash-session-type {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  color: #0C241C;
+}
+.dash-session-time {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  color: #7a8e88;
+}
+.dash-session-past .dash-session-type { color: #7a8e88; }
+.dash-session-join {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  color: #fff;
+  background: #0E766B;
+  padding: 7px 18px;
+  border-radius: 999px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background .2s;
+}
+.dash-session-join:hover { background: #0E9C8A; }
+
+/* Quick links */
+.dash-quick-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+.dash-quick-card {
+  background: #fff;
+  border: 1px solid rgba(12,36,28,.1);
+  border-radius: 20px;
+  padding: 28px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  transition: background .2s, box-shadow .2s, transform .2s;
+  cursor: pointer;
+}
+.dash-quick-card:hover {
+  background: #0E766B;
+  box-shadow: 0 12px 32px -12px rgba(14,118,107,.4);
+  transform: translateY(-2px);
+}
+.dash-quick-card:hover .dash-quick-icon,
+.dash-quick-card:hover .dash-quick-label {
+  color: #fff;
+}
+.dash-quick-icon {
+  font-size: 28px;
+  color: #0E766B;
+  line-height: 1;
+  transition: color .2s;
+}
+.dash-quick-label {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  color: #0C241C;
+  text-align: center;
+  transition: color .2s;
+}
+.dash-quick-logout {
+  border: none;
+  background: #fff;
+}
+.dash-quick-logout .dash-quick-icon { color: #c0392b; }
+.dash-quick-logout:hover { background: #c0392b; }
+.dash-quick-logout:hover .dash-quick-icon { color: #fff; }
+
+/* Spinner */
+.dash-loading {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #F4F1E9;
+}
+.dash-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid rgba(14,118,107,.2);
+  border-top-color: #0E766B;
+  border-radius: 50%;
+  animation: dash-spin .8s linear infinite;
+}
+@keyframes dash-spin { to { transform: rotate(360deg); } }
+
+/* Responsive */
+@media (max-width: 900px) {
+  .dash-hero-inner { flex-direction: column; align-items: flex-start; gap: 20px; }
+  .dash-avatar { width: 80px; height: 80px; }
+  .dash-avatar-fallback { width: 80px; height: 80px; font-size: 30px; }
+  .dash-stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .dash-quick-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 540px) {
+  .dash-stats-grid { grid-template-columns: 1fr 1fr; }
+  .dash-quick-grid { grid-template-columns: 1fr 1fr; }
+  .dash-course-grid { grid-template-columns: 1fr; }
+}

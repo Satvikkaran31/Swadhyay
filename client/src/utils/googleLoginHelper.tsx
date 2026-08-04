@@ -23,7 +23,7 @@ export function useTriggerGoogleLogin(setUser, navigateTo = "/") {
 
         const response = await axios.post(`${apiBase}/api/auth/google`, {
           code: codeResponse.code,
-          redirect_uri: window.location.origin
+          redirect_uri: 'postmessage'
         }, {
           withCredentials: true
         });

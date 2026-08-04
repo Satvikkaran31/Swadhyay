@@ -10,6 +10,7 @@ export default function Inquiry() {
     name: '',
     email: '',
     phone: '',
+    linkedin_url: '',
     message: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -69,9 +70,9 @@ export default function Inquiry() {
       if (response.ok) {
         setSubmitStatus('success');
         if (!user) {
-          setFormData({ name: '', email: '', phone: '', message: '' });
+          setFormData({ name: '', email: '', phone: '', linkedin_url: '', message: '' });
         } else {
-          setFormData(prev => ({ ...prev, phone: '', message: '' }));
+          setFormData(prev => ({ ...prev, phone: '', linkedin_url: '', message: '' }));
         }
       } else {
         throw new Error('Failed to send inquiry');
@@ -179,6 +180,21 @@ export default function Inquiry() {
                   maxLength={15}
                   pattern="[0-9+ -]{7,15}"
                   title="Phone number can include digits, spaces, dashes, or +"
+                />
+              </div>
+
+              <div className="inq-form-group">
+                <label className="inq-label" htmlFor="linkedin_url">LinkedIn Profile <span style={{ fontWeight: 400, color: "#999" }}>(optional)</span></label>
+                <input
+                  className="inq-input"
+                  type="url"
+                  id="linkedin_url"
+                  name="linkedin_url"
+                  value={formData.linkedin_url}
+                  onChange={handleInputChange}
+                  placeholder="https://linkedin.com/in/yourname"
+                  disabled={isSubmitting}
+                  maxLength={300}
                 />
               </div>
 

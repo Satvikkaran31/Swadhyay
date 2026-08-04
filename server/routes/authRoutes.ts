@@ -4,6 +4,7 @@ import { OAuth2Client } from 'google-auth-library';
 import pool from '../utils/db.js';
 
 const ALLOWED_REDIRECT_URIS = [
+  'postmessage',
   'http://localhost:3000',
   'http://localhost:5173',
   'https://swadhyay.co',
@@ -44,15 +45,21 @@ router.post('/google', authLimiter, async (req, res) => {
 
     // Upsert user into persistent users table
     const { rows } = await pool.query(
-      `INSERT INTO users (google_id, name, email, picture, role)
-       VALUES ($1, $2, $3, $4,
-         CASE WHEN $3 = $5 THEN 'admin' ELSE 'student' END
+      `WITH vals AS (
+         SELECT $1::text AS google_id, $2::text AS name,
+                $3::text AS email,     $4::text AS picture,
+                $5::text AS admin_email
        )
+       INSERT INTO users (google_id, name, email, picture, role)
+       SELECT v.google_id, v.name, v.email, v.picture,
+              CASE WHEN v.email = v.admin_email THEN 'admin' ELSE 'student' END
+       FROM vals v
        ON CONFLICT (google_id) DO UPDATE
          SET name    = EXCLUDED.name,
              picture = EXCLUDED.picture,
-             role    = CASE WHEN users.email = $5 THEN 'admin' ELSE users.role END
-       RETURNING id, name, email, picture, role`,
+             role    = CASE WHEN users.email = (SELECT admin_email FROM vals)
+                            THEN 'admin' ELSE users.role END
+       RETURNING id, name, email, picture, role, linkedin_url`,
       [payload.sub, payload.name, payload.email, payload.picture, process.env.ADMIN_EMAIL]
     );
 
@@ -66,6 +73,7 @@ router.post('/google', authLimiter, async (req, res) => {
       picture: dbUser.picture,
       role: dbUser.role,
       verified: payload.email_verified,
+      linkedin_url: dbUser.linkedin_url ?? null,
     };
 
     // Regenerate session ID after login to prevent session fixation attacks
@@ -78,6 +86,7 @@ router.post('/google', authLimiter, async (req, res) => {
       });
     });
   } catch (error) {
+    console.error('[auth/google] error:', error.message, JSON.stringify((error as any)?.response?.data ?? {}));
     if (error.message.includes('redirect_uri_mismatch')) {
       return res.status(400).json({ error: 'Redirect URI mismatch.' });
     }
@@ -93,6 +102,28 @@ router.get('/me', (req, res) => {
     return res.status(200).json({ success: true, user: req.session.user });
   }
   return res.status(200).json({ success: true, user: null });
+});
+
+router.put('/profile', async (req, res) => {
+  if (!req.session?.user) return res.status(401).json({ error: 'Not authenticated' });
+  const { linkedin_url } = req.body;
+  const sanitized = (linkedin_url ?? '').toString().trim().slice(0, 500) || null;
+  if (sanitized && !sanitized.includes('linkedin.com/in/')) {
+    return res.status(400).json({ error: 'URL must be a LinkedIn profile URL (linkedin.com/in/…)' });
+  }
+  try {
+    await pool.query(
+      `UPDATE users SET linkedin_url = $1 WHERE id = $2`,
+      [sanitized, req.session.user.id]
+    );
+    req.session.user = { ...req.session.user, linkedin_url: sanitized };
+    req.session.save((err) => {
+      if (err) return res.status(500).json({ error: 'Session save failed' });
+      res.json({ success: true, linkedin_url: sanitized });
+    });
+  } catch {
+    res.status(500).json({ error: 'Failed to update profile' });
+  }
 });
 
 router.post('/logout', (req, res) => {

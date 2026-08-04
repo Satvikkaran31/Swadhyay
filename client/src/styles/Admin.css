@@ -1,3 +1,20 @@
+/* ── Design tokens ─────────────────────────────────────────────────────────── */
+:root {
+  --gradient-start:    #0C241C;
+  --gradient-mid:      #0E2E24;
+  --accent-green:      #5FC8B8;
+  --accent-dark-green: #0E766B;
+  --button-primary:    #0E766B;
+  --text-primary:      #F4F1E9;
+  --text-secondary:    #5a7268;
+  --primary-bg:        #ffffff;
+  --font-primary:      'Poppins', sans-serif;
+  --font-hero-title:   'Caveat', cursive;
+  --border-radius-xsm: 8px;
+  --border-radius-sm:  14px;
+  --shadow-default:    0 4px 24px -8px rgba(0, 0, 0, .14);
+}
+
 /* ── Shell layout ─────────────────────────────────────────────────────────── */
 
 .admin-shell {
@@ -1363,4 +1380,244 @@
   .admin-sidebar.open {
     transform: translateX(0);
   }
+}
+
+/* ── CRM Styles ───────────────────────────────────────────────────────────── */
+
+/* Stats bar */
+.crm-stats-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  padding: 1rem 1.5rem 0;
+}
+.crm-stat-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #f4f8f6;
+  border: 1px solid #e4eeea;
+  border-radius: 10px;
+  padding: 0.5rem 0.9rem;
+  min-width: 72px;
+}
+.crm-stat-val {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #1a2b3c;
+  font-variant-numeric: tabular-nums;
+}
+.crm-stat-lbl {
+  font-size: 0.68rem;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-top: 1px;
+}
+
+/* Sub-nav */
+.crm-subnav {
+  display: flex;
+  gap: 0.25rem;
+  padding: 1rem 1.5rem 0;
+  border-bottom: 1px solid #e8f0ec;
+  margin-bottom: 0;
+}
+.crm-subnav-btn {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #888;
+  cursor: pointer;
+  margin-bottom: -1px;
+  transition: color 0.15s, border-color 0.15s;
+}
+.crm-subnav-btn.active,
+.crm-subnav-btn:hover {
+  color: #0e766b;
+  border-bottom-color: #0e766b;
+}
+
+/* Toolbar */
+.crm-toolbar {
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.crm-filter-select {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #dde7e2;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  background: #fff;
+  color: #333;
+  cursor: pointer;
+}
+
+/* Row selection highlight */
+.crm-row-selected {
+  background: #f0faf8 !important;
+}
+
+/* Status select */
+.crm-status-select {
+  border: none;
+  border-radius: 20px;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-transform: capitalize;
+}
+.crm-status-new       { background: #e8f4ff; color: #1565c0; }
+.crm-status-contacted { background: #fff8e1; color: #e65100; }
+.crm-status-qualified { background: #e8f5e9; color: #2e7d32; }
+.crm-status-converted { background: #f3e5f5; color: #6a1b9a; }
+.crm-status-lost      { background: #fce4ec; color: #880e4f; }
+
+/* Source badge */
+.crm-source-badge {
+  border-radius: 20px;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.crm-source-inquiry    { background: #e3f2fd; color: #0d47a1; }
+.crm-source-newsletter { background: #e8f5e9; color: #1b5e20; }
+.crm-source-manual     { background: #f5f5f5; color: #555; }
+
+/* Category badge */
+.crm-cat-badge {
+  border-radius: 20px;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  display: inline-block;
+  margin-right: 0.3rem;
+}
+.crm-cat-welcome    { background: #e8f5e9; color: #2e7d32; }
+.crm-cat-follow-up  { background: #fff8e1; color: #e65100; }
+.crm-cat-promotional{ background: #f3e5f5; color: #6a1b9a; }
+.crm-cat-nurture    { background: #e3f2fd; color: #0d47a1; }
+.crm-cat-general    { background: #f5f5f5; color: #555; }
+
+/* Log status */
+.crm-log-status {
+  border-radius: 20px;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  display: inline-block;
+}
+.crm-log-sent   { background: #e8f5e9; color: #2e7d32; }
+.crm-log-failed { background: #fce4ec; color: #880e4f; }
+.crm-log-error  {
+  font-size: 0.7rem;
+  color: #b00;
+  margin-top: 2px;
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Send modal */
+.crm-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 300;
+}
+.crm-modal {
+  background: #fff;
+  border-radius: 16px;
+  padding: 2rem;
+  min-width: 340px;
+  max-width: 480px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.18);
+}
+.crm-modal h3 {
+  margin: 0 0 0.25rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+/* Template editor */
+.crm-template-editor {
+  background: #f9fbfa;
+  border: 1px solid #e4eeea;
+  border-radius: 14px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.crm-var-palette {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 0.6rem;
+}
+.crm-var-chip {
+  background: #e3f4f1;
+  color: #0e766b;
+  border: 1px solid #b2ddd8;
+  border-radius: 20px;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.78rem;
+  font-family: 'IBM Plex Mono', monospace;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.crm-var-chip:hover {
+  background: #c8ece8;
+}
+.crm-body-editor {
+  width: 100%;
+  font-family: 'IBM Plex Mono', 'Courier New', monospace;
+  font-size: 0.82rem;
+  border: 1px solid #dde7e2;
+  border-radius: 8px;
+  padding: 0.75rem;
+  resize: vertical;
+  box-sizing: border-box;
+  background: #fff;
+}
+
+/* Preview */
+.crm-preview-panel {
+  margin-top: 1.25rem;
+  border: 1px solid #dde7e2;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.crm-preview-subject {
+  background: #f4f8f6;
+  padding: 0.6rem 1rem;
+  font-size: 0.85rem;
+  border-bottom: 1px solid #dde7e2;
+}
+.crm-preview-frame {
+  width: 100%;
+  height: 400px;
+  border: none;
+  display: block;
+}
+
+/* Success banner */
+.admin-success-banner {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #a5d6a7;
+  border-radius: 8px;
+  padding: 0.6rem 0.9rem;
+  font-size: 0.88rem;
+  font-weight: 500;
 }

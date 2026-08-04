@@ -29,6 +29,7 @@ import newsletterRoutes from "./routes/newsletterRoutes.js";
 import seriesRoutes from "./routes/seriesRoutes.js";
 import instructorRoutes from "./routes/instructorRoutes.js";
 import webhookRoutes from "./routes/webhookRoutes.js";
+import crmRoutes from "./routes/crmRoutes.js";
 
 if (process.env.SENTRY_DSN) {
   Sentry.init({ dsn: process.env.SENTRY_DSN, tracesSampleRate: 0.1 });
@@ -54,6 +55,7 @@ const PGStore = pgSession(session);
 const allowed_origins = [
   "https://swadhyay-pa3f.onrender.com",
   "http://localhost:3000",
+  "http://localhost:5000",
   "http://localhost:5173",
   "https://swadhyay.co",
 ];
@@ -109,6 +111,7 @@ app.use("/api/notes", notesRoutes);
 app.use("/api/newsletter", newsletterRoutes);
 app.use("/api/series", seriesRoutes);
 app.use("/api/instructor", instructorRoutes);
+app.use("/api/crm", crmRoutes);
 
 app.get("/sitemap.xml", async (_req, res) => {
   try {

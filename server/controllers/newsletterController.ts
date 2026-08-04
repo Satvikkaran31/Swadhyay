@@ -1,6 +1,7 @@
 import pool from '../utils/db.js';
 import rateLimit from 'express-rate-limit';
 import validator from 'validator';
+import { upsertLeadQuietly } from './crmController.js';
 
 export const newsletterLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
@@ -20,6 +21,7 @@ export const subscribe = async (req, res) => {
       `INSERT INTO newsletter_subscribers (email) VALUES ($1) ON CONFLICT (email) DO NOTHING`,
       [email.toLowerCase().trim()]
     );
+    upsertLeadQuietly(email.toLowerCase().trim(), email.toLowerCase().trim(), 'newsletter', {});
     res.json({ success: true });
   } catch {
     res.status(500).json({ error: 'Failed to subscribe' });

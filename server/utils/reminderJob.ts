@@ -39,8 +39,13 @@ async function sendReminders() {
         hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Kolkata',
       });
 
-      const meetLinkHtml = booking.meet_link
-        ? `<p><a href="${e(booking.meet_link)}" style="background:#1A2B3C;color:#fff;padding:10px 20px;border-radius:6px;text-decoration:none">Join on Google Meet</a></p>`
+      const safeMeetLink =
+        booking.meet_link &&
+        validator.isURL(booking.meet_link, { protocols: ['https'], require_protocol: true })
+          ? booking.meet_link
+          : null;
+      const meetLinkHtml = safeMeetLink
+        ? `<p><a href="${e(safeMeetLink)}" style="background:#1A2B3C;color:#fff;padding:10px 20px;border-radius:6px;text-decoration:none">Join on Google Meet</a></p>`
         : '';
       await mailer.sendMail({
         from: process.env.MAIL_USER as string,

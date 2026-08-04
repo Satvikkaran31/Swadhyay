@@ -47,7 +47,7 @@ function CourseSkeleton() {
 export default function CourseDetail() {
   const { slug } = useParams();
   const navigate = useNavigate();
-  const { user, setUser } = useUser();
+  const { user, setUser, loading: authLoading } = useUser();
   const login = useTriggerGoogleLogin(setUser);
   const { initiatePayment } = useRazorpay();
 
@@ -231,9 +231,14 @@ export default function CourseDetail() {
         <div className="cd-hero-orb" />
         <div className="cd-hero-grid">
           <div className="rv">
-            <Link to="/courses" className="cd-back-link">
-              ← {course.series?.title || "Courses"}
-            </Link>
+            <div className="cd-hero-toprow">
+              <Link to="/courses" className="cd-back-link">
+                ← {course.series?.title || "Courses"}
+              </Link>
+              {!authLoading && user?.role === "admin" && (
+                <Link to="/admin" className="cd-admin-edit-btn">⚙ Edit in Admin</Link>
+              )}
+            </div>
             <div className="cd-hero-badges">
               <span className="cd-badge-primary">
                 {isFree ? "START HERE · FREE" : (course.level?.toUpperCase() ?? "COURSE")}

@@ -57,10 +57,12 @@ export const submitReview = async (req, res) => {
 export const deleteReview = async (req, res) => {
   const userId = req.session.user?.id;
   const isAdmin = req.session.user?.role === 'admin';
+  if (!userId) return res.status(401).json({ error: 'Authentication required' });
   try {
     const where = isAdmin ? 'id = $1' : 'id = $1 AND user_id = $2';
     const params = isAdmin ? [req.params.id] : [req.params.id, userId];
-    await pool.query(`DELETE FROM reviews WHERE ${where}`, params);
+    const { rowCount } = await pool.query(`DELETE FROM reviews WHERE ${where}`, params);
+    if (!rowCount) return res.status(404).json({ error: 'Review not found' });
     res.json({ success: true });
   } catch {
     res.status(500).json({ error: 'Failed to delete review' });

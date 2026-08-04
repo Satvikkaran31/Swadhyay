@@ -1,6 +1,7 @@
 import rateLimit from 'express-rate-limit';
 import validator from 'validator';
 import mailer from '../utils/mailer.js';
+import { upsertLeadQuietly } from './crmController.js';
 
 // Rate limiting middleware
 const inquiryLimiter = rateLimit({
@@ -46,7 +47,7 @@ export const handleInquiry = async (req, res) => {
       return res.status(405).json({ error: 'Method not allowed' });
     }
 
-    const { name, email, phone, message } = req.body;
+    const { name, email, phone, linkedin_url, message } = req.body;
 
     // Validate input data
     const validationErrors = validateInquiryData({ name, email, phone, message });
@@ -172,13 +173,24 @@ export const handleInquiry = async (req, res) => {
           <div class="field">
             <div class="field-label">Phone Number</div>
             <div class="field-value">
-              <a href="tel:${phone.trim()}" style="color: #1A2B3C; text-decoration: none;">
-                ${validator.escape(phone.trim())}
-              </a>
+              ${validator.isMobilePhone(phone.trim(), 'any', { strictMode: false })
+                ? `<a href="tel:${validator.escape(phone.trim())}" style="color: #1A2B3C; text-decoration: none;">${validator.escape(phone.trim())}</a>`
+                : validator.escape(phone.trim())}
             </div>
           </div>
           ` : ''}
-          
+
+          ${linkedin_url ? `
+          <div class="field">
+            <div class="field-label">LinkedIn Profile</div>
+            <div class="field-value">
+              ${validator.isURL(linkedin_url.trim(), { protocols: ['https'], require_protocol: true }) && linkedin_url.trim().includes('linkedin.com/in/')
+                ? `<a href="${validator.escape(linkedin_url.trim())}" target="_blank" style="color: #0A66C2; text-decoration: none;">${validator.escape(linkedin_url.trim())}</a>`
+                : validator.escape(linkedin_url.trim())}
+            </div>
+          </div>
+          ` : ''}
+
           <div class="field">
             <div class="field-label">Message</div>
             <div class="field-value message-field">${validator.escape(message.trim())}</div>
@@ -223,7 +235,14 @@ Received on: ${new Date().toLocaleString('en-US', {
     // Send email
     await mailer.sendMail(mailOptions);
 
-    // Log successful inquiry 
+    // Auto-capture lead in CRM (non-blocking)
+    upsertLeadQuietly(email.trim(), name.trim(), 'inquiry', {
+      phone: phone?.trim(),
+      linkedin_url: linkedin_url?.trim(),
+      notes: `Inquiry: ${message.trim().slice(0, 250)}`,
+    });
+
+    // Log successful inquiry
     console.log(`Inquiry received from ${name.trim()} (${email.trim()}) at ${new Date().toISOString()}`);
 
     // Send success response

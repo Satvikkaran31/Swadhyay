@@ -313,8 +313,8 @@ export async function batchSaveCourse(req, res) {
       const offset = existingMods.length * 4;
       const vals = existingMods.map((_, i) => `($${i * 4 + 1}::int, $${i * 4 + 2}::text, $${i * 4 + 3}::text, $${i * 4 + 4}::int)`).join(',');
       await client.query(
-        `UPDATE modules AS m SET title = v.title, description = v.desc, position = v.pos
-         FROM (VALUES ${vals}) AS v(id, title, desc, pos)
+        `UPDATE modules AS m SET title = v.title, description = v.description, position = v.pos
+         FROM (VALUES ${vals}) AS v(id, title, description, pos)
          WHERE m.id = v.id AND m.course_id = $${offset + 1}`,
         [...existingMods.flatMap(m => [m.id, m.title, m.description ?? null, m.pos]), courseId]
       );
@@ -388,7 +388,8 @@ export async function batchSaveCourse(req, res) {
 
 export async function deleteCourse(req, res) {
   try {
-    await pool.query('DELETE FROM courses WHERE id = $1', [req.params.id]);
+    const { rowCount } = await pool.query('DELETE FROM courses WHERE id = $1', [req.params.id]);
+    if (!rowCount) return res.status(404).json({ error: 'Course not found' });
     res.json({ success: true });
   } catch {
     res.status(500).json({ error: 'Failed to delete course' });

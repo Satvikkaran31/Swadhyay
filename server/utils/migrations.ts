@@ -224,6 +224,142 @@ const migrations = [
 
   // ── Module-level description (shown under module title in curriculum) ─────────
   `ALTER TABLE modules ADD COLUMN IF NOT EXISTS description TEXT`,
+
+  // ── LinkedIn URL on user profiles ─────────────────────────────────────────────
+  `ALTER TABLE users ADD COLUMN IF NOT EXISTS linkedin_url TEXT`,
+
+  // ── CRM: leads ────────────────────────────────────────────────────────────────
+  `CREATE TABLE IF NOT EXISTS leads (
+    id           SERIAL PRIMARY KEY,
+    name         TEXT NOT NULL,
+    email        TEXT NOT NULL,
+    phone        TEXT,
+    linkedin_url TEXT,
+    source       TEXT NOT NULL DEFAULT 'manual',
+    status       TEXT NOT NULL DEFAULT 'new',
+    notes        TEXT,
+    tags         TEXT[] DEFAULT '{}',
+    created_at   TIMESTAMPTZ DEFAULT NOW(),
+    updated_at   TIMESTAMPTZ DEFAULT NOW()
+  )`,
+  `CREATE UNIQUE INDEX IF NOT EXISTS idx_leads_email ON leads(lower(email))`,
+  `CREATE INDEX IF NOT EXISTS idx_leads_status ON leads(status)`,
+
+  // ── CRM: email templates ──────────────────────────────────────────────────────
+  `CREATE TABLE IF NOT EXISTS email_templates (
+    id         SERIAL PRIMARY KEY,
+    name       TEXT NOT NULL,
+    subject    TEXT NOT NULL,
+    body       TEXT NOT NULL,
+    category   TEXT NOT NULL DEFAULT 'general',
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+  )`,
+
+  // ── CRM: email send log ───────────────────────────────────────────────────────
+  `CREATE TABLE IF NOT EXISTS email_logs (
+    id          SERIAL PRIMARY KEY,
+    lead_id     INT REFERENCES leads(id) ON DELETE SET NULL,
+    template_id INT REFERENCES email_templates(id) ON DELETE SET NULL,
+    to_email    TEXT NOT NULL,
+    to_name     TEXT,
+    subject     TEXT NOT NULL,
+    status      TEXT NOT NULL DEFAULT 'sent',
+    error_msg   TEXT,
+    sent_at     TIMESTAMPTZ DEFAULT NOW()
+  )`,
+  `CREATE INDEX IF NOT EXISTS idx_email_logs_sent_at ON email_logs(sent_at DESC)`,
+
+  // ── CRM: seed 4 starter templates (skipped if any already exist) ─────────────
+  `INSERT INTO email_templates (name, subject, body, category)
+   SELECT * FROM (VALUES
+     (
+       'Welcome – New Lead',
+       'Welcome to Swadhyay, {{first_name}}!',
+       '<!DOCTYPE html><html><head><meta charset="utf-8"></head><body style="margin:0;padding:0;background:#f4f1e9;font-family:Georgia,serif;">
+<div style="max-width:560px;margin:0 auto;padding:40px 20px;">
+  <div style="background:#0c241c;color:#f4f1e9;padding:28px 32px;border-radius:12px;text-align:center;margin-bottom:32px;">
+    <p style="margin:0;font-size:11px;letter-spacing:3px;opacity:.6;text-transform:uppercase;">Swadhyay Coaching</p>
+    <h1 style="margin:8px 0 0;font-size:26px;font-weight:600;letter-spacing:1px;">A space for inner work</h1>
+  </div>
+  <h2 style="color:#0c241c;font-size:20px;">Hi {{first_name}},</h2>
+  <p style="line-height:1.75;color:#333;">Thank you for reaching out. I''m Neha — and I''m genuinely glad you''re here.</p>
+  <p style="line-height:1.75;color:#333;">Whether you''re navigating a career transition, preparing for something important, or simply feeling the pull toward deeper self-knowledge — you''ve come to the right place.</p>
+  <p style="line-height:1.75;color:#333;">The first conversation is always about listening. I''d love to understand where you are and how I can best support you.</p>
+  <p style="text-align:center;margin:36px 0;">
+    <a href="{{booking_link}}" style="background:#0c241c;color:#f4f1e9;padding:14px 28px;border-radius:8px;text-decoration:none;font-size:14px;display:inline-block;">Book a free 20-min call →</a>
+  </p>
+  <p style="line-height:1.75;color:#333;">With warmth,<br><strong>Neha Verma</strong><br><span style="color:#888;font-size:13px;">Executive &amp; Life Coach · Swadhyay</span></p>
+  <hr style="border:none;border-top:1px solid #ddd;margin:32px 0;">
+  <p style="font-size:11px;color:#aaa;text-align:center;">Swadhyay · swadhyay.co · You''re receiving this because you connected with us.</p>
+</div></body></html>',
+       'welcome'
+     ),
+     (
+       'Follow-Up After Enquiry',
+       'Just checking in, {{first_name}}',
+       '<!DOCTYPE html><html><head><meta charset="utf-8"></head><body style="margin:0;padding:0;background:#f4f1e9;font-family:Georgia,serif;">
+<div style="max-width:560px;margin:0 auto;padding:40px 20px;">
+  <div style="background:#0c241c;color:#f4f1e9;padding:28px 32px;border-radius:12px;text-align:center;margin-bottom:32px;">
+    <p style="margin:0;font-size:11px;letter-spacing:3px;opacity:.6;text-transform:uppercase;">Swadhyay Coaching</p>
+  </div>
+  <h2 style="color:#0c241c;font-size:20px;">Hi {{first_name}},</h2>
+  <p style="line-height:1.75;color:#333;">I wanted to follow up on your recent enquiry — I hope things are going well on your end.</p>
+  <p style="line-height:1.75;color:#333;">Sometimes the right moment to begin this kind of inner work takes a little while to arrive. There''s no pressure here.</p>
+  <p style="line-height:1.75;color:#333;">When you''re ready, I''m here. If you have any questions before booking, simply reply to this email — I read every message personally.</p>
+  <p style="text-align:center;margin:36px 0;">
+    <a href="{{booking_link}}" style="background:#0c241c;color:#f4f1e9;padding:14px 28px;border-radius:8px;text-decoration:none;font-size:14px;display:inline-block;">Book a session →</a>
+  </p>
+  <p style="line-height:1.75;color:#333;">Warmly,<br><strong>Neha</strong></p>
+  <hr style="border:none;border-top:1px solid #ddd;margin:32px 0;">
+  <p style="font-size:11px;color:#aaa;text-align:center;">Swadhyay · swadhyay.co</p>
+</div></body></html>',
+       'follow-up'
+     ),
+     (
+       'Course Recommendation',
+       'A course I think you''ll find valuable, {{first_name}}',
+       '<!DOCTYPE html><html><head><meta charset="utf-8"></head><body style="margin:0;padding:0;background:#f4f1e9;font-family:Georgia,serif;">
+<div style="max-width:560px;margin:0 auto;padding:40px 20px;">
+  <div style="background:#0c241c;color:#f4f1e9;padding:28px 32px;border-radius:12px;text-align:center;margin-bottom:32px;">
+    <p style="margin:0;font-size:11px;letter-spacing:3px;opacity:.6;text-transform:uppercase;">Swadhyay Coaching</p>
+  </div>
+  <h2 style="color:#0c241c;font-size:20px;">Hi {{first_name}},</h2>
+  <p style="line-height:1.75;color:#333;">Based on our conversation, I wanted to share something that I think will resonate with where you are right now.</p>
+  <p style="line-height:1.75;color:#333;">Our <strong>{{course_name}}</strong> course has helped many professionals in exactly your position — and it''s available to start immediately, at your own pace.</p>
+  <p style="line-height:1.75;color:#333;">It''s completely free to begin. The first module gives you a real sense of whether it''s the right fit.</p>
+  <p style="text-align:center;margin:36px 0;">
+    <a href="{{courses_link}}" style="background:#0c241c;color:#f4f1e9;padding:14px 28px;border-radius:8px;text-decoration:none;font-size:14px;display:inline-block;">Explore the course →</a>
+  </p>
+  <p style="line-height:1.75;color:#333;">With warmth,<br><strong>Neha</strong></p>
+  <hr style="border:none;border-top:1px solid #ddd;margin:32px 0;">
+  <p style="font-size:11px;color:#aaa;text-align:center;">Swadhyay · swadhyay.co</p>
+</div></body></html>',
+       'promotional'
+     ),
+     (
+       'Re-Engagement – Cold Lead',
+       'It''s been a while, {{first_name}} — still thinking about this?',
+       '<!DOCTYPE html><html><head><meta charset="utf-8"></head><body style="margin:0;padding:0;background:#f4f1e9;font-family:Georgia,serif;">
+<div style="max-width:560px;margin:0 auto;padding:40px 20px;">
+  <div style="background:#0c241c;color:#f4f1e9;padding:28px 32px;border-radius:12px;text-align:center;margin-bottom:32px;">
+    <p style="margin:0;font-size:11px;letter-spacing:3px;opacity:.6;text-transform:uppercase;">Swadhyay Coaching</p>
+  </div>
+  <h2 style="color:#0c241c;font-size:20px;">Hi {{first_name}},</h2>
+  <p style="line-height:1.75;color:#333;">It''s been a little while since we were in touch, and I just wanted to check in.</p>
+  <p style="line-height:1.75;color:#333;">I know life gets full. The work of genuine self-reflection — the kind that actually changes things — often gets pushed to "later."</p>
+  <p style="line-height:1.75;color:#333;">If you''re still feeling the pull toward something more, I''m still here. No pressure, no pitch. Just a conversation when you''re ready.</p>
+  <p style="text-align:center;margin:36px 0;">
+    <a href="{{booking_link}}" style="background:#0c241c;color:#f4f1e9;padding:14px 28px;border-radius:8px;text-decoration:none;font-size:14px;display:inline-block;">Let''s reconnect →</a>
+  </p>
+  <p style="line-height:1.75;color:#333;">Warmly,<br><strong>Neha</strong></p>
+  <hr style="border:none;border-top:1px solid #ddd;margin:32px 0;">
+  <p style="font-size:11px;color:#aaa;text-align:center;">Swadhyay · swadhyay.co · Reply to unsubscribe from future emails.</p>
+</div></body></html>',
+       'nurture'
+     )
+   ) AS t(name, subject, body, category)
+   WHERE NOT EXISTS (SELECT 1 FROM email_templates LIMIT 1)`,
 ];
 
 export async function runMigrations() {

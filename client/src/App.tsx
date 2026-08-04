@@ -1,11 +1,13 @@
-import React, { useRef, Suspense, lazy, useEffect } from "react";
+import React, { useRef, Suspense, lazy, useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import Navbar from "./components/Navbar";
 import ScrollToTop from "./components/ScrollToTop";
 import WhatsAppFloat from "./components/WhatsAppFloat";
+import LinkedInModal from "./components/LinkedInModal";
 import Home from "./pages/Home";
 import ArticleDetail from './pages/ArticleDetail';
+import { useUser } from "./context/UserProvider";
 
 // Lazy-load pages
 const Booking     = lazy(() => import("./pages/Booking"));
@@ -25,7 +27,8 @@ const SampleCourse = lazy(() => import("./pages/SampleCourse"));
 const SampleSeries = lazy(() => import("./pages/SampleSeries"));
 const Pricing      = lazy(() => import("./pages/Pricing"));
 const SeriesListing = lazy(() => import("./pages/SeriesListing"));
-const NotFound = lazy(() => import("./pages/NotFound"));
+const NotFound  = lazy(() => import("./pages/NotFound"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
 
 // SEO hook for React 19
 function useSEO({ title, description, path, keywords, noindex = false }) {
@@ -89,6 +92,31 @@ function LoadingFallback() {
   );
 }
 
+function LinkedInGate() {
+  const { user, loading, setUser } = useUser();
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    if (loading) return;
+    if (!user) { setShow(false); return; }
+    if (user.linkedin_url != null) { setShow(false); return; }
+    if (sessionStorage.getItem("li_modal_done")) { setShow(false); return; }
+    setShow(true);
+  }, [user, loading]);
+
+  if (!show) return null;
+
+  return (
+    <LinkedInModal
+      onDone={(linkedin_url) => {
+        sessionStorage.setItem("li_modal_done", "1");
+        setShow(false);
+        if (user) setUser({ ...user, linkedin_url });
+      }}
+    />
+  );
+}
+
 export default function App() {
   const aboutRef = useRef(null);
 
@@ -117,6 +145,7 @@ export default function App() {
   return (
     <Router>
       <Toaster position="top-center" toastOptions={{ duration: 4000 }} />
+      <LinkedInGate />
       <ScrollToTop />
       <WhatsAppFloat />
       <Suspense fallback={<LoadingFallback />}>
@@ -194,6 +223,7 @@ export default function App() {
           } />
 
           {/* Admin — no SEO */}
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/admin" element={<Admin />} />
 
           {/* Series listing */}

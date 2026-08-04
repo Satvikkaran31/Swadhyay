@@ -9,6 +9,7 @@ interface UserData {
   picture: string;
   role: string;
   verified: boolean;
+  linkedin_url: string | null;
 }
 
 interface UserContextType {

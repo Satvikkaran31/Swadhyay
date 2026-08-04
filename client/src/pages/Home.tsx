@@ -79,9 +79,13 @@ const SERIES: Record<SeriesKey, {
   },
 };
 
+const API = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+
 export default function Home() {
   const [svcIdx, setSvcIdx] = useState(0);
   const [series, setSeries] = useState<SeriesKey>("youth");
+  const [testimonials, setTestimonials] = useState<{ name: string; role: string; quote: string }[]>([]);
+  const [testimonialIdx, setTestimonialIdx] = useState(0);
 
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const sliderRef = useRef<HTMLDivElement>(null);
@@ -103,6 +107,13 @@ export default function Home() {
     window.addEventListener("resize", positionSlider);
     return () => window.removeEventListener("resize", positionSlider);
   }, [svcIdx]);
+
+  useEffect(() => {
+    fetch(`${API}/api/testimonials`)
+      .then(r => r.json())
+      .then(d => { if (Array.isArray(d) && d.length) setTestimonials(d); })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     const t0 = document.timeline?.currentTime ?? 0;
@@ -330,22 +341,40 @@ export default function Home() {
       </section>
 
       {/* ── TESTIMONIAL ───────────────────────────────────────────────── */}
-      <section className="home-testimonial sw-page-pad">
-        <div className="rv home-testimonial-inner">
-          <span className="mono-label" style={{ color: "#0E766B" }}>what people say</span>
-          <p className="home-testimonial-quote">
-            "Working with Neha reshaped how I lead. I stopped performing and started
-            leading from a place of genuine clarity and calm."
-          </p>
-          <div className="home-testimonial-attr">
-            <div className="home-testimonial-avatar" />
-            <div>
-              <div className="home-testimonial-name">Aarav Mehta</div>
-              <div className="home-testimonial-role">VP, Product · fintech</div>
+      {testimonials.length > 0 && (() => {
+        const t = testimonials[testimonialIdx];
+        return (
+          <section className="home-testimonial sw-page-pad">
+            <div className="rv home-testimonial-inner">
+              <span className="mono-label" style={{ color: "#0E766B" }}>what people say</span>
+              <p className="home-testimonial-quote">"{t.quote}"</p>
+              <div className="home-testimonial-attr">
+                <div className="home-testimonial-avatar" />
+                <div>
+                  <div className="home-testimonial-name">{t.name}</div>
+                  <div className="home-testimonial-role">{t.role}</div>
+                </div>
+              </div>
+              {testimonials.length > 1 && (
+                <div style={{ display: "flex", gap: 8, marginTop: 20, justifyContent: "center" }}>
+                  {testimonials.map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setTestimonialIdx(i)}
+                      style={{
+                        width: 8, height: 8, borderRadius: "50%", border: "none",
+                        background: i === testimonialIdx ? "#0E766B" : "#C8C0B0",
+                        cursor: "pointer", padding: 0, transition: "background 0.2s",
+                      }}
+                      aria-label={`View testimonial ${i + 1}`}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
-          </div>
-        </div>
-      </section>
+          </section>
+        );
+      })()}
 
       {/* ── BOOKING CTA ───────────────────────────────────────────────── */}
       <section className="home-cta-section sw-page-pad">

@@ -132,6 +132,13 @@ const ICONS = {
       <polyline points="22,6 12,13 2,6" />
     </svg>
   ),
+  crm: (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+      <circle cx="9" cy="7" r="4" />
+      <path d="M23 11h-6M20 8l3 3-3 3" />
+    </svg>
+  ),
 };
 
 // ── Course sub-components ─────────────────────────────────────────────────────
@@ -151,9 +158,11 @@ function CourseList({ courses, onNew, onSelect, onDelete, onRefresh }) {
       await apiFetch(`/api/courses/${c.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...c, is_published: !c.is_published }),
+        body: JSON.stringify({ is_published: !c.is_published }),
       });
       onRefresh();
+    } catch {
+      alert("Failed to update publish status. Please try again.");
     } finally {
       setTogglingId(null);
     }
@@ -903,6 +912,7 @@ function UsersTab() {
             <tr>
               <th>Name</th>
               <th>Email</th>
+              <th>LinkedIn</th>
               <th>Role</th>
               <th>Joined</th>
               <th>Actions</th>
@@ -924,6 +934,16 @@ function UsersTab() {
                   </div>
                 </td>
                 <td style={{ color: "#666", fontSize: "0.85rem" }}>{u.email}</td>
+                <td style={{ fontSize: "0.8rem" }}>
+                  {u.linkedin_url ? (
+                    <a href={u.linkedin_url} target="_blank" rel="noopener noreferrer"
+                      style={{ color: "#0A66C2", textDecoration: "none", fontWeight: 500 }}>
+                      View ↗
+                    </a>
+                  ) : (
+                    <span style={{ color: "#ccc" }}>—</span>
+                  )}
+                </td>
                 <td>
                   <span className={`admin-badge ${u.role === "admin" ? "admin-role" : "student-role"}`}>
                     {u.role ?? "student"}
@@ -1566,10 +1586,601 @@ function NewsletterTab() {
   );
 }
 
+// ── CRM tab ───────────────────────────────────────────────────────────────────
+
+const CRM_STATUSES = ['new', 'contacted', 'qualified', 'converted', 'lost'] as const;
+const CRM_SOURCES  = ['inquiry', 'newsletter', 'manual'] as const;
+const CRM_CATS     = ['welcome', 'follow-up', 'promotional', 'nurture', 'general'] as const;
+
+const STATUS_COLORS: Record<string, string> = {
+  new: 'crm-status-new', contacted: 'crm-status-contacted',
+  qualified: 'crm-status-qualified', converted: 'crm-status-converted', lost: 'crm-status-lost',
+};
+
+function emptyLeadForm() {
+  return { name: '', email: '', phone: '', linkedin_url: '', source: 'manual', status: 'new', notes: '', tags: [] as string[] };
+}
+function emptyTemplateForm() {
+  return { name: '', subject: '', body: '', category: 'general' };
+}
+
+// ── Leads Panel ────────────────────────────────────────────────────────────
+
+function LeadsPanel() {
+  const [leads, setLeads] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
+  const [filterStatus, setFilterStatus] = useState('all');
+  const [filterSource, setFilterSource] = useState('all');
+  const [selected, setSelected] = useState<Set<number>>(new Set());
+  const [editingLead, setEditingLead] = useState<any | null>(null);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [addForm, setAddForm] = useState(emptyLeadForm());
+  const [addError, setAddError] = useState('');
+  const [addSaving, setAddSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [sendModal, setSendModal] = useState(false);
+  const [templates, setTemplates] = useState<any[]>([]);
+  const [sendTemplateId, setSendTemplateId] = useState('');
+  const [sending, setSending] = useState(false);
+  const [sendResult, setSendResult] = useState<string | null>(null);
+
+  const load = () => {
+    setLoading(true);
+    const params = new URLSearchParams();
+    if (filterStatus !== 'all') params.set('status', filterStatus);
+    if (filterSource !== 'all') params.set('source', filterSource);
+    if (search.trim()) params.set('search', search.trim());
+    apiFetch(`/api/crm/leads?${params}`).then(d => setLeads(Array.isArray(d) ? d : [])).finally(() => setLoading(false));
+  };
+
+  useEffect(load, [filterStatus, filterSource]);
+
+  const handleSearch = (e) => { if (e.key === 'Enter') load(); };
+
+  const toggleSelect = (id: number) => setSelected(prev => {
+    const n = new Set(prev); if (n.has(id)) n.delete(id); else n.add(id); return n;
+  });
+  const toggleAll = () => setSelected(prev => prev.size === leads.length ? new Set() : new Set(leads.map(l => l.id)));
+
+  const handleAddSave = async () => {
+    if (!addForm.name.trim() || !addForm.email.trim()) { setAddError('Name and email are required'); return; }
+    setAddSaving(true); setAddError('');
+    try {
+      await apiFetch('/api/crm/leads', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(addForm),
+      });
+      setShowAddForm(false); setAddForm(emptyLeadForm()); load();
+    } catch (err: any) { setAddError(err.message || 'Failed to save'); }
+    finally { setAddSaving(false); }
+  };
+
+  const handleStatusChange = async (id: number, status: string) => {
+    try {
+      await apiFetch(`/api/crm/leads/${id}`, {
+        method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status }),
+      });
+      setLeads(prev => prev.map(l => l.id === id ? { ...l, status } : l));
+    } catch {}
+  };
+
+  const handleDelete = async (id: number) => {
+    await apiFetch(`/api/crm/leads/${id}`, { method: 'DELETE' });
+    setDeletingId(null); load();
+  };
+
+  const openSendModal = async () => {
+    if (!selected.size) return;
+    setSendResult(null); setSendTemplateId('');
+    const tmpl = await apiFetch('/api/crm/templates').catch(() => []);
+    setTemplates(Array.isArray(tmpl) ? tmpl : []);
+    setSendModal(true);
+  };
+
+  const handleSend = async () => {
+    if (!sendTemplateId) return;
+    setSending(true); setSendResult(null);
+    try {
+      const res = await apiFetch('/api/crm/send', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ lead_ids: Array.from(selected), template_id: Number(sendTemplateId) }),
+      });
+      setSendResult(`Sent: ${res.sent}, Failed: ${res.failed}`);
+      setSelected(new Set());
+      load();
+    } catch (err: any) { setSendResult(`Error: ${err.message}`); }
+    finally { setSending(false); }
+  };
+
+  return (
+    <div className="admin-section">
+      <div className="admin-section-header">
+        <h2>Leads</h2>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+          {selected.size > 0 && (
+            <button className="admin-btn-primary" onClick={openSendModal}>
+              Send Email ({selected.size})
+            </button>
+          )}
+          <button className="admin-btn-primary" onClick={() => { setShowAddForm(true); setAddForm(emptyLeadForm()); }}>
+            + Add Lead
+          </button>
+        </div>
+      </div>
+
+      {/* Filters */}
+      <div className="admin-list-toolbar crm-toolbar">
+        <input
+          className="admin-search"
+          placeholder="Search name or email… (Enter)"
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          onKeyDown={handleSearch}
+        />
+        <select className="crm-filter-select" value={filterStatus} onChange={e => setFilterStatus(e.target.value)}>
+          <option value="all">All statuses</option>
+          {CRM_STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
+        </select>
+        <select className="crm-filter-select" value={filterSource} onChange={e => setFilterSource(e.target.value)}>
+          <option value="all">All sources</option>
+          {CRM_SOURCES.map(s => <option key={s} value={s}>{s}</option>)}
+        </select>
+        <button className="admin-btn-secondary" onClick={load} style={{ whiteSpace: 'nowrap' }}>Refresh</button>
+      </div>
+
+      {/* Add form */}
+      {showAddForm && (
+        <div className="admin-inline-editor">
+          {addError && <div className="admin-error">{addError}</div>}
+          <div className="admin-form-row">
+            <div className="admin-form-group">
+              <label>Name *</label>
+              <input value={addForm.name} onChange={e => setAddForm(f => ({ ...f, name: e.target.value }))} placeholder="Full name" />
+            </div>
+            <div className="admin-form-group">
+              <label>Email *</label>
+              <input value={addForm.email} onChange={e => setAddForm(f => ({ ...f, email: e.target.value }))} placeholder="email@example.com" />
+            </div>
+          </div>
+          <div className="admin-form-row">
+            <div className="admin-form-group">
+              <label>Phone</label>
+              <input value={addForm.phone} onChange={e => setAddForm(f => ({ ...f, phone: e.target.value }))} placeholder="+91 98765 43210" />
+            </div>
+            <div className="admin-form-group">
+              <label>LinkedIn URL</label>
+              <input value={addForm.linkedin_url} onChange={e => setAddForm(f => ({ ...f, linkedin_url: e.target.value }))} placeholder="https://linkedin.com/in/…" />
+            </div>
+          </div>
+          <div className="admin-form-row">
+            <div className="admin-form-group narrow">
+              <label>Source</label>
+              <select value={addForm.source} onChange={e => setAddForm(f => ({ ...f, source: e.target.value }))}>
+                {CRM_SOURCES.map(s => <option key={s} value={s}>{s}</option>)}
+              </select>
+            </div>
+            <div className="admin-form-group narrow">
+              <label>Status</label>
+              <select value={addForm.status} onChange={e => setAddForm(f => ({ ...f, status: e.target.value }))}>
+                {CRM_STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
+              </select>
+            </div>
+            <div className="admin-form-group">
+              <label>Notes</label>
+              <input value={addForm.notes} onChange={e => setAddForm(f => ({ ...f, notes: e.target.value }))} placeholder="Context notes…" />
+            </div>
+          </div>
+          <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.75rem' }}>
+            <button className="admin-btn-primary" onClick={handleAddSave} disabled={addSaving}>{addSaving ? 'Saving…' : 'Add Lead'}</button>
+            <button className="admin-btn-secondary" onClick={() => setShowAddForm(false)}>Cancel</button>
+          </div>
+        </div>
+      )}
+
+      {/* Leads table */}
+      {loading ? (
+        <div className="admin-empty">Loading leads…</div>
+      ) : leads.length === 0 ? (
+        <div className="admin-empty">
+          <span className="admin-empty-icon">👥</span>
+          <p>No leads yet. Inquiries and newsletter signups auto-appear here.</p>
+        </div>
+      ) : (
+        <table className="admin-table">
+          <thead>
+            <tr>
+              <th><input type="checkbox" onChange={toggleAll} checked={selected.size === leads.length && leads.length > 0} /></th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Source</th>
+              <th>Status</th>
+              <th>Added</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {leads.map(lead => (
+              <tr key={lead.id} className={selected.has(lead.id) ? 'crm-row-selected' : ''}>
+                <td><input type="checkbox" checked={selected.has(lead.id)} onChange={() => toggleSelect(lead.id)} /></td>
+                <td style={{ fontWeight: 500, whiteSpace: 'nowrap' }}>{lead.name}</td>
+                <td style={{ color: '#666', fontSize: '0.85rem' }}>{lead.email}</td>
+                <td><span className={`crm-source-badge crm-source-${lead.source}`}>{lead.source}</span></td>
+                <td>
+                  <select
+                    className={`crm-status-select ${STATUS_COLORS[lead.status]}`}
+                    value={lead.status}
+                    onChange={e => handleStatusChange(lead.id, e.target.value)}
+                  >
+                    {CRM_STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
+                  </select>
+                </td>
+                <td style={{ whiteSpace: 'nowrap', fontSize: '0.8rem', color: '#888' }}>
+                  {formatDateShort(lead.created_at)}
+                </td>
+                <td>
+                  <div className="admin-actions">
+                    {deletingId === lead.id ? (
+                      <>
+                        <span style={{ fontSize: '0.8rem', color: '#c00', fontWeight: 600 }}>Delete?</span>
+                        <button className="admin-btn-sm danger" onClick={() => handleDelete(lead.id)}>Yes</button>
+                        <button className="admin-btn-sm" onClick={() => setDeletingId(null)}>No</button>
+                      </>
+                    ) : (
+                      <>
+                        {lead.linkedin_url && (
+                          <a href={lead.linkedin_url} target="_blank" rel="noopener noreferrer" className="admin-btn-sm">Li</a>
+                        )}
+                        <button className="admin-btn-sm danger" onClick={() => setDeletingId(lead.id)}>Delete</button>
+                      </>
+                    )}
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+
+      {/* Send email modal */}
+      {sendModal && (
+        <div className="crm-modal-overlay" onClick={() => !sending && setSendModal(false)}>
+          <div className="crm-modal" onClick={e => e.stopPropagation()}>
+            <h3>Send Email to {selected.size} lead{selected.size !== 1 ? 's' : ''}</h3>
+            <div className="admin-form-group" style={{ marginTop: '1rem' }}>
+              <label>Choose Template</label>
+              <select value={sendTemplateId} onChange={e => setSendTemplateId(e.target.value)}>
+                <option value="">— Select template —</option>
+                {templates.map(t => <option key={t.id} value={t.id}>[{t.category}] {t.name}</option>)}
+              </select>
+            </div>
+            {sendResult && (
+              <div className={`admin-${sendResult.startsWith('Error') ? 'error' : 'success-banner'}`} style={{ marginTop: '0.75rem' }}>
+                {sendResult}
+              </div>
+            )}
+            <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1.25rem' }}>
+              <button className="admin-btn-primary" onClick={handleSend} disabled={sending || !sendTemplateId}>
+                {sending ? 'Sending…' : 'Send'}
+              </button>
+              <button className="admin-btn-secondary" onClick={() => setSendModal(false)} disabled={sending}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Templates Panel ────────────────────────────────────────────────────────
+
+const TEMPLATE_VARS = ['{{name}}', '{{first_name}}', '{{email}}', '{{phone}}', '{{booking_link}}', '{{courses_link}}', '{{course_name}}'];
+
+function TemplatesPanel() {
+  const [templates, setTemplates] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [editing, setEditing] = useState<any | null>(null);
+  const [showEditor, setShowEditor] = useState(false);
+  const [form, setForm] = useState(emptyTemplateForm());
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+  const [preview, setPreview] = useState<{ subject: string; body: string } | null>(null);
+  const [loadingPreview, setLoadingPreview] = useState(false);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
+  const bodyRef = useRef<HTMLTextAreaElement>(null);
+
+  const load = () => {
+    setLoading(true);
+    apiFetch('/api/crm/templates').then(d => setTemplates(Array.isArray(d) ? d : [])).finally(() => setLoading(false));
+  };
+  useEffect(load, []);
+
+  const startNew = () => { setEditing(null); setForm(emptyTemplateForm()); setPreview(null); setError(''); setShowEditor(true); };
+  const startEdit = (t) => { setEditing(t); setForm({ name: t.name, subject: t.subject, body: t.body, category: t.category }); setPreview(null); setError(''); setShowEditor(true); };
+  const cancelEdit = () => { setEditing(null); setForm(emptyTemplateForm()); setPreview(null); setShowEditor(false); };
+
+  const insertVar = (v: string) => {
+    const el = bodyRef.current;
+    if (!el) return;
+    const start = el.selectionStart ?? el.value.length;
+    const end   = el.selectionEnd ?? start;
+    const newVal = el.value.slice(0, start) + v + el.value.slice(end);
+    setForm(f => ({ ...f, body: newVal }));
+    setTimeout(() => { el.focus(); el.setSelectionRange(start + v.length, start + v.length); }, 0);
+  };
+
+  const handleSave = async () => {
+    if (!form.name.trim() || !form.subject.trim() || !form.body.trim()) {
+      setError('Name, subject and body are required'); return;
+    }
+    setSaving(true); setError('');
+    try {
+      if (editing?.id) {
+        await apiFetch(`/api/crm/templates/${editing.id}`, {
+          method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form),
+        });
+      } else {
+        await apiFetch('/api/crm/templates', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form),
+        });
+      }
+      cancelEdit(); load();
+    } catch (err: any) { setError(err.message || 'Save failed'); }
+    finally { setSaving(false); }
+  };
+
+  const handleDelete = async (id: number) => {
+    await apiFetch(`/api/crm/templates/${id}`, { method: 'DELETE' });
+    setDeletingId(null); load();
+  };
+
+  const loadPreview = async (id: number) => {
+    setLoadingPreview(true); setPreview(null);
+    try {
+      const p = await apiFetch(`/api/crm/templates/${id}/preview`);
+      setPreview(p);
+    } catch {}
+    finally { setLoadingPreview(false); }
+  };
+
+  return (
+    <div className="admin-section">
+      <div className="admin-section-header">
+        <h2>Email Templates</h2>
+        {!showEditor && <button className="admin-btn-primary" onClick={startNew}>+ New Template</button>}
+      </div>
+
+      {/* Editor */}
+      {showEditor && (
+        <div className="crm-template-editor">
+          {error && <div className="admin-error">{error}</div>}
+          <div className="admin-form-row">
+            <div className="admin-form-group">
+              <label>Template Name *</label>
+              <input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} placeholder="e.g. Welcome – New Lead" />
+            </div>
+            <div className="admin-form-group narrow">
+              <label>Category</label>
+              <select value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))}>
+                {CRM_CATS.map(c => <option key={c} value={c}>{c}</option>)}
+              </select>
+            </div>
+          </div>
+          <div className="admin-form-group">
+            <label>Subject Line *</label>
+            <input value={form.subject} onChange={e => setForm(f => ({ ...f, subject: e.target.value }))} placeholder="Hi {{first_name}}, welcome to Swadhyay!" />
+          </div>
+          <div className="admin-form-group">
+            <label>Body (HTML)</label>
+            <div className="crm-var-palette">
+              {TEMPLATE_VARS.map(v => (
+                <button key={v} className="crm-var-chip" onClick={() => insertVar(v)} type="button">{v}</button>
+              ))}
+            </div>
+            <textarea
+              ref={bodyRef}
+              rows={16}
+              value={form.body}
+              onChange={e => setForm(f => ({ ...f, body: e.target.value }))}
+              placeholder={'<p>Hi {{first_name}},</p>\n<p>Welcome to Swadhyay!</p>'}
+              className="crm-body-editor"
+            />
+          </div>
+          <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem', flexWrap: 'wrap' }}>
+            <button className="admin-btn-primary" onClick={handleSave} disabled={saving}>{saving ? 'Saving…' : editing?.id ? 'Save Changes' : 'Create Template'}</button>
+            {editing?.id && (
+              <button className="admin-btn-secondary" onClick={() => loadPreview(editing.id)} disabled={loadingPreview}>
+                {loadingPreview ? 'Loading…' : 'Preview'}
+              </button>
+            )}
+            <button className="admin-btn-secondary" onClick={cancelEdit}>Cancel</button>
+          </div>
+
+          {preview && (
+            <div className="crm-preview-panel">
+              <div className="crm-preview-subject"><strong>Subject:</strong> {preview.subject}</div>
+              <iframe
+                className="crm-preview-frame"
+                srcDoc={preview.body}
+                sandbox="allow-same-origin"
+                title="Email preview"
+              />
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Template list */}
+      {templates.length === 0 && !showEditor ? (
+        <div className="admin-empty">
+          <span className="admin-empty-icon">✉️</span>
+          <p>No templates yet. The default 4 templates are seeded on first server start.</p>
+        </div>
+      ) : (
+        !showEditor && (
+          <table className="admin-table">
+            <thead><tr><th>Name</th><th>Category</th><th>Subject</th><th>Updated</th><th>Actions</th></tr></thead>
+            <tbody>
+              {templates.map(t => (
+                <tr key={t.id}>
+                  <td style={{ fontWeight: 500 }}>{t.name}</td>
+                  <td><span className={`crm-cat-badge crm-cat-${t.category}`}>{t.category}</span></td>
+                  <td style={{ maxWidth: 240, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '0.85rem', color: '#666' }}>{t.subject}</td>
+                  <td style={{ whiteSpace: 'nowrap', fontSize: '0.8rem', color: '#888' }}>{formatDateShort(t.updated_at)}</td>
+                  <td>
+                    <div className="admin-actions">
+                      {deletingId === t.id ? (
+                        <>
+                          <span style={{ fontSize: '0.8rem', color: '#c00', fontWeight: 600 }}>Delete?</span>
+                          <button className="admin-btn-sm danger" onClick={() => handleDelete(t.id)}>Yes</button>
+                          <button className="admin-btn-sm" onClick={() => setDeletingId(null)}>No</button>
+                        </>
+                      ) : (
+                        <>
+                          <button className="admin-btn-sm" onClick={() => startEdit(t)}>Edit</button>
+                          <button className="admin-btn-sm danger" onClick={() => setDeletingId(t.id)}>Delete</button>
+                        </>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )
+      )}
+    </div>
+  );
+}
+
+// ── History Panel ──────────────────────────────────────────────────────────
+
+function HistoryPanel() {
+  const [logs, setLogs] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    apiFetch('/api/crm/logs').then(d => setLogs(Array.isArray(d) ? d : [])).finally(() => setLoading(false));
+  }, []);
+
+  if (loading) return <div className="admin-empty">Loading email history…</div>;
+
+  return (
+    <div className="admin-section">
+      <div className="admin-section-header">
+        <h2>Email History</h2>
+        <span style={{ fontSize: '0.85rem', color: '#888' }}>{logs.length} records (last 300)</span>
+      </div>
+
+      {logs.length === 0 ? (
+        <div className="admin-empty">
+          <span className="admin-empty-icon">📋</span>
+          <p>No emails sent yet.</p>
+        </div>
+      ) : (
+        <table className="admin-table">
+          <thead>
+            <tr>
+              <th>To</th>
+              <th>Template</th>
+              <th>Subject</th>
+              <th>Status</th>
+              <th>Sent</th>
+            </tr>
+          </thead>
+          <tbody>
+            {logs.map(log => (
+              <tr key={log.id}>
+                <td style={{ fontSize: '0.85rem' }}>
+                  <div style={{ fontWeight: 500 }}>{log.to_name || log.to_email}</div>
+                  {log.to_name && <div style={{ color: '#888', fontSize: '0.78rem' }}>{log.to_email}</div>}
+                </td>
+                <td style={{ fontSize: '0.82rem' }}>
+                  {log.template_name ? (
+                    <><span className={`crm-cat-badge crm-cat-${log.category}`}>{log.category}</span> {log.template_name}</>
+                  ) : '—'}
+                </td>
+                <td style={{ maxWidth: 220, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '0.82rem', color: '#555' }}>
+                  {log.subject}
+                </td>
+                <td>
+                  <span className={`crm-log-status crm-log-${log.status}`}>{log.status}</span>
+                  {log.error_msg && <div className="crm-log-error">{log.error_msg}</div>}
+                </td>
+                <td style={{ whiteSpace: 'nowrap', fontSize: '0.78rem', color: '#888' }}>
+                  {formatDate(log.sent_at)}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </div>
+  );
+}
+
+// ── CRM Stats bar ──────────────────────────────────────────────────────────
+
+function CRMStatsBar() {
+  const [stats, setStats] = useState<any>(null);
+  useEffect(() => {
+    apiFetch('/api/crm/stats').then(d => setStats(d)).catch(() => {});
+  }, []);
+
+  if (!stats) return null;
+  const l = stats.leads || {};
+  const e = stats.emails || {};
+
+  return (
+    <div className="crm-stats-bar">
+      {[
+        { label: 'Total', val: l.total_count, cls: '' },
+        { label: 'New', val: l.new_count, cls: 'crm-status-new' },
+        { label: 'Contacted', val: l.contacted_count, cls: 'crm-status-contacted' },
+        { label: 'Qualified', val: l.qualified_count, cls: 'crm-status-qualified' },
+        { label: 'Converted', val: l.converted_count, cls: 'crm-status-converted' },
+        { label: 'Lost', val: l.lost_count, cls: 'crm-status-lost' },
+        { label: 'Emails Sent', val: e.emails_sent, cls: '' },
+        { label: 'Failed', val: e.emails_failed, cls: '' },
+      ].map(({ label, val, cls }) => (
+        <div key={label} className={`crm-stat-chip ${cls}`}>
+          <span className="crm-stat-val">{val ?? 0}</span>
+          <span className="crm-stat-lbl">{label}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ── CRM Tab (wrapper) ──────────────────────────────────────────────────────
+
+function CRMTab() {
+  const [subTab, setSubTab] = useState<'leads' | 'templates' | 'history'>('leads');
+
+  return (
+    <div>
+      <CRMStatsBar />
+      <div className="crm-subnav">
+        {(['leads', 'templates', 'history'] as const).map(tab => (
+          <button
+            key={tab}
+            className={`crm-subnav-btn${subTab === tab ? ' active' : ''}`}
+            onClick={() => setSubTab(tab)}
+          >
+            {tab.charAt(0).toUpperCase() + tab.slice(1)}
+          </button>
+        ))}
+      </div>
+      {subTab === 'leads'     && <LeadsPanel />}
+      {subTab === 'templates' && <TemplatesPanel />}
+      {subTab === 'history'   && <HistoryPanel />}
+    </div>
+  );
+}
+
 // ── Main Admin Page ───────────────────────────────────────────────────────────
 
 export default function Admin() {
-  const { user } = useUser();
+  const { user, loading } = useUser();
   const navigate = useNavigate();
 
   const [section, setSection] = useState("overview");
@@ -1582,10 +2193,9 @@ export default function Admin() {
   const [articles, setArticles] = useState([]);
 
   useEffect(() => {
-    if (false /* TODO: re-enable: !user || user.role !== "admin" */) {
-      navigate("/");
-    }
-  }, [user]);
+    if (loading) return;
+    if (!user || user.role !== "admin") navigate("/");
+  }, [user, loading]);
 
   const loadCourses = () =>
     apiFetch("/api/courses/admin/all").then(d => setCourses(Array.isArray(d) ? d : []));
@@ -1594,9 +2204,11 @@ export default function Admin() {
     apiFetch("/api/articles/admin/all").then(d => setArticles(Array.isArray(d) ? d : []));
 
   useEffect(() => {
-    loadCourses();
-    loadArticles();
-  }, []);
+    if (user?.role === "admin") {
+      loadCourses();
+      loadArticles();
+    }
+  }, [user?.role]);
 
   const handleDeleteCourse = async (id) => {
     await apiFetch(`/api/courses/${id}`, { method: "DELETE" });
@@ -1629,10 +2241,12 @@ export default function Admin() {
     return {
       overview: "Overview", users: "Users", sessions: "Sessions",
       series: "Series", instructor: "Instructor", newsletter: "Newsletter", testimonials: "Testimonials",
+      crm: "CRM",
     }[section] || section;
   };
 
-  if (false /* TODO: re-enable: !user || user.role !== "admin" */) return null;
+  if (loading) return null;
+  if (!user || user.role !== "admin") return null;
 
   const NAV_ITEMS = [
     { id: "overview", label: "Overview", icon: ICONS.overview },
@@ -1644,6 +2258,7 @@ export default function Admin() {
     { id: "instructor", label: "Instructor", icon: ICONS.instructor },
     { id: "testimonials", label: "Testimonials", icon: ICONS.testimonials },
     { id: "newsletter", label: "Newsletter", icon: ICONS.newsletter },
+    { id: "crm", label: "CRM", icon: ICONS.crm },
   ];
 
   return (
@@ -1691,8 +2306,12 @@ export default function Admin() {
             <span className="admin-topbar-breadcrumb">{getBreadcrumb()}</span>
           </div>
           <div className="admin-topbar-user">
-            <div className="admin-user-avatar">{(user?.name ?? "G")[0].toUpperCase()}</div>
-            <span className="admin-user-name">{user?.name ?? "Guest"}</span>
+            {user?.picture ? (
+              <img src={user.picture} alt={user.name} className="admin-user-avatar" style={{ borderRadius: "50%", objectFit: "cover" }} referrerPolicy="no-referrer" />
+            ) : (
+              <div className="admin-user-avatar">{(user?.name ?? "A")[0].toUpperCase()}</div>
+            )}
+            <span className="admin-user-name">{user?.name ?? ""}</span>
           </div>
         </header>
 
@@ -1742,6 +2361,7 @@ export default function Admin() {
           {section === "instructor" && <InstructorTab />}
           {section === "testimonials" && <TestimonialsTab />}
           {section === "newsletter" && <NewsletterTab />}
+          {section === "crm" && <CRMTab />}
         </main>
       </div>
     </div>

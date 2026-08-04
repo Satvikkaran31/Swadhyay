@@ -26,6 +26,7 @@ export default function Learn() {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useUser();
 
+  const isAdmin = user?.role === "admin";
   const [course, setCourse] = useState<any>(null);
   const [completedIds, setCompletedIds] = useState(new Set<number>());
   const [activeLesson, setActiveLesson] = useState<any>(null);
@@ -38,6 +39,7 @@ export default function Learn() {
   const [noteSaved, setNoteSaved] = useState(false);
   const [noteSaving, setNoteSaving] = useState(false);
   const noteSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const activeLessonRef = useRef<HTMLButtonElement | null>(null);
   useEffect(() => () => { if (noteSaveTimer.current) clearTimeout(noteSaveTimer.current); }, []);
 
   useEffect(() => {
@@ -85,6 +87,12 @@ export default function Learn() {
       .then(data => setResources(Array.isArray(data) ? data : []))
       .catch(() => setResources([]));
   }, [activeLesson]);
+
+  useEffect(() => {
+    if (activeLessonRef.current) {
+      activeLessonRef.current.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    }
+  }, [activeLesson?.id]);
 
   useEffect(() => {
     if (!activeLesson || !user) return;
@@ -135,8 +143,8 @@ export default function Learn() {
   const prevLesson = currentIdx > 0 ? allLessons[currentIdx - 1] : null;
   const nextLesson = currentIdx < allLessons.length - 1 ? allLessons[currentIdx + 1] : null;
 
-  const goNext = () => {
-    markComplete();
+  const goNext = async () => {
+    await markComplete();
     if (nextLesson) setActiveLesson(nextLesson);
   };
 
@@ -163,19 +171,24 @@ export default function Learn() {
           ← Back
         </button>
         <span className="lms-course-title">{course.title}</span>
-        <div className="lms-progress-wrap">
-          <div className="lms-progress-track">
-            <div className="lms-progress-fill" style={{ width: `${progressPct}%` }} />
+        <div className="lms-topbar-right">
+          <div className="lms-progress-wrap">
+            <div className="lms-progress-track">
+              <div className="lms-progress-fill" style={{ width: `${progressPct}%` }} />
+            </div>
+            <span className="lms-progress-pct">{progressPct}%</span>
           </div>
-          <span className="lms-progress-pct">{progressPct}%</span>
+          {isAdmin && (
+            <a href="/admin" className="lms-admin-btn">⚙ Edit</a>
+          )}
+          <button
+            className="lms-outline-btn"
+            onClick={() => setSidebarOpen(p => !p)}
+            aria-label="Toggle outline"
+          >
+            {sidebarOpen ? "✕" : "☰"}
+          </button>
         </div>
-        <button
-          className="lms-outline-btn"
-          onClick={() => setSidebarOpen(p => !p)}
-          aria-label="Toggle outline"
-        >
-          {sidebarOpen ? "✕" : "☰"}
-        </button>
       </header>
 
       {/* ── BODY ──────────────────────────────────────────────────── */}
@@ -242,18 +255,21 @@ export default function Learn() {
           {/* Prev / Next navigation */}
           <div className="lms-nav-row">
             <button
-              className="lms-nav-btn"
+              className="lms-nav-btn lms-nav-prev"
               onClick={() => prevLesson && setActiveLesson(prevLesson)}
               disabled={!prevLesson}
             >
               ← Previous
             </button>
+            <div className="lms-nav-center-info">
+              <span className="lms-nav-position">{currentIdx + 1} / {allLessons.length}</span>
+            </div>
             <button
               className={`lms-nav-btn lms-nav-next${!nextLesson ? " disabled" : ""}`}
               onClick={goNext}
               disabled={!nextLesson}
             >
-              Next lesson →
+              {isCompleted ? "Next →" : "Complete & Next →"}
             </button>
           </div>
 
@@ -348,6 +364,7 @@ export default function Learn() {
                 return (
                   <button
                     key={lesson.id}
+                    ref={active ? activeLessonRef : null}
                     className={`lms-lesson-btn${active ? " active" : ""}${done ? " done" : ""}`}
                     onClick={() => {
                       setActiveLesson(lesson);

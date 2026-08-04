@@ -32,6 +32,14 @@
   align-items: center;
 }
 
+.cd-hero-toprow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 2px;
+}
+
 .cd-back-link {
   font-family: 'Poppins', sans-serif;
   font-weight: 600;
@@ -42,6 +50,26 @@
   transition: opacity .2s ease;
 }
 .cd-back-link:hover { opacity: .75; }
+
+.cd-admin-edit-btn {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  color: #5FC8B8;
+  background: rgba(95,200,184,.12);
+  border: 1px solid rgba(95,200,184,.3);
+  padding: 6px 14px;
+  border-radius: 999px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background .2s, border-color .2s;
+  flex-shrink: 0;
+}
+.cd-admin-edit-btn:hover {
+  background: rgba(95,200,184,.22);
+  border-color: rgba(95,200,184,.55);
+  color: #7fdfd2;
+}
 
 .cd-hero-badges {
   display: flex;
