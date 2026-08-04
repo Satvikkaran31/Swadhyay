@@ -360,6 +360,38 @@ const migrations = [
      )
    ) AS t(name, subject, body, category)
    WHERE NOT EXISTS (SELECT 1 FROM email_templates LIMIT 1)`,
+
+  // ── CRM: unsubscribe support on leads ─────────────────────────────────────────
+  `ALTER TABLE leads ADD COLUMN IF NOT EXISTS unsubscribed BOOLEAN DEFAULT FALSE`,
+  `ALTER TABLE leads ADD COLUMN IF NOT EXISTS unsubscribed_at TIMESTAMPTZ`,
+  `ALTER TABLE leads ADD COLUMN IF NOT EXISTS unsubscribe_token UUID DEFAULT gen_random_uuid()`,
+
+  // ── CRM: email open tracking on logs ─────────────────────────────────────────
+  `ALTER TABLE email_logs ADD COLUMN IF NOT EXISTS tracking_token UUID DEFAULT gen_random_uuid()`,
+  `ALTER TABLE email_logs ADD COLUMN IF NOT EXISTS opened_at TIMESTAMPTZ`,
+  `ALTER TABLE email_logs ADD COLUMN IF NOT EXISTS open_count INT DEFAULT 0`,
+
+  // ── CRM: email automations ────────────────────────────────────────────────────
+  `CREATE TABLE IF NOT EXISTS email_automations (
+    id             SERIAL PRIMARY KEY,
+    name           TEXT NOT NULL,
+    trigger_source TEXT,
+    delay_hours    INT NOT NULL DEFAULT 0,
+    template_id    INT REFERENCES email_templates(id) ON DELETE SET NULL,
+    is_active      BOOLEAN DEFAULT TRUE,
+    created_at     TIMESTAMPTZ DEFAULT NOW()
+  )`,
+
+  // ── CRM: automation run tracking ─────────────────────────────────────────────
+  `CREATE TABLE IF NOT EXISTS automation_runs (
+    id             SERIAL PRIMARY KEY,
+    automation_id  INT REFERENCES email_automations(id) ON DELETE CASCADE,
+    lead_id        INT REFERENCES leads(id) ON DELETE CASCADE,
+    scheduled_for  TIMESTAMPTZ NOT NULL,
+    executed_at    TIMESTAMPTZ,
+    status         TEXT DEFAULT 'pending',
+    UNIQUE(automation_id, lead_id)
+  )`,
 ];
 
 export async function runMigrations() {

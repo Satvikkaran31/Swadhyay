@@ -23,6 +23,7 @@ import userRoutes from "./routes/userRoutes.js";
 import { ensureAuthenticated } from "./controllers/auth.js";
 import { handleInquiry, inquiryLimiter } from "./controllers/Inquiry.js";
 import { startReminderJob } from "./utils/reminderJob.js";
+import { startAutomationJob } from "./utils/automationJob.js";
 import testimonialRoutes from "./routes/testimonialRoutes.js";
 import notesRoutes from "./routes/notesRoutes.js";
 import newsletterRoutes from "./routes/newsletterRoutes.js";
@@ -144,6 +145,7 @@ if (process.env.SENTRY_DSN) {
 
 runMigrations().then(() => {
   startReminderJob();
+  startAutomationJob();
   const PORT = parseInt(process.env.PORT ?? '5000', 10);
   const HOST = process.env.NODE_ENV === "production" ? "0.0.0.0" : "localhost";
   app.listen(PORT, HOST, () => {

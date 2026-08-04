@@ -1800,9 +1800,12 @@ function LeadsPanel() {
           </thead>
           <tbody>
             {leads.map(lead => (
-              <tr key={lead.id} className={selected.has(lead.id) ? 'crm-row-selected' : ''}>
+              <tr key={lead.id} className={`${selected.has(lead.id) ? 'crm-row-selected' : ''}${lead.unsubscribed ? ' crm-row-unsub' : ''}`}>
                 <td><input type="checkbox" checked={selected.has(lead.id)} onChange={() => toggleSelect(lead.id)} /></td>
-                <td style={{ fontWeight: 500, whiteSpace: 'nowrap' }}>{lead.name}</td>
+                <td style={{ fontWeight: 500, whiteSpace: 'nowrap' }}>
+                  {lead.name}
+                  {lead.unsubscribed && <span className="crm-unsub-badge" title={`Unsubscribed ${lead.unsubscribed_at ? new Date(lead.unsubscribed_at).toLocaleDateString() : ''}`}>unsub</span>}
+                </td>
                 <td style={{ color: '#666', fontSize: '0.85rem' }}>{lead.email}</td>
                 <td><span className={`crm-source-badge crm-source-${lead.source}`}>{lead.source}</span></td>
                 <td>
@@ -1873,7 +1876,7 @@ function LeadsPanel() {
 
 // ── Templates Panel ────────────────────────────────────────────────────────
 
-const TEMPLATE_VARS = ['{{name}}', '{{first_name}}', '{{email}}', '{{phone}}', '{{booking_link}}', '{{courses_link}}', '{{course_name}}'];
+const TEMPLATE_VARS = ['{{name}}', '{{first_name}}', '{{email}}', '{{phone}}', '{{booking_link}}', '{{courses_link}}', '{{course_name}}', '{{unsubscribe_link}}'];
 
 function TemplatesPanel() {
   const [templates, setTemplates] = useState<any[]>([]);
@@ -2084,6 +2087,7 @@ function HistoryPanel() {
               <th>Template</th>
               <th>Subject</th>
               <th>Status</th>
+              <th>Opens</th>
               <th>Sent</th>
             </tr>
           </thead>
@@ -2099,12 +2103,19 @@ function HistoryPanel() {
                     <><span className={`crm-cat-badge crm-cat-${log.category}`}>{log.category}</span> {log.template_name}</>
                   ) : '—'}
                 </td>
-                <td style={{ maxWidth: 220, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '0.82rem', color: '#555' }}>
+                <td style={{ maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '0.82rem', color: '#555' }}>
                   {log.subject}
                 </td>
                 <td>
                   <span className={`crm-log-status crm-log-${log.status}`}>{log.status}</span>
                   {log.error_msg && <div className="crm-log-error">{log.error_msg}</div>}
+                </td>
+                <td style={{ whiteSpace: 'nowrap', fontSize: '0.82rem', textAlign: 'center' }}>
+                  {log.open_count > 0 ? (
+                    <span className="crm-open-badge" title={`First opened ${log.opened_at ? new Date(log.opened_at).toLocaleString() : ''}`}>
+                      👁 {log.open_count}
+                    </span>
+                  ) : <span style={{ color: '#bbb' }}>—</span>}
                 </td>
                 <td style={{ whiteSpace: 'nowrap', fontSize: '0.78rem', color: '#888' }}>
                   {formatDate(log.sent_at)}
@@ -2114,6 +2125,192 @@ function HistoryPanel() {
           </tbody>
         </table>
       )}
+    </div>
+  );
+}
+
+// ── Automations Panel ──────────────────────────────────────────────────────
+
+const AUTO_SOURCES = ['any', 'inquiry', 'newsletter', 'manual', 'booking'] as const;
+
+function emptyAutoForm() {
+  return { name: '', trigger_source: '', delay_hours: 0, template_id: '', is_active: true };
+}
+
+function AutomationsPanel() {
+  const [autos, setAutos] = useState<any[]>([]);
+  const [templates, setTemplates] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [editing, setEditing] = useState<any | null>(null);
+  const [form, setForm] = useState(emptyAutoForm());
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+  const [deletingId, setDeletingId] = useState<number | null>(null);
+
+  const load = () => {
+    setLoading(true);
+    Promise.all([
+      apiFetch('/api/crm/automations'),
+      apiFetch('/api/crm/templates'),
+    ]).then(([a, t]) => {
+      setAutos(Array.isArray(a) ? a : []);
+      setTemplates(Array.isArray(t) ? t : []);
+    }).finally(() => setLoading(false));
+  };
+  useEffect(load, []);
+
+  const startNew = () => { setEditing(null); setForm(emptyAutoForm()); setError(''); setShowForm(true); };
+  const startEdit = (a) => {
+    setEditing(a);
+    setForm({ name: a.name, trigger_source: a.trigger_source || '', delay_hours: a.delay_hours, template_id: String(a.template_id || ''), is_active: a.is_active });
+    setError(''); setShowForm(true);
+  };
+  const cancel = () => { setEditing(null); setForm(emptyAutoForm()); setShowForm(false); };
+
+  const handleSave = async () => {
+    if (!form.name.trim() || !form.template_id) { setError('Name and template are required'); return; }
+    setSaving(true); setError('');
+    const payload = { ...form, trigger_source: form.trigger_source || null, template_id: Number(form.template_id), delay_hours: Number(form.delay_hours) };
+    try {
+      if (editing?.id) {
+        await apiFetch(`/api/crm/automations/${editing.id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      } else {
+        await apiFetch('/api/crm/automations', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      }
+      cancel(); load();
+    } catch (err: any) { setError(err.message || 'Save failed'); }
+    finally { setSaving(false); }
+  };
+
+  const handleDelete = async (id: number) => {
+    await apiFetch(`/api/crm/automations/${id}`, { method: 'DELETE' });
+    setDeletingId(null); load();
+  };
+
+  const toggleActive = async (auto: any) => {
+    await apiFetch(`/api/crm/automations/${auto.id}`, {
+      method: 'PUT', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...auto, is_active: !auto.is_active }),
+    });
+    load();
+  };
+
+  return (
+    <div className="admin-section">
+      <div className="admin-section-header">
+        <div>
+          <h2>Email Automations</h2>
+          <p style={{ margin: '2px 0 0', fontSize: '0.82rem', color: '#888' }}>
+            Rules that auto-send emails when a new lead enters the system.
+          </p>
+        </div>
+        {!showForm && <button className="admin-btn-primary" onClick={startNew}>+ New Rule</button>}
+      </div>
+
+      {showForm && (
+        <div className="admin-inline-editor">
+          {error && <div className="admin-error">{error}</div>}
+          <div className="admin-form-row">
+            <div className="admin-form-group">
+              <label>Rule Name *</label>
+              <input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} placeholder="e.g. Welcome inquiry leads" />
+            </div>
+            <div className="admin-form-group narrow">
+              <label>Trigger Source</label>
+              <select value={form.trigger_source} onChange={e => setForm(f => ({ ...f, trigger_source: e.target.value }))}>
+                <option value="">Any source</option>
+                {AUTO_SOURCES.filter(s => s !== 'any').map(s => <option key={s} value={s}>{s}</option>)}
+              </select>
+            </div>
+          </div>
+          <div className="admin-form-row">
+            <div className="admin-form-group narrow">
+              <label>Delay (hours after lead created)</label>
+              <input type="number" min={0} value={form.delay_hours} onChange={e => setForm(f => ({ ...f, delay_hours: Number(e.target.value) }))} />
+            </div>
+            <div className="admin-form-group">
+              <label>Email Template *</label>
+              <select value={form.template_id} onChange={e => setForm(f => ({ ...f, template_id: e.target.value }))}>
+                <option value="">— Select template —</option>
+                {templates.map(t => <option key={t.id} value={t.id}>[{t.category}] {t.name}</option>)}
+              </select>
+            </div>
+            <div className="admin-form-group narrow" style={{ justifyContent: 'flex-end' }}>
+              <label>Active</label>
+              <input type="checkbox" checked={form.is_active} onChange={e => setForm(f => ({ ...f, is_active: e.target.checked }))} style={{ width: 18, height: 18, marginTop: 6 }} />
+            </div>
+          </div>
+          <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.75rem' }}>
+            <button className="admin-btn-primary" onClick={handleSave} disabled={saving}>{saving ? 'Saving…' : editing?.id ? 'Save Changes' : 'Create Rule'}</button>
+            <button className="admin-btn-secondary" onClick={cancel}>Cancel</button>
+          </div>
+        </div>
+      )}
+
+      {loading ? <div className="admin-empty">Loading…</div> : autos.length === 0 ? (
+        <div className="admin-empty">
+          <span className="admin-empty-icon">⚡</span>
+          <p>No automation rules yet. Create one to auto-email new leads.</p>
+        </div>
+      ) : (
+        <table className="admin-table">
+          <thead>
+            <tr>
+              <th>Rule</th>
+              <th>Trigger</th>
+              <th>Delay</th>
+              <th>Template</th>
+              <th>Active</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {autos.map(auto => (
+              <tr key={auto.id} style={{ opacity: auto.is_active ? 1 : 0.55 }}>
+                <td style={{ fontWeight: 500 }}>{auto.name}</td>
+                <td><span className={`crm-source-badge crm-source-${auto.trigger_source || 'manual'}`}>{auto.trigger_source || 'any'}</span></td>
+                <td style={{ fontSize: '0.82rem', color: '#666' }}>
+                  {auto.delay_hours === 0 ? 'Immediately' : `After ${auto.delay_hours}h`}
+                </td>
+                <td style={{ fontSize: '0.82rem' }}>
+                  {auto.template_name ? (
+                    <><span className={`crm-cat-badge crm-cat-${auto.template_category}`}>{auto.template_category}</span> {auto.template_name}</>
+                  ) : <span style={{ color: '#c00' }}>Template deleted</span>}
+                </td>
+                <td>
+                  <button
+                    className={`crm-toggle-btn${auto.is_active ? ' on' : ''}`}
+                    onClick={() => toggleActive(auto)}
+                    title={auto.is_active ? 'Click to pause' : 'Click to activate'}
+                  >
+                    {auto.is_active ? 'On' : 'Off'}
+                  </button>
+                </td>
+                <td>
+                  <div className="admin-actions">
+                    {deletingId === auto.id ? (
+                      <>
+                        <span style={{ fontSize: '0.8rem', color: '#c00', fontWeight: 600 }}>Delete?</span>
+                        <button className="admin-btn-sm danger" onClick={() => handleDelete(auto.id)}>Yes</button>
+                        <button className="admin-btn-sm" onClick={() => setDeletingId(null)}>No</button>
+                      </>
+                    ) : (
+                      <>
+                        <button className="admin-btn-sm" onClick={() => startEdit(auto)}>Edit</button>
+                        <button className="admin-btn-sm danger" onClick={() => setDeletingId(auto.id)}>Delete</button>
+                      </>
+                    )}
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+      <div className="crm-auto-note">
+        <strong>How it works:</strong> When a new lead enters the CRM (via inquiry, newsletter signup, booking, or manual add), matching active rules schedule an email to send after the configured delay. Unsubscribed leads are automatically skipped.
+      </div>
     </div>
   );
 }
@@ -2139,6 +2336,7 @@ function CRMStatsBar() {
         { label: 'Qualified', val: l.qualified_count, cls: 'crm-status-qualified' },
         { label: 'Converted', val: l.converted_count, cls: 'crm-status-converted' },
         { label: 'Lost', val: l.lost_count, cls: 'crm-status-lost' },
+        { label: 'Unsubscribed', val: l.unsubscribed_count, cls: '' },
         { label: 'Emails Sent', val: e.emails_sent, cls: '' },
         { label: 'Failed', val: e.emails_failed, cls: '' },
       ].map(({ label, val, cls }) => (
@@ -2154,25 +2352,33 @@ function CRMStatsBar() {
 // ── CRM Tab (wrapper) ──────────────────────────────────────────────────────
 
 function CRMTab() {
-  const [subTab, setSubTab] = useState<'leads' | 'templates' | 'history'>('leads');
+  const [subTab, setSubTab] = useState<'leads' | 'templates' | 'automations' | 'history'>('leads');
+
+  const tabs: Array<{ key: typeof subTab; label: string }> = [
+    { key: 'leads',       label: 'Leads' },
+    { key: 'templates',   label: 'Templates' },
+    { key: 'automations', label: 'Automations' },
+    { key: 'history',     label: 'History' },
+  ];
 
   return (
     <div>
       <CRMStatsBar />
       <div className="crm-subnav">
-        {(['leads', 'templates', 'history'] as const).map(tab => (
+        {tabs.map(({ key, label }) => (
           <button
-            key={tab}
-            className={`crm-subnav-btn${subTab === tab ? ' active' : ''}`}
-            onClick={() => setSubTab(tab)}
+            key={key}
+            className={`crm-subnav-btn${subTab === key ? ' active' : ''}`}
+            onClick={() => setSubTab(key)}
           >
-            {tab.charAt(0).toUpperCase() + tab.slice(1)}
+            {label}
           </button>
         ))}
       </div>
-      {subTab === 'leads'     && <LeadsPanel />}
-      {subTab === 'templates' && <TemplatesPanel />}
-      {subTab === 'history'   && <HistoryPanel />}
+      {subTab === 'leads'       && <LeadsPanel />}
+      {subTab === 'templates'   && <TemplatesPanel />}
+      {subTab === 'automations' && <AutomationsPanel />}
+      {subTab === 'history'     && <HistoryPanel />}
     </div>
   );
 }

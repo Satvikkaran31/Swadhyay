@@ -4,11 +4,17 @@ import {
   getLeads, createLead, updateLead, deleteLead,
   getTemplates, createTemplate, updateTemplate, deleteTemplate,
   sendToLeads, previewTemplate, getEmailLogs, getCRMStats,
+  unsubscribeLead, trackOpen,
+  getAutomations, createAutomation, updateAutomation, deleteAutomation,
 } from '../controllers/crmController.js';
 
 const router = express.Router();
 
-// All CRM routes require admin
+// Public routes — no admin required
+router.get('/unsubscribe', unsubscribeLead);
+router.get('/track/open/:token', trackOpen);
+
+// All CRM routes below require admin
 router.use(isAdmin);
 
 // Leads
@@ -28,5 +34,11 @@ router.get('/templates/:id/preview', previewTemplate);
 router.post('/send',     sendToLeads);
 router.get('/logs',      getEmailLogs);
 router.get('/stats',     getCRMStats);
+
+// Automations
+router.get('/automations',        getAutomations);
+router.post('/automations',       createAutomation);
+router.put('/automations/:id',    updateAutomation);
+router.delete('/automations/:id', deleteAutomation);
 
 export default router;

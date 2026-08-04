@@ -3,6 +3,7 @@ import axios from "axios";
 import { DateTime } from "luxon";
 import mailer from "../utils/mailer.js";
 import pool from "../utils/db.js";
+import { upsertLeadQuietly } from "./crmController.js";
 
 const oauth2Client = new google.auth.OAuth2(
   process.env.GOOGLE_CLIENT_ID,
@@ -174,6 +175,11 @@ export const bookSession = async (req, res) => {
        VALUES ($1, $2, $3, $4, $5, $6, $7)`,
       [googleEventId, email, name.trim(), sessionType.trim(), meetingType, sessionStart, meetLink ?? null]
     );
+
+    // 6. Auto-capture lead in CRM (best-effort, non-blocking)
+    upsertLeadQuietly(email.trim(), name.trim(), 'booking', {
+      notes: `Booked: ${sessionType} on ${date} at ${time}. Org: ${organization}`,
+    });
 
     res.status(200).json({ success: true, meetLink });
   } catch (err: any) {
