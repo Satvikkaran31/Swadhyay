@@ -412,12 +412,15 @@
   color: #c8d8d2;
 }
 
-/* ── Sidebar backdrop (mobile) ────────────────────────────── */
+/* ── Sidebar backdrop (mobile only) ──────────────────────── */
 .lms-sidebar-backdrop {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.55);
   z-index: 19;
+}
+@media (min-width: 769px) {
+  .lms-sidebar-backdrop { display: none; }
 }
 
 /* ── Sidebar ──────────────────────────────────────────────── */
