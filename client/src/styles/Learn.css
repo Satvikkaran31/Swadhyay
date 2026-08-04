@@ -434,6 +434,9 @@
   overflow: hidden;
   flex-shrink: 0;
   transition: width 0.25s ease, min-width 0.25s ease;
+  /* Positioned so it beats any fixed-position overlays in the stacking order */
+  position: relative;
+  z-index: 20;
 }
 
 /* Sidebar header: tabs + progress */

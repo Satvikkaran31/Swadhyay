@@ -320,8 +320,8 @@ export default function Learn() {
           )}
         </div>
 
-        {/* Mobile backdrop */}
-        {sidebarOpen && (
+        {/* Mobile backdrop — only rendered on small screens */}
+        {sidebarOpen && window.innerWidth <= 768 && (
           <div className="lms-sidebar-backdrop" onClick={() => setSidebarOpen(false)} />
         )}
 
