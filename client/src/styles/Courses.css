@@ -118,7 +118,7 @@
 
 /* ── BODY ─────────────────────────────────────────────────────────── */
 .ser-body {
-  background: #F4F1E9;
+  background: var(--bg-page);
   padding-top: 64px;
   padding-bottom: 110px;
 }
@@ -137,7 +137,7 @@
   position: relative;
   display: inline-flex;
   gap: 4px;
-  background: #FFF;
+  background: var(--bg-card);
   border: 1px solid rgba(18,54,43,.12);
   padding: 6px;
   border-radius: 999px;
@@ -165,7 +165,7 @@
   position: relative;
   z-index: 1;
   background: transparent;
-  color: #4A4E44;
+  color: var(--fg-mid);
   transition: color .35s ease;
 }
 .ser-tab.active { color: #FFF; }
@@ -182,14 +182,14 @@
   font-weight: 300;
   font-size: 46px;
   line-height: 1.04;
-  color: #12362B;
+  color: var(--fg-head);
   margin: 10px 0 0;
 }
 .ser-series-desc {
   font-family: 'Poppins', sans-serif;
   font-size: 17px;
   line-height: 1.66;
-  color: #4A4E44;
+  color: var(--fg-mid);
   margin: 16px 0 0;
   max-width: 520px;
 }
@@ -231,7 +231,7 @@
   margin-top: 44px;
 }
 .ser-course-card {
-  background: #FFF;
+  background: var(--bg-card);
   border: 1px solid rgba(18,54,43,.1);
   border-radius: 22px;
   overflow: hidden;
@@ -269,7 +269,7 @@
   font-weight: 300;
   font-size: 25px;
   line-height: 1.12;
-  color: #12362B;
+  color: var(--fg-head);
   margin: 0;
   min-height: 56px;
 }
@@ -277,7 +277,7 @@
   font-family: 'Poppins', sans-serif;
   font-size: 14.5px;
   line-height: 1.55;
-  color: #4A4E44;
+  color: var(--fg-mid);
   margin: 8px 0 0;
 }
 .ser-course-meta {
@@ -323,7 +323,7 @@
 
 /* ── CTA ──────────────────────────────────────────────────────────── */
 .ser-cta-section {
-  background: #F4F1E9;
+  background: var(--bg-page);
   padding-top: 0;
   padding-bottom: 104px;
 }

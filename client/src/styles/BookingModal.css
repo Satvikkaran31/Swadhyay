@@ -14,7 +14,7 @@
 
 /* ── Container ────────────────────────────────────────────────────── */
 .modal-container {
-  background: #FFF;
+  background: var(--bg-card);
   border-radius: 24px;
   width: 100%;
   max-width: 560px;
@@ -47,7 +47,7 @@
 
 .modal-close:hover {
   background: rgba(18,54,43,.14);
-  color: #12362B;
+  color: var(--fg-head);
 }
 
 /* ── Heading ──────────────────────────────────────────────────────── */
@@ -55,7 +55,7 @@
   font-family: 'Poppins', sans-serif;
   font-weight: 300;
   font-size: 28px;
-  color: #12362B;
+  color: var(--fg-head);
   padding: 32px 32px 0;
   margin: 0;
 }
@@ -86,7 +86,7 @@
   font-family: 'Poppins', sans-serif;
   font-weight: 600;
   font-size: 13px;
-  color: #4A4E44;
+  color: var(--fg-mid);
 }
 
 /* ── Inputs / Selects ─────────────────────────────────────────────── */
@@ -94,10 +94,10 @@
 .modal-container select {
   border: 1px solid rgba(18,54,43,.2);
   border-radius: 12px;
-  background: #FBFAF6;
+  background: var(--bg-raised);
   font-family: 'Poppins', sans-serif;
   font-size: 15px;
-  color: #12362B;
+  color: var(--fg-head);
   padding: 14px 16px;
   outline: none;
   width: 100%;
@@ -129,7 +129,7 @@
   font-family: 'Poppins', sans-serif;
   font-weight: 600;
   font-size: 13px;
-  color: #4A4E44;
+  color: var(--fg-mid);
   margin-bottom: 10px;
 }
 
@@ -157,7 +157,7 @@
 }
 
 .session-card.selected {
-  background: #F0F7F3;
+  background: var(--bg-tint);
   border-color: #0E766B;
 }
 
@@ -175,7 +175,7 @@
   font-family: 'Poppins', sans-serif;
   font-weight: 600;
   font-size: 13px;
-  color: #12362B;
+  color: var(--fg-head);
   line-height: 1.3;
 }
 
@@ -195,7 +195,7 @@
   padding: 8px 16px;
   cursor: pointer;
   background: transparent;
-  color: #12362B;
+  color: var(--fg-head);
   transition: background 0.15s, border-color 0.15s, color 0.15s;
 }
 
@@ -207,7 +207,7 @@
 .slot-pill.selected {
   background: #12362B;
   color: #FFF;
-  border-color: #12362B;
+  border-color: var(--fg-head);
 }
 
 .slots-empty {
@@ -283,7 +283,7 @@
   font-family: 'Poppins', sans-serif;
   font-size: 15px;
   font-weight: 600;
-  color: #12362B;
+  color: var(--fg-head);
   border: 1.5px solid rgba(18,54,43,.2);
   border-radius: 999px;
   background: transparent;
@@ -344,14 +344,14 @@
   font-family: 'Poppins', sans-serif;
   font-size: 22px;
   font-weight: 600;
-  color: #12362B;
+  color: var(--fg-head);
   margin: 0;
 }
 
 .booking-success p {
   font-family: 'Poppins', sans-serif;
   font-size: 15px;
-  color: #4A4E44;
+  color: var(--fg-mid);
   margin: 0;
   line-height: 1.55;
 }
@@ -400,8 +400,8 @@
 }
 
 .success-close-btn:hover {
-  border-color: #12362B;
-  color: #12362B;
+  border-color: var(--fg-head);
+  color: var(--fg-head);
 }
 
 /* ── Animations ───────────────────────────────────────────────────── */

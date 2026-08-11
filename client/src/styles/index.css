@@ -1,22 +1,92 @@
 /* ─── Design tokens ─────────────────────────────────────────────── */
 :root {
-  --cream:        #F4F1E9;
+  /* Brand palette — theme-invariant */
   --dark:         #0C241C;
   --dark-card:    #16362E;
   --teal:         #5FC8B8;
   --teal-soft:    #8FE0D4;
   --teal-deep:    #0E766B;
   --teal-deeper:  #0E9C8A;
-  --ink:          #12362B;
-  --ink-dark:     #16362E;
-  --ink-body:     #24261F;
   --muted-dark:   #B9C6BC;
   --muted-mid:    #A9BBB0;
-  --muted-light:  #8FA394;
-  --mono-muted:   #6E8577;
   --light-fg:     #F6F2EA;
-  --body-on-light:#4A4E44;
-  --body-muted:   #6B6E63;
+  --mono-muted:   #6E8577;
+
+  /* ── Theme surface tokens (light defaults) ── */
+  --bg-page:       #F4F1E9;
+  --bg-card:       #FFFFFF;
+  --bg-raised:     #EDEAD8;
+  --bg-tint:       #EBF4ED;
+
+  /* ── Theme text tokens (light defaults) ── */
+  --fg-head:       #12362B;
+  --fg-body:       #24261F;
+  --fg-mid:        #4A4E44;
+  --fg-muted:      #8FA394;
+
+  /* ── Theme border tokens ── */
+  --border-subtle: rgba(12,36,28,.09);
+  --border-mid:    rgba(12,36,28,.16);
+
+  /* ── Aliases: backward-compat with older components ── */
+  --card-bg:       var(--bg-card);
+  --input-bg:      var(--bg-raised);
+  --hover-bg:      var(--bg-raised);
+  --border:        var(--border-subtle);
+  --text-muted:    var(--fg-muted);
+  --text-secondary: var(--fg-mid);
+
+  /* ── Legacy aliases kept for existing CSS that references them ── */
+  --cream:         var(--bg-page);
+  --ink:           var(--fg-head);
+  --ink-dark:      var(--fg-head);
+  --ink-body:      var(--fg-body);
+  --body-on-light: var(--fg-mid);
+  --body-muted:    var(--fg-mid);
+}
+
+/* ── Dark via system preference ─────────────────────────────────── */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg-page:       #07100B;
+    --bg-card:       #0D1F16;
+    --bg-raised:     #122418;
+    --bg-tint:       #0A1C12;
+    --fg-head:       #E4F0E8;
+    --fg-body:       #C0D8C8;
+    --fg-mid:        #94B0A0;
+    --fg-muted:      #618070;
+    --border-subtle: rgba(255,255,255,.08);
+    --border-mid:    rgba(255,255,255,.14);
+  }
+}
+
+/* ── Dark via explicit toggle ────────────────────────────────────── */
+:root[data-theme="dark"] {
+  --bg-page:       #07100B;
+  --bg-card:       #0D1F16;
+  --bg-raised:     #122418;
+  --bg-tint:       #0A1C12;
+  --fg-head:       #E4F0E8;
+  --fg-body:       #C0D8C8;
+  --fg-mid:        #94B0A0;
+  --fg-muted:      #618070;
+  --border-subtle: rgba(255,255,255,.08);
+  --border-mid:    rgba(255,255,255,.14);
+}
+
+/* ── Light via explicit toggle ───────────────────────────────────── */
+:root[data-theme="light"] {
+  --bg-page:       #F4F1E9;
+  --bg-card:       #FFFFFF;
+  --bg-raised:     #EDEAD8;
+  --bg-tint:       #EBF4ED;
+  --fg-head:       #12362B;
+  --fg-body:       #24261F;
+  --fg-mid:        #4A4E44;
+  --fg-muted:      #8FA394;
+  --border-subtle: rgba(12,36,28,.09);
+  --border-mid:    rgba(12,36,28,.16);
 }
 
 /* ─── Reset ─────────────────────────────────────────────────────── */
@@ -24,12 +94,13 @@
 html { scroll-behavior: smooth; }
 body {
   margin: 0;
-  background: var(--cream);
+  background: var(--bg-page);
   font-family: 'Poppins', sans-serif;
-  color: var(--ink-body);
+  color: var(--fg-body);
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.25s ease, color 0.2s ease;
 }
-a { color: var(--ink-dark); text-decoration: none; }
+a { color: var(--fg-head); text-decoration: none; }
 a:hover { color: var(--teal); }
 ::selection { background: var(--teal); color: #FFF; }
 h1, h2, h3, h4, h5, h6 { text-wrap: pretty; }
@@ -61,7 +132,6 @@ h1, h2, h3, h4, h5, h6 { text-wrap: pretty; }
 }
 
 /* ─── Utility classes ────────────────────────────────────────────── */
-/* .rv content is always visible; .rv-go enables entrance animation */
 .rv { opacity: 1; transform: none; }
 .rv-go .rv {
   animation: rvIn .8s cubic-bezier(.16,1,.3,1) both;

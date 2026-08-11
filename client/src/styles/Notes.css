@@ -79,9 +79,6 @@
 }
 
 .learn-notes-save-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-@media (prefers-color-scheme: dark) {
-  .learn-notes-panel { background: #1e2a35; border-color: #2d3f50; }
   .learn-notes-textarea { background: #162230; border-color: #2d3f50; color: #e2e8f0; }
   .learn-notes-header:hover { background: #24313f; }
 }

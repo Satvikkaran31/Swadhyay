@@ -267,7 +267,7 @@
 
 /* ── BODY SPLIT ──────────────────────────────────────────────────── */
 .cd-body-split {
-  background: #F4F1E9;
+  background: var(--bg-page);
   padding-top: 72px;
   padding-bottom: 96px;
 }
@@ -291,7 +291,7 @@
   font-family: 'Poppins', sans-serif;
   font-weight: 300;
   font-size: 34px;
-  color: #12362B;
+  color: var(--fg-head);
   margin: 0;
 }
 
@@ -299,7 +299,7 @@
   font-family: 'Poppins', sans-serif;
   font-size: 17px;
   line-height: 1.7;
-  color: #4A4E44;
+  color: var(--fg-mid);
   margin: 16px 0 0;
 }
 
@@ -315,7 +315,7 @@
   display: flex;
   align-items: flex-start;
   gap: 12px;
-  background: #FFF;
+  background: var(--bg-card);
   border: 1px solid rgba(18,54,43,.1);
   border-radius: 14px;
   padding: 16px 18px;
@@ -339,7 +339,7 @@
   font-family: 'Poppins', sans-serif;
   font-size: 15px;
   line-height: 1.45;
-  color: #2A362D;
+  color: var(--fg-head);
 }
 
 /* ── Requirements ─────────────────────────────────────────────────── */
@@ -359,7 +359,7 @@
   font-family: 'Poppins', sans-serif;
   font-size: 16px;
   line-height: 1.55;
-  color: #4A4E44;
+  color: var(--fg-mid);
 }
 
 .cd-req-dot {
@@ -386,7 +386,7 @@
 }
 
 .cd-mod {
-  background: #FFF;
+  background: var(--bg-card);
   border-bottom: 1px solid rgba(18,54,43,.1);
 }
 
@@ -416,7 +416,7 @@
   font-family: 'Poppins', sans-serif;
   font-weight: 700;
   font-size: 17px;
-  color: #12362B;
+  color: var(--fg-head);
 }
 
 .cd-mod-meta-text {
@@ -456,7 +456,7 @@
   border-top: 1px solid rgba(18,54,43,.06);
   font-family: 'Poppins', sans-serif;
   font-size: 15px;
-  color: #4A4E44;
+  color: var(--fg-mid);
 }
 
 .cd-lesson svg { flex-shrink: 0; color: #9AB0A6; }
@@ -501,7 +501,7 @@
 }
 
 .cd-enroll-card {
-  background: #FFF;
+  background: var(--bg-card);
   border: 1px solid rgba(18,54,43,.12);
   border-radius: 24px;
   overflow: hidden;
@@ -568,7 +568,7 @@
   font-family: 'Poppins', sans-serif;
   font-weight: 300;
   font-size: 44px;
-  color: #12362B;
+  color: var(--fg-head);
   line-height: 1;
 }
 
@@ -622,7 +622,7 @@
   transition: background .2s ease;
 }
 
-.cd-enroll-secondary:hover { background: #F0F7F3; }
+.cd-enroll-secondary:hover { background: var(--bg-tint); }
 
 .cd-payment-error {
   margin-top: 10px;
@@ -650,14 +650,14 @@
   gap: 12px;
   font-family: 'Poppins', sans-serif;
   font-size: 14.5px;
-  color: #2A362D;
+  color: var(--fg-head);
 }
 
 .cd-enroll-include-icon { color: #0E766B; flex-shrink: 0; }
 
 /* ── TESTIMONIALS / REVIEWS ───────────────────────────────────────── */
 .cd-testimonials {
-  background: #EEF4EF;
+  background: var(--bg-tint);
   padding-top: 92px;
   padding-bottom: 92px;
 }
@@ -672,7 +672,7 @@
   font-weight: 300;
   font-size: 40px;
   line-height: 1.05;
-  color: #12362B;
+  color: var(--fg-head);
   margin: 10px 0 0;
 }
 
@@ -684,7 +684,7 @@
 }
 
 .cd-review-card {
-  background: #FFF;
+  background: var(--bg-card);
   border: 1px solid rgba(18,54,43,.1);
   border-radius: 22px;
   padding: 32px 30px;
@@ -704,7 +704,7 @@
   font-weight: 300;
   font-size: 20px;
   line-height: 1.5;
-  color: #12362B;
+  color: var(--fg-head);
   margin: 16px 0 0;
 }
 
@@ -733,7 +733,7 @@
   justify-content: center;
   font-family: 'Poppins', sans-serif;
   font-weight: 700;
-  color: #12362B;
+  color: var(--fg-head);
   font-size: 16px;
   flex-shrink: 0;
 }
@@ -742,7 +742,7 @@
   font-family: 'Poppins', sans-serif;
   font-weight: 700;
   font-size: 14px;
-  color: #12362B;
+  color: var(--fg-head);
 }
 
 .cd-review-date {
@@ -760,7 +760,7 @@
 
 /* ── Review form ──────────────────────────────────────────────────── */
 .cd-review-form {
-  background: #FFF;
+  background: var(--bg-card);
   border: 1px solid rgba(18,54,43,.12);
   border-radius: 18px;
   padding: 28px 26px;
@@ -771,7 +771,7 @@
   font-family: 'Poppins', sans-serif;
   font-weight: 700;
   font-size: 18px;
-  color: #12362B;
+  color: var(--fg-head);
   margin: 0 0 14px;
 }
 
@@ -796,10 +796,10 @@
   box-sizing: border-box;
   border: 1px solid rgba(18,54,43,.2);
   border-radius: 12px;
-  background: #FBFAF6;
+  background: var(--bg-raised);
   font-family: 'Poppins', sans-serif;
   font-size: 15px;
-  color: #12362B;
+  color: var(--fg-head);
   padding: 14px 16px;
   resize: vertical;
   outline: none;
@@ -849,7 +849,7 @@
   font-family: 'Poppins', sans-serif;
   font-size: 52px;
   font-weight: 300;
-  color: #12362B;
+  color: var(--fg-head);
   line-height: 1;
 }
 .cd-rating-stars-display {
@@ -1007,7 +1007,7 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background: #FFF;
+  background: var(--bg-card);
   border-top: 1px solid rgba(18,54,43,.12);
   padding: 14px 72px;
   display: flex;
@@ -1022,7 +1022,7 @@
   font-family: 'Poppins', sans-serif;
   font-weight: 600;
   font-size: 16px;
-  color: #12362B;
+  color: var(--fg-head);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1041,7 +1041,7 @@
   font-family: 'Poppins', sans-serif;
   font-weight: 300;
   font-size: 24px;
-  color: #12362B;
+  color: var(--fg-head);
 }
 
 .cd-sticky-cta {

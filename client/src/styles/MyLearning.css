@@ -30,7 +30,7 @@
 
 /* ── Body ─────────────────────────────────────────────────────── */
 .ml-body {
-  background: #F4F1E9;
+  background: var(--bg-page);
   padding: 72px 0 104px;
 }
 
@@ -90,7 +90,7 @@
 
 /* ── Card ─────────────────────────────────────────────────────── */
 .ml-card {
-  background: #fff;
+  background: var(--bg-card);
   border: 1px solid rgba(18, 54, 43, 0.12);
   border-radius: 22px;
   overflow: hidden;
@@ -131,7 +131,7 @@
   font-family: 'Poppins', sans-serif;
   font-weight: 600;
   font-size: 17px;
-  color: #12362B;
+  color: var(--fg-head);
   line-height: 1.35;
 }
 

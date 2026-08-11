@@ -170,6 +170,28 @@ body.nav-scrolled .nav-unified-pill {
 }
 .nav-user-chevron.open { transform: rotate(180deg); }
 
+/* ── Theme toggle ─────────────────────────────────────────────────── */
+.nav-theme-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.16);
+  color: rgba(244,241,233,.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background .2s, border-color .2s, color .2s;
+  flex-shrink: 0;
+  margin-left: 6px;
+}
+.nav-theme-btn:hover {
+  background: rgba(255,255,255,.16);
+  border-color: rgba(255,255,255,.3);
+  color: #F6F2EA;
+}
+
 /* Login button */
 .nav-login-btn {
   font-family: 'Poppins', sans-serif;
@@ -438,6 +460,37 @@ body.nav-scrolled .nav-unified-pill {
   cursor: pointer;
   margin-top: 4px;
 }
+
+.nav-mobile-theme-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-top: 1px solid rgba(255,255,255,.08);
+  margin-top: 6px;
+}
+.nav-mobile-theme-label {
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(244,242,234,.6);
+}
+.nav-mobile-theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255,255,255,.1);
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 999px;
+  padding: 5px 12px;
+  cursor: pointer;
+  color: rgba(244,241,233,.8);
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  transition: background .2s;
+}
+.nav-mobile-theme-toggle:hover { background: rgba(255,255,255,.18); }
 
 @media (max-width: 1100px) {
   .nav-desktop { display: none !important; }

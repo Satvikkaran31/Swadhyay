@@ -97,10 +97,4 @@
   font-size: 0.82rem;
   color: var(--text-muted, #888);
 }
-
-@media (prefers-color-scheme: dark) {
-  .testimonial-card {
-    background: #1e2a35;
-    border-color: #2d3f50;
-  }
 }

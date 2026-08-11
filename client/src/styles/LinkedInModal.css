@@ -12,7 +12,7 @@
 }
 
 .li-modal {
-  background: #F4F1E9;
+  background: var(--bg-page);
   border-radius: 24px;
   padding: 40px 36px 32px;
   width: 100%;
@@ -76,7 +76,7 @@
   padding: 12px 16px;
   border-radius: 12px;
   border: 1.5px solid rgba(12, 36, 28, .18);
-  background: #fff;
+  background: var(--bg-card);
   font-family: 'IBM Plex Mono', monospace;
   font-size: 13px;
   color: #0C241C;

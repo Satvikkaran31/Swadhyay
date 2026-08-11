@@ -4,6 +4,30 @@ import { useUser } from "../context/UserProvider";
 import { useTriggerGoogleLogin } from "../utils/googleLoginHelper";
 import "../styles/Navbar.css";
 
+function SunIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="5"/>
+      <line x1="12" y1="1" x2="12" y2="3"/>
+      <line x1="12" y1="21" x2="12" y2="23"/>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+      <line x1="1" y1="12" x2="3" y2="12"/>
+      <line x1="21" y1="12" x2="23" y2="12"/>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+    </svg>
+  );
+}
+
+function MoonIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+    </svg>
+  );
+}
+
 export default function Navbar({ aboutRef }: { aboutRef?: unknown }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -11,6 +35,20 @@ export default function Navbar({ aboutRef }: { aboutRef?: unknown }) {
   const { user, setUser, logout, loading } = useUser();
   const login = useTriggerGoogleLogin(setUser, location.pathname);
   const userMenuRef = useRef<HTMLDivElement>(null);
+
+  const [isDark, setIsDark] = useState(() => {
+    const stored = localStorage.getItem("sw-theme");
+    if (stored === "dark") return true;
+    if (stored === "light") return false;
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  });
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = isDark ? "dark" : "light";
+    localStorage.setItem("sw-theme", isDark ? "dark" : "light");
+  }, [isDark]);
+
+  const toggleTheme = () => setIsDark(d => !d);
 
   // Frosted-on-scroll
   useEffect(() => {
@@ -81,6 +119,15 @@ export default function Navbar({ aboutRef }: { aboutRef?: unknown }) {
           {!loading && isAdmin && (
             <Link to="/admin" className="nav-admin-btn">⚙ Admin</Link>
           )}
+
+          {/* Theme toggle */}
+          <button
+            className="nav-theme-btn"
+            onClick={toggleTheme}
+            aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+          >
+            {isDark ? <SunIcon /> : <MoonIcon />}
+          </button>
 
           {/* Divider */}
           <div className="nav-divider" />
@@ -187,6 +234,13 @@ export default function Navbar({ aboutRef }: { aboutRef?: unknown }) {
                 <button className="nav-mobile-login" onClick={() => { setMenuOpen(false); login(); }}>Log in with Google</button>
               )
             )}
+            <div className="nav-mobile-theme-row">
+              <span className="nav-mobile-theme-label">{isDark ? "Dark mode" : "Light mode"}</span>
+              <button className="nav-mobile-theme-toggle" onClick={toggleTheme}>
+                {isDark ? <SunIcon /> : <MoonIcon />}
+                {isDark ? "Light" : "Dark"}
+              </button>
+            </div>
           </div>
         )}
       </div>

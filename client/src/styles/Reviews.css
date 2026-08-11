@@ -132,8 +132,5 @@
 .review-text { font-size: 0.95rem; line-height: 1.6; color: var(--text-secondary, #444); }
 
 .reviews-empty { color: var(--text-muted, #888); font-size: 0.95rem; padding: 1rem 0; }
-
-@media (prefers-color-scheme: dark) {
-  .review-form { background: #1e2a35; border-color: #2d3f50; }
   .review-form textarea { background: #162230; border-color: #2d3f50; color: #e2e8f0; }
 }

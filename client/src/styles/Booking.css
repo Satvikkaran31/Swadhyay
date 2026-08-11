@@ -135,7 +135,7 @@
 
 /* ── BODY ─────────────────────────────────────────────────────────── */
 .bk-body {
-  background: #F4F1E9;
+  background: var(--bg-page);
   padding-top: 64px;
   padding-bottom: 104px;
 }
@@ -149,7 +149,7 @@
 
 /* ── Flow card ────────────────────────────────────────────────────── */
 .bk-flow-card {
-  background: #FFF;
+  background: var(--bg-card);
   border: 1px solid rgba(18,54,43,.12);
   border-radius: 26px;
   overflow: hidden;
@@ -162,7 +162,7 @@
   font-family: 'Poppins', sans-serif;
   font-weight: 300;
   font-size: 32px;
-  color: #12362B;
+  color: var(--fg-head);
   margin: 0;
 }
 .bk-session-list {
@@ -182,9 +182,9 @@
   transition: background .3s ease;
   background: transparent;
 }
-.bk-session-row:hover { background: #F9F8F4; }
+.bk-session-row:hover { background: var(--bg-raised); }
 .bk-session-row.active {
-  background: #F0F7F3;
+  background: var(--bg-tint);
   border-left: 3px solid #0E766B;
   padding-left: 41px;
 }
@@ -193,12 +193,12 @@
   font-family: 'Poppins', sans-serif;
   font-weight: 300;
   font-size: 24px;
-  color: #12362B;
+  color: var(--fg-head);
 }
 .bk-session-desc {
   font-family: 'Poppins', sans-serif;
   font-size: 14.5px;
-  color: #4A4E44;
+  color: var(--fg-mid);
   margin-top: 4px;
 }
 .bk-session-meta { text-align: right; flex: none; }
@@ -233,7 +233,7 @@
   font-weight: 300;
   font-size: 38px;
   line-height: 1.05;
-  color: #12362B;
+  color: var(--fg-head);
   margin: 0;
 }
 .bk-faq-list {
@@ -256,7 +256,7 @@
   font-family: 'Poppins', sans-serif;
   font-weight: 700;
   font-size: 17px;
-  color: #12362B;
+  color: var(--fg-head);
 }
 .bk-faq-arrow {
   font-size: 24px;
@@ -271,7 +271,7 @@
   font-family: 'Poppins', sans-serif;
   font-size: 16px;
   line-height: 1.64;
-  color: #4A4E44;
+  color: var(--fg-mid);
   margin: 0;
   padding: 0 0 22px;
 }
@@ -288,7 +288,7 @@
 }
 .bk-pay-toggle:hover { color: #0c5e55; }
 .bk-pay-card {
-  background: #FFF;
+  background: var(--bg-card);
   border: 1px solid rgba(18,54,43,.12);
   border-radius: 22px;
   padding: 36px;
@@ -299,7 +299,7 @@
   font-family: 'Poppins', sans-serif;
   font-weight: 300;
   font-size: 26px;
-  color: #12362B;
+  color: var(--fg-head);
   margin: 0 0 22px;
 }
 .bk-pay-row {
@@ -312,14 +312,14 @@
   font-family: 'Poppins', sans-serif;
   font-weight: 600;
   font-size: 13px;
-  color: #4A4E44;
+  color: var(--fg-mid);
 }
 .bk-pay-input-wrap {
   display: flex;
   align-items: center;
   border: 1px solid rgba(18,54,43,.2);
   border-radius: 12px;
-  background: #FBFAF6;
+  background: var(--bg-raised);
   overflow: hidden;
 }
 .bk-pay-symbol {
@@ -334,7 +334,7 @@
   background: transparent;
   font-family: 'Poppins', sans-serif;
   font-size: 15px;
-  color: #12362B;
+  color: var(--fg-head);
   padding: 14px 16px 14px 0;
   flex: 1;
   min-width: 0;

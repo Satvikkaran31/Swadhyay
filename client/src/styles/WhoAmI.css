@@ -112,7 +112,7 @@
 
 /* ── MISSION ──────────────────────────────────────────────────────── */
 .wa-mission {
-  background: #F4F1E9;
+  background: var(--bg-page);
   padding-top: 104px;
   padding-bottom: 104px;
 }
@@ -130,7 +130,7 @@
   font-weight: 300;
   font-size: 38px;
   line-height: 1.24;
-  color: #12362B;
+  color: var(--fg-head);
   margin: 20px 0 0;
   text-wrap: pretty;
 }
@@ -138,7 +138,7 @@
   font-family: 'Poppins', sans-serif;
   font-size: 17px;
   line-height: 1.68;
-  color: #4A4E44;
+  color: var(--fg-mid);
   margin: 28px 0 0;
 }
 .wa-mission-visual {
@@ -160,7 +160,7 @@
 
 /* ── VALUES ───────────────────────────────────────────────────────── */
 .wa-values {
-  background: #F4F1E9;
+  background: var(--bg-page);
   padding-bottom: 104px;
 }
 .wa-values-inner { max-width: 1180px; margin: 0 auto; }
@@ -169,7 +169,7 @@
   font-weight: 300;
   font-size: 48px;
   line-height: 1.05;
-  color: #12362B;
+  color: var(--fg-head);
   margin: 0;
 }
 .wa-values-grid {
@@ -179,7 +179,7 @@
   margin-top: 36px;
 }
 .wa-value-card {
-  background: #FFF;
+  background: var(--bg-card);
   border: 1px solid rgba(18,54,43,.1);
   border-radius: 22px;
   padding: 34px 30px;
@@ -201,14 +201,14 @@
   font-family: 'Poppins', sans-serif;
   font-weight: 300;
   font-size: 25px;
-  color: #12362B;
+  color: var(--fg-head);
   margin: 20px 0 0;
 }
 .wa-value-desc {
   font-family: 'Poppins', sans-serif;
   font-size: 15.5px;
   line-height: 1.62;
-  color: #4A4E44;
+  color: var(--fg-mid);
   margin: 10px 0 0;
 }
 
@@ -273,7 +273,7 @@
   position: absolute;
   left: -14px;
   bottom: 64px;
-  background: #FFF;
+  background: var(--bg-card);
   border-radius: 16px;
   padding: 15px 20px;
   box-shadow: 0 24px 50px -22px rgba(0,0,0,.6);
@@ -282,7 +282,7 @@
   font-family: 'Poppins', sans-serif;
   font-weight: 700;
   font-size: 15px;
-  color: #12362B;
+  color: var(--fg-head);
 }
 .wa-badge-sub {
   font-family: 'Poppins', sans-serif;
@@ -386,7 +386,7 @@
 
 /* ── CTA SECTION ──────────────────────────────────────────────────── */
 .wa-cta-section {
-  background: #F4F1E9;
+  background: var(--bg-page);
   padding-top: 104px;
   padding-bottom: 104px;
 }
