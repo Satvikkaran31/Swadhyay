@@ -245,10 +245,10 @@ export const sendToLeads = async (req, res) => {
       const subject = substitute(t.subject, vars);
       const rawHtml = substitute(t.body, vars);
       const trackingToken = crypto.randomUUID();
-      const trackedHtml = rawHtml
-        .replace('</body>', '')
-        .replace('</html>', '') +
-        `<img src="${apiBase}/api/crm/track/open/${trackingToken}" width="1" height="1" alt="" style="display:none"></html>`;
+      const pixel = `<img src="${apiBase}/api/crm/track/open/${trackingToken}" width="1" height="1" alt="" style="display:none">`;
+      const trackedHtml = rawHtml.includes('</body>')
+        ? rawHtml.replace('</body>', `${pixel}</body>`)
+        : rawHtml + pixel;
 
       let status: 'sent' | 'failed' = 'sent';
       let errMsg: string | null = null;
@@ -434,13 +434,13 @@ export const updateAutomation = async (req, res) => {
     const { rows } = await pool.query(
       `UPDATE email_automations
        SET name           = COALESCE($1, name),
-           trigger_source = $2,
+           trigger_source = COALESCE($2, trigger_source),
            delay_hours    = COALESCE($3, delay_hours),
            template_id    = COALESCE($4, template_id),
            is_active      = COALESCE($5, is_active)
        WHERE id = $6 RETURNING *`,
       [name?.trim() || null,
-       trigger_source !== undefined ? (trigger_source || null) : undefined,
+       trigger_source !== undefined ? (trigger_source || null) : null,
        delay_hours !== undefined ? Number(delay_hours) : null,
        template_id || null,
        is_active ?? null,
@@ -486,7 +486,7 @@ export async function runPendingAutomations() {
   try {
     const { rows: pending } = await pool.query(`
       SELECT ar.id AS run_id, ar.automation_id, ar.lead_id,
-             a.template_id, l.name, l.email, l.unsubscribe_token,
+             a.template_id, l.name, l.email, l.phone, l.unsubscribe_token,
              l.unsubscribed
       FROM automation_runs ar
       JOIN email_automations a ON a.id = ar.automation_id
@@ -512,9 +512,11 @@ export async function runPendingAutomations() {
       const vars = buildVars(run);
       const subject = substitute(tmpl[0].subject, vars);
       const trackingToken = crypto.randomUUID();
-      let html = substitute(tmpl[0].body, vars);
-      html = html.replace('</body>', '').replace('</html>', '') +
-        `<img src="${apiBase}/api/crm/track/open/${trackingToken}" width="1" height="1" alt="" style="display:none"></html>`;
+      const rawHtml = substitute(tmpl[0].body, vars);
+      const pixel = `<img src="${apiBase}/api/crm/track/open/${trackingToken}" width="1" height="1" alt="" style="display:none">`;
+      const html = rawHtml.includes('</body>')
+        ? rawHtml.replace('</body>', `${pixel}</body>`)
+        : rawHtml + pixel;
 
       let status: 'sent' | 'failed' = 'sent';
       let errMsg: string | null = null;

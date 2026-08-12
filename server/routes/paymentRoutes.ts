@@ -71,7 +71,7 @@ router.post("/verify", async (req, res) => {
 
   // 1. Verify HMAC signature (timing-safe comparison prevents timing attacks)
   const expected = crypto
-    .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+    .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET!)
     .update(`${razorpay_order_id}|${razorpay_payment_id}`)
     .digest("hex");
 

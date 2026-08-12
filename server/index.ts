@@ -62,6 +62,15 @@ const allowed_origins = [
 ];
 app.use(cors({ origin: allowed_origins, credentials: true }));
 
+// Security headers — no external dependency needed
+app.use((_req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  next();
+});
+
 // Razorpay webhook needs the raw body for HMAC verification — must be before bodyParser.json()
 app.use("/api/webhook", express.raw({ type: "application/json" }), webhookRoutes);
 

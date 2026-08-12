@@ -42,6 +42,7 @@ router.post('/google', authLimiter, async (req, res) => {
     });
 
     const payload = ticket.getPayload();
+    if (!payload) throw new Error('Empty token payload');
 
     // Upsert user into persistent users table
     const { rows } = await pool.query(
@@ -116,7 +117,7 @@ router.put('/profile', async (req, res) => {
       `UPDATE users SET linkedin_url = $1 WHERE id = $2`,
       [sanitized, req.session.user.id]
     );
-    req.session.user = { ...req.session.user, linkedin_url: sanitized };
+    (req.session as any).user = { ...req.session.user, linkedin_url: sanitized };
     req.session.save((err) => {
       if (err) return res.status(500).json({ error: 'Session save failed' });
       res.json({ success: true, linkedin_url: sanitized });

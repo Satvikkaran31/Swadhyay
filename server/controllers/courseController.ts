@@ -63,7 +63,7 @@ function reshapeCourseRows(rows, { includeResources = false, includeVideoUrls = 
       }
     }
   }
-  course.total_duration = course.modules.reduce(
+  (course as any).total_duration = course.modules.reduce(
     (sum: number, m: any) => sum + m.lessons.reduce((s: number, l: any) => s + (l.duration ?? 0), 0),
     0
   );

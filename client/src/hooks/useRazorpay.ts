@@ -99,8 +99,12 @@ export function useRazorpay() {
       },
     };
 
-    const rzp = new window.Razorpay(options);
-    rzp.open();
+    try {
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    } catch (err: any) {
+      onFailure?.('Payment could not be initiated. Please try again.');
+    }
   }, []);
 
   return { initiatePayment };

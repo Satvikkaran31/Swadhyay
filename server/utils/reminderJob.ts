@@ -47,6 +47,7 @@ async function sendReminders() {
       const meetLinkHtml = safeMeetLink
         ? `<p><a href="${e(safeMeetLink)}" style="background:#1A2B3C;color:#fff;padding:10px 20px;border-radius:6px;text-decoration:none">Join on Google Meet</a></p>`
         : '';
+      await pool.query('UPDATE bookings SET reminder_sent = true WHERE id = $1', [booking.id]);
       await mailer.sendMail({
         from: process.env.MAIL_USER as string,
         to: booking.user_email,
@@ -61,8 +62,6 @@ async function sendReminders() {
           <p>See you soon!<br/>Neha</p>
         `,
       });
-
-      await pool.query('UPDATE bookings SET reminder_sent = true WHERE id = $1', [booking.id]);
       console.log(`Reminder sent to ${booking.user_email} for session at ${booking.session_start}`);
     } catch (err: any) {
       console.error(`Reminder job: failed for booking ${booking.id} (${booking.user_email}):`, err.message);

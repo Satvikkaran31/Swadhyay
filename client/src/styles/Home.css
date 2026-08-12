@@ -303,6 +303,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  background: var(--svc-bg, #D9E8E0);
+  transition: background .5s ease;
+}
+:root[data-theme="dark"] .home-svc-panel { background: var(--bg-tint); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .home-svc-panel { background: var(--bg-tint); }
 }
 .home-svc-rings {
   position: relative;

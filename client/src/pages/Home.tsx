@@ -228,7 +228,7 @@ export default function Home() {
             </div>
 
             {/* right: animated panel */}
-            <div className="home-svc-panel" style={{ background: svc.panelBg, transition: "background .5s ease" }}>
+            <div className="home-svc-panel" style={{ '--svc-bg': svc.panelBg } as React.CSSProperties}>
               <div className="home-svc-rings">
                 <div className="home-svc-ring home-svc-ring-1" />
                 <div className="home-svc-ring home-svc-ring-2" />

@@ -1,4 +1,4 @@
-import React, { useRef, Suspense, lazy, useEffect, useState } from "react";
+import React, { Component, useRef, Suspense, lazy, useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import Navbar from "./components/Navbar";
@@ -86,10 +86,26 @@ function SEORoute({ component: Component, title, description, path, keywords, no
 
 function LoadingFallback() {
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px', fontSize: '18px', color: '#666' }}>
-      Loading...
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px', fontSize: '18px', color: 'var(--fg-muted)' }}>
+      Loading…
     </div>
   );
+}
+
+class ErrorBoundary extends Component<{ children: React.ReactNode }, { crashed: boolean }> {
+  constructor(props) { super(props); this.state = { crashed: false }; }
+  static getDerivedStateFromError() { return { crashed: true }; }
+  componentDidCatch(err, info) { console.error('[ErrorBoundary]', err, info); }
+  render() {
+    if (this.state.crashed) {
+      return (
+        <div style={{ padding: '80px 24px', textAlign: 'center', color: 'var(--fg-mid)' }}>
+          <p style={{ fontSize: 18 }}>Something went wrong. Please <a href="/" style={{ color: 'var(--teal)' }}>return home</a>.</p>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
 }
 
 function LinkedInGate() {
@@ -148,6 +164,7 @@ export default function App() {
       <LinkedInGate />
       <ScrollToTop />
       <WhatsAppFloat />
+      <ErrorBoundary>
       <Suspense fallback={<LoadingFallback />}>
         <Routes>
           <Route path="/" element={
@@ -228,7 +245,7 @@ export default function App() {
 
           {/* Series listing */}
           <Route path="/series" element={
-            <SEORoute component={Courses}
+            <SEORoute component={SeriesListing}
               title="Course Series — Swadhyay"
               description="Explore three curated series — Youth, Leadership &amp; Board, and Board Retreat."
               path="/series" keywords="series, course series, youth, leadership, coaching" />
@@ -250,6 +267,7 @@ export default function App() {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
+      </ErrorBoundary>
     </Router>
   );
 }
