@@ -15,7 +15,7 @@ function toEmbedUrl(url: string | null | undefined) {
   if (ytMatch) return `https://www.youtube.com/embed/${ytMatch[1]}?rel=0&modestbranding=1`;
   const vimeoMatch = url.match(/vimeo\.com\/(\d+)/);
   if (vimeoMatch) return `https://player.vimeo.com/video/${vimeoMatch[1]}`;
-  return url;
+  return null;
 }
 
 function fmtDuration(secs: number) {
@@ -408,11 +408,8 @@ export default function CourseDetail() {
                             </div>
                           </div>
                           <span
-                            className="cd-mod-arrow"
-                            style={{
-                              color: isOpen ? "#0E766B" : "#9AB0A6",
-                              transform: isOpen ? "rotate(90deg)" : "rotate(0deg)",
-                            }}
+                            className={`cd-mod-arrow${isOpen ? " open" : ""}`}
+                            style={{ transform: isOpen ? "rotate(90deg)" : "rotate(0deg)" }}
                           >›</span>
                         </button>
                         <div
@@ -473,14 +470,7 @@ export default function CourseDetail() {
               </div>
               <div className="cd-enroll-body">
                 <div className="cd-enroll-price-row">
-                  {isFree ? (
-                    <>
-                      <span className="cd-enroll-price">Free</span>
-                      <span className="cd-enroll-was">₹1,499</span>
-                    </>
-                  ) : (
-                    <span className="cd-enroll-price">{priceDisplay}</span>
-                  )}
+                  <span className="cd-enroll-price">{priceDisplay}</span>
                 </div>
                 <p className="cd-enroll-tagline">
                   {isFree ? "The perfect place to begin your inner work." : "Lifetime access · Certificate on completion"}

@@ -39,6 +39,7 @@ export default function MySessions() {
   const [loading, setLoading] = useState(true);
   const [cancelling, setCancelling] = useState<number | null>(null);
   const [confirmId, setConfirmId] = useState<number | null>(null);
+  const [cancelError, setCancelError] = useState<string | null>(null);
 
   // rv-go entrance animation
   useEffect(() => {
@@ -66,6 +67,7 @@ export default function MySessions() {
 
   const cancelSession = async (id: number) => {
     setCancelling(id);
+    setCancelError(null);
     try {
       const res = await fetch(`${API}/api/calendar/bookings/${id}/cancel`, {
         method: 'POST',
@@ -75,7 +77,11 @@ export default function MySessions() {
         setSessions(prev => prev.map(s =>
           s.id === id ? { ...s, cancelled_at: new Date().toISOString() } : s
         ));
+      } else {
+        setCancelError('Could not cancel session. Please try again or contact support.');
       }
+    } catch {
+      setCancelError('Network error. Please check your connection and try again.');
     } finally {
       setCancelling(null);
       setConfirmId(null);
@@ -99,6 +105,9 @@ export default function MySessions() {
 
       <section className="ms-body sw-page-pad">
         <div className="ms-body-inner">
+          {cancelError && (
+            <p style={{ color: '#e05252', marginBottom: '1rem', fontSize: '0.9rem' }}>{cancelError}</p>
+          )}
           {authLoading || loading ? (
             <div className="ms-status">
               <div className="ms-spinner" />

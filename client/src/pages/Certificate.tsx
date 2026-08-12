@@ -11,10 +11,12 @@ interface Eligibility {
   total: number;
   course_title: string;
   learner_name: string;
+  completed_at?: string | null;
 }
 
-function today() {
-  return new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+function formatCertDate(iso: string | null | undefined) {
+  const d = iso ? new Date(iso) : new Date();
+  return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
 export default function Certificate() {
@@ -87,7 +89,7 @@ export default function Certificate() {
         <div className="cert-learner">{data.learner_name}</div>
         <p className="cert-body">has successfully completed the course</p>
         <div className="cert-course">{data.course_title}</div>
-        <p className="cert-date">Issued on {today()}</p>
+        <p className="cert-date">Issued on {formatCertDate(data.completed_at)}</p>
 
         <div className="cert-sig-row">
           <div className="cert-sig">

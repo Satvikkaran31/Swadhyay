@@ -1,9 +1,11 @@
 import { Link } from "react-router-dom";
+import Navbar from "../components/Navbar";
 import "../styles/NotFound.css";
 
 export default function NotFound() {
   return (
     <div className="nf-page">
+      <Navbar />
       <div className="nf-orb" />
       <div className="nf-inner rv">
         <span className="nf-eyebrow">404</span>

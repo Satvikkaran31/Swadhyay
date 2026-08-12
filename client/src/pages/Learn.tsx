@@ -65,20 +65,16 @@ export default function Learn() {
         setCourse(data);
 
         let resumeLesson = null;
-        let resumeModuleId: number | null = null;
         outer: for (const mod of data.modules ?? []) {
           for (const lesson of mod.lessons ?? []) {
             if (!completedSet.has(lesson.id)) {
               resumeLesson = lesson;
-              resumeModuleId = mod.id;
               break outer;
             }
           }
         }
         const fallbackLesson = data.modules?.[0]?.lessons?.[0] ?? null;
-        const fallbackModuleId = data.modules?.[0]?.id ?? null;
         setActiveLesson(resumeLesson ?? fallbackLesson);
-        // Expand all modules initially (Coursera-style — collapsed only on demand)
         setOpenModules(new Set((data.modules ?? []).map((m: any) => m.id)));
       } catch (err: any) {
         if (err.name !== "AbortError") setPageLoading(false);
@@ -108,10 +104,12 @@ export default function Learn() {
     if (!activeLesson || !user) return;
     setNoteText("");
     setNoteSaved(false);
-    fetch(`${API}/api/notes/${activeLesson.id}`, { credentials: "include" })
+    const ctrl = new AbortController();
+    fetch(`${API}/api/notes/${activeLesson.id}`, { credentials: "include", signal: ctrl.signal })
       .then(r => r.json())
       .then(d => { if (d.content != null) setNoteText(d.content); })
       .catch(() => {});
+    return () => ctrl.abort();
   }, [activeLesson?.id]);
 
   const saveNote = useCallback(async () => {
@@ -330,8 +328,8 @@ export default function Learn() {
           )}
         </div>
 
-        {/* Mobile backdrop — only rendered on small screens */}
-        {sidebarOpen && window.innerWidth < 769 && (
+        {/* Mobile backdrop — hidden on desktop via CSS media query */}
+        {sidebarOpen && (
           <div className="lms-sidebar-backdrop" onClick={() => setSidebarOpen(false)} />
         )}
 
@@ -414,7 +412,7 @@ export default function Learn() {
                     {/* Lesson list — slides open/closed */}
                     <div
                       className="lms-module-lessons-wrap"
-                      style={{ maxHeight: isOpen ? `${modTotal * 64 + 8}px` : "0" }}
+                      style={{ maxHeight: isOpen ? `${modTotal * 96 + 8}px` : "0" }}
                     >
                       {mod.lessons?.map((lesson: any) => {
                         const done = completedIds.has(lesson.id);

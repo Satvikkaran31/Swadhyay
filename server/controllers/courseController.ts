@@ -606,7 +606,8 @@ export async function getCertificateEligibility(req, res) {
     if (total === 0) return res.json({ eligible: false, reason: 'no_lessons' });
 
     const { rows: progress } = await pool.query(
-      `SELECT COUNT(*) FROM progress p
+      `SELECT COUNT(*) AS count, MAX(p.completed_at) AS last_completed
+       FROM progress p
        JOIN lessons l ON l.id = p.lesson_id
        JOIN modules m ON m.id = l.module_id
        WHERE m.course_id = $1 AND p.user_id = $2`,
@@ -620,6 +621,7 @@ export async function getCertificateEligibility(req, res) {
       total,
       course_title: course.title,
       learner_name: req.session.user!.name,
+      completed_at: eligible ? (progress[0].last_completed ?? null) : null,
     });
   } catch {
     res.status(500).json({ error: 'Failed to check certificate eligibility' });

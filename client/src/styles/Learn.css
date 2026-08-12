@@ -442,6 +442,7 @@
 
 /* ── Sidebar backdrop (mobile only) ──────────────────────── */
 .lms-sidebar-backdrop {
+  display: none;
   position: fixed;
   top: 52px;
   left: 0;
@@ -449,6 +450,9 @@
   bottom: 0;
   background: rgba(0, 0, 0, 0.6);
   z-index: 39;
+}
+@media (max-width: 768px) {
+  .lms-sidebar-backdrop { display: block; }
 }
 
 /* ── Sidebar — position: fixed on both mobile and desktop ─── */
