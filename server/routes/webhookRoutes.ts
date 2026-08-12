@@ -53,16 +53,24 @@ router.post("/razorpay", async (req, res) => {
       const entity = payload?.payload?.refund?.entity;
       const razorpayPaymentId: string | undefined = entity?.payment_id;
       if (razorpayPaymentId) {
-        // Revoke enrollment so the user loses access
-        await pool.query(
-          "DELETE FROM enrollments WHERE payment_id = $1",
-          [razorpayPaymentId]
-        );
-        // Mark the corresponding order as refunded
-        await pool.query(
-          "UPDATE payment_orders SET status = 'refunded' WHERE razorpay_payment_id = $1",
-          [razorpayPaymentId]
-        );
+        const dbClient = await pool.connect();
+        try {
+          await dbClient.query('BEGIN');
+          await dbClient.query(
+            "DELETE FROM enrollments WHERE payment_id = $1",
+            [razorpayPaymentId]
+          );
+          await dbClient.query(
+            "UPDATE payment_orders SET status = 'refunded' WHERE razorpay_payment_id = $1",
+            [razorpayPaymentId]
+          );
+          await dbClient.query('COMMIT');
+        } catch (refundErr) {
+          await dbClient.query('ROLLBACK').catch(() => {});
+          throw refundErr;
+        } finally {
+          dbClient.release();
+        }
       }
     }
 

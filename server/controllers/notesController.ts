@@ -21,6 +21,15 @@ export const saveNote = async (req, res) => {
   const { lesson_id } = req.params;
   const { content } = req.body;
   try {
+    const { rows: enrollCheck } = await pool.query(
+      `SELECT e.id FROM enrollments e
+       JOIN modules m ON m.course_id = e.course_id
+       JOIN lessons l ON l.module_id = m.id
+       WHERE l.id = $1 AND e.user_id = $2`,
+      [lesson_id, userId]
+    );
+    if (!enrollCheck.length) return res.status(403).json({ error: 'Not enrolled in this course' });
+
     await pool.query(
       `INSERT INTO lesson_notes (user_id, lesson_id, content, updated_at)
        VALUES ($1, $2, $3, NOW())
