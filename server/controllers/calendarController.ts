@@ -1,5 +1,4 @@
 import { google } from "googleapis";
-import axios from "axios";
 import { DateTime } from "luxon";
 import mailer from "../utils/mailer.js";
 import pool from "../utils/db.js";
@@ -133,42 +132,7 @@ export const bookSession = async (req, res) => {
       `,
     });
 
-    // 4. Mirror to Outlook (best-effort)
-    try {
-      const tokenRes = await axios.post(
-        "https://login.microsoftonline.com/common/oauth2/v2.0/token",
-        new URLSearchParams({
-          client_id: process.env.MS_CLIENT_ID!,
-          scope: "https://graph.microsoft.com/.default",
-          client_secret: process.env.MS_CLIENT_SECRET!,
-          grant_type: "client_credentials",
-        }),
-        { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
-      );
-      const accessToken = tokenRes.data.access_token;
-      await axios.post(
-        `https://graph.microsoft.com/v1.0/users/${process.env.ADMIN_EMAIL}/calendar/events`,
-        {
-          subject: `${safeSessionType} with ${safeName}`,
-          start: { dateTime: dateTime.toISO(), timeZone: "Asia/Kolkata" },
-          end: { dateTime: endTime.toISO(), timeZone: "Asia/Kolkata" },
-          attendees: [
-            { emailAddress: { address: email, name: safeName }, type: "required" },
-            { emailAddress: { address: process.env.ADMIN_EMAIL, name: "Admin" }, type: "required" },
-          ],
-          location: { displayName: meetLink ? "Google Meet (see link in body)" : meetingType },
-          body: {
-            contentType: "HTML",
-            content: `Session with ${safeName} (${safeOccupation} at ${safeOrganization}).${meetLink ? `<br><br>Join: <a href="${meetLink}">${meetLink}</a>` : ''}`,
-          },
-        },
-        { headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" } }
-      );
-    } catch (msError: any) {
-      console.error("Outlook calendar error:", msError.response?.data || msError.message);
-    }
-
-    // 5. Save booking for reminder job
+    // 4. Save booking for reminder job
     const sessionStart = DateTime.fromISO(`${date}T${time}`, { zone: "Asia/Kolkata" }).toJSDate();
     await pool.query(
       `INSERT INTO bookings (google_event_id, user_email, user_name, session_type, meeting_type, session_start, meet_link)
