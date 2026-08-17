@@ -4,6 +4,7 @@ import { slugify } from '../utils/slugify.js';
 const ALLOWED_VIDEO_HOSTS = [
   'youtube.com', 'www.youtube.com', 'youtu.be',
   'vimeo.com', 'player.vimeo.com',
+  'iframe.mediadelivery.net', 'video.bunnycdn.com',
 ];
 
 function isAllowedVideoUrl(url) {

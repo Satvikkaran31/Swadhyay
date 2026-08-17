@@ -1,0 +1,55 @@
+services:
+  - type: web
+    name: swadhyay
+    runtime: node
+    rootDir: server
+    buildCommand: npm install && cd ../client && npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/auth/me
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # Set all of the following in the Render dashboard (Settings > Environment):
+      - key: SESSION_SECRET
+        sync: false
+      - key: POSTGRES_URL
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: RAZORPAY_KEY_ID
+        sync: false
+      - key: RAZORPAY_KEY_SECRET
+        sync: false
+      - key: RAZORPAY_WEBHOOK_SECRET
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: MAIL_USER
+        sync: false
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: AZURE_CLIENT_ID
+        sync: false
+      - key: AZURE_CLIENT_SECRET
+        sync: false
+      - key: AZURE_TENANT_ID
+        sync: false
+      - key: MS_ORGANIZER_EMAIL
+        sync: false
+      - key: SENTRY_DSN
+        sync: false
+      - key: CLIENT_URL
+        value: https://swadhyay.co
+      - key: API_URL
+        value: https://swadhyay.co
+      # Vite build-time variables — must be set here so the client build picks them up
+      - key: VITE_API_BASE_URL
+        value: https://swadhyay.co
+      - key: VITE_RAZORPAY_KEY_ID
+        sync: false
+      - key: VITE_GOOGLE_CLIENT_ID
+        sync: false
+      - key: VITE_BOOKING_LINK
+        sync: false

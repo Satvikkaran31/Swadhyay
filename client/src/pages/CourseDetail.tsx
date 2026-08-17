@@ -15,6 +15,9 @@ function toEmbedUrl(url: string | null | undefined) {
   if (ytMatch) return `https://www.youtube.com/embed/${ytMatch[1]}?rel=0&modestbranding=1`;
   const vimeoMatch = url.match(/vimeo\.com\/(\d+)/);
   if (vimeoMatch) return `https://player.vimeo.com/video/${vimeoMatch[1]}`;
+  if (/iframe\.mediadelivery\.net\/embed\//.test(url)) return url;
+  const bunnyPlay = url.match(/video\.bunnycdn\.com\/play\/(\d+)\/([\w-]+)/);
+  if (bunnyPlay) return `https://iframe.mediadelivery.net/embed/${bunnyPlay[1]}/${bunnyPlay[2]}`;
   return null;
 }
 

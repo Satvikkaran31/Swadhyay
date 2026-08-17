@@ -39,6 +39,7 @@ if (process.env.SENTRY_DSN) {
 const REQUIRED_ENV = [
   "SESSION_SECRET", "POSTGRES_URL", "GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET",
   "RAZORPAY_KEY_ID", "RAZORPAY_KEY_SECRET", "ADMIN_EMAIL",
+  "RESEND_API_KEY", "MAIL_USER",
 ];
 const missingEnv = REQUIRED_ENV.filter(k => !process.env[k]);
 if (missingEnv.length) {
@@ -59,22 +60,37 @@ const allowed_origins = [
   "http://localhost:5000",
   "http://localhost:5173",
   "https://swadhyay.co",
+  "https://www.swadhyay.co",
 ];
 app.use(cors({ origin: allowed_origins, credentials: true }));
 
-// Security headers — no external dependency needed
+// Security headers
 app.use((_req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-Frame-Options', 'DENY');
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  res.setHeader('Content-Security-Policy', [
+    "default-src 'self'",
+    "script-src 'self' checkout.razorpay.com accounts.google.com",
+    "style-src 'self' 'unsafe-inline'",
+    "img-src 'self' data: https:",
+    "font-src 'self' data:",
+    "frame-src www.youtube.com player.vimeo.com iframe.mediadelivery.net checkout.razorpay.com accounts.google.com",
+    "frame-ancestors 'none'",
+    "connect-src 'self' https://api.razorpay.com",
+    "worker-src blob:",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "upgrade-insecure-requests",
+  ].join('; '));
   next();
 });
 
 // Razorpay webhook needs the raw body for HMAC verification — must be before bodyParser.json()
 app.use("/api/webhook", express.raw({ type: "application/json" }), webhookRoutes);
 
-app.use(bodyParser.json({ limit: '50kb' }));
+app.use(bodyParser.json({ limit: '2mb' }));
 
 // Block state-changing requests from absent or unrecognized origins (CSRF defense)
 app.use((req, _res, next) => {

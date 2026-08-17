@@ -38,7 +38,7 @@ export async function enroll(req, res) {
           <h2>Enrollment confirmed!</h2>
           <p>Hi ${name},</p>
           <p>You're now enrolled in <strong>${course.title}</strong>.</p>
-          <p>Head over to <a href="${process.env.CLIENT_URL || 'http://localhost:3000'}/my-learning">My Learning</a> to start watching.</p>
+          <p>Head over to <a href="${process.env.CLIENT_URL || 'https://swadhyay.co'}/my-learning">My Learning</a> to start watching.</p>
           <p>Happy learning!</p>
         `,
       }).catch(err => console.error('Enrollment email error:', err.message));
