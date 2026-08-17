@@ -46,7 +46,7 @@ router.get('/', async (req, res) => {
 
  try {
   const events = await getGraphClient()
-   .api(`/users/${process.env.ADMIN_EMAIL}/calendarView`)
+   .api(`/users/${process.env.MS_ORGANIZER_EMAIL}/calendarView`)
    .header("Prefer", 'outlook.timezone="Asia/Kolkata"')
    .query({ startDateTime: startOfDay, endDateTime: endOfDay })
    .select("start,end")
