@@ -33,11 +33,15 @@ function ShareButtons({ title }: { title: string }) {
   const [copied, setCopied] = useState(false);
   const url = window.location.href;
 
-  const copy = () => {
-    navigator.clipboard.writeText(url).then(() => {
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(url);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    });
+    } catch {
+      // Clipboard API unavailable (e.g. insecure context) — fall back to a prompt
+      window.prompt("Copy this link:", url);
+    }
   };
 
   return (
@@ -209,7 +213,8 @@ export default function ArticleDetail() {
                   borderRadius: 16,
                 }}
                 title={article.title}
-                frameBorder="0"
+                loading="lazy"
+                referrerPolicy="strict-origin-when-cross-origin"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
               />

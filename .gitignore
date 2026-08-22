@@ -4,3 +4,9 @@ client/node_modules/
 client/.env
 server/.env
 design_handoff_swadhyay_site/
+
+# OS / editor cruft (Windows/WSL)
+*:Zone.Identifier
+*.TMP
+*~RF*.TMP
+.DS_Store

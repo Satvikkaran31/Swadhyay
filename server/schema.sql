@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS lessons (
   id          SERIAL PRIMARY KEY,
   module_id   INTEGER NOT NULL REFERENCES modules(id) ON DELETE CASCADE,
   title       VARCHAR(500) NOT NULL,
-  video_url   TEXT,           -- YouTube/Vimeo URL; we convert to embed on the frontend
+  video_url   TEXT,           -- YouTube URL; converted to a youtube-nocookie embed on the frontend
   duration    INTEGER,        -- seconds
   position    INTEGER NOT NULL DEFAULT 0,
   is_preview  BOOLEAN NOT NULL DEFAULT false,  -- visible without enrollment

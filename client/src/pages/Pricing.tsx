@@ -157,6 +157,7 @@ export default function Pricing() {
                 <button
                   className="pr-faq-q"
                   onClick={() => setOpenFaq(openFaq === i ? -1 : i)}
+                  aria-expanded={openFaq === i}
                 >
                   <span>{f.q}</span>
                   <span
@@ -180,7 +181,6 @@ export default function Pricing() {
       </section>
 
       <Footer compact />
-      <a href="https://wa.me/919810059991" className="whatsapp-float" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">💬</a>
     </>
   );
 }

@@ -426,16 +426,16 @@
 .home-mission-cta:hover { background: #0e2c24; color: #FFF; }
 .home-mission-visual {
   position: relative;
-  background: repeating-linear-gradient(135deg, #DCE4D8, #DCE4D8 15px, #D2DBCC 15px, #D2DBCC 30px);
   min-height: 440px;
+  background:
+    radial-gradient(120% 90% at 78% 22%, rgba(255,255,255,.55) 0%, rgba(255,255,255,0) 55%),
+    linear-gradient(135deg, #E4ECDD 0%, #D2DBCC 55%, #C6D2C2 100%);
 }
-.home-mission-caption {
+.home-mission-visual::after {
+  content: "";
   position: absolute;
-  bottom: 20px;
-  right: 24px;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 12px;
-  color: rgba(22,54,46,.6);
+  inset: 0;
+  background: radial-gradient(60% 60% at 50% 45%, rgba(14,118,107,.10) 0%, rgba(14,118,107,0) 70%);
 }
 
 /* ── COURSES ──────────────────────────────────────────────────────── */

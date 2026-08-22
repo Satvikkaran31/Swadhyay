@@ -68,6 +68,8 @@
   transition: box-shadow 0.22s, transform 0.22s;
   display: flex;
   flex-direction: column;
+  text-decoration: none;
+  color: inherit;
 }
 
 .sl-card:hover {
@@ -137,6 +139,7 @@
 }
 
 .sl-card-btn {
+  display: inline-block;
   background: var(--button-primary, #1A2B3C);
   color: #fff;
   border: none;

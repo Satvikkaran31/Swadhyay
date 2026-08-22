@@ -280,6 +280,8 @@
   transition: box-shadow 0.25s, transform 0.25s;
   display: flex;
   flex-direction: column;
+  text-decoration: none;
+  color: inherit;
 }
 
 .sd-course-card:hover {

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { articlesData } from '../utils/articlesData';
@@ -34,9 +34,8 @@ function normaliseApiArticle(a: any) {
 }
 
 const ArticleCard = ({ article }: { article: any }) => {
-  const navigate = useNavigate();
   return (
-    <div className="art-card" onClick={() => navigate(`/article/${article.slug}`)}>
+    <Link to={`/article/${article.slug}`} className="art-card">
       {article.imageUrl ? (
         <img
           src={article.imageUrl}
@@ -66,7 +65,7 @@ const ArticleCard = ({ article }: { article: any }) => {
           <span className="art-card-date">{article.date}</span>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 
@@ -126,6 +125,7 @@ export default function Articles() {
               <button
                 className={`art-filter-btn${!activeTag ? ' active' : ''}`}
                 onClick={() => setActiveTag(null)}
+                aria-pressed={!activeTag}
               >
                 All
               </button>
@@ -134,6 +134,7 @@ export default function Articles() {
                   key={tag}
                   className={`art-filter-btn${activeTag === tag ? ' active' : ''}`}
                   onClick={() => setActiveTag(activeTag === tag ? null : tag)}
+                  aria-pressed={activeTag === tag}
                 >
                   {tag}
                 </button>

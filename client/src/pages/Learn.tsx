@@ -3,6 +3,8 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { useUser } from "../context/UserProvider";
 import { marked } from "marked";
 import DOMPurify from "dompurify";
+import toast from "react-hot-toast";
+import { toEmbedUrl } from "../utils/videoEmbed";
 import "../styles/Learn.css";
 
 const API = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
@@ -10,18 +12,6 @@ const API = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
 function renderMarkdown(md: string | null | undefined): string {
   if (!md) return "";
   return DOMPurify.sanitize(marked.parse(md) as string);
-}
-
-function toEmbedUrl(url: string | null | undefined) {
-  if (!url) return null;
-  const ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
-  if (ytMatch) return `https://www.youtube.com/embed/${ytMatch[1]}?rel=0&modestbranding=1`;
-  const vimeoMatch = url.match(/vimeo\.com\/(\d+)/);
-  if (vimeoMatch) return `https://player.vimeo.com/video/${vimeoMatch[1]}`;
-  if (/iframe\.mediadelivery\.net\/embed\//.test(url)) return url;
-  const bunnyPlay = url.match(/video\.bunnycdn\.com\/play\/(\d+)\/([\w-]+)/);
-  if (bunnyPlay) return `https://iframe.mediadelivery.net/embed/${bunnyPlay[1]}/${bunnyPlay[2]}`;
-  return null;
 }
 
 export default function Learn() {
@@ -119,15 +109,18 @@ export default function Learn() {
     if (!activeLesson) return;
     setNoteSaving(true);
     try {
-      await fetch(`${API}/api/notes/${activeLesson.id}`, {
+      const res = await fetch(`${API}/api/notes/${activeLesson.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({ content: noteText }),
       });
+      if (!res.ok) throw new Error("save failed");
       setNoteSaved(true);
       if (noteSaveTimer.current) clearTimeout(noteSaveTimer.current);
       noteSaveTimer.current = setTimeout(() => setNoteSaved(false), 2500);
+    } catch {
+      toast.error("Couldn't save your note. Please try again.");
     } finally {
       setNoteSaving(false);
     }
@@ -143,7 +136,10 @@ export default function Learn() {
         body: JSON.stringify({ lesson_id: activeLesson.id }),
       });
       if (res.ok) setCompletedIds(prev => new Set([...prev, activeLesson.id]));
-    } catch { /* leave UI unchanged */ }
+      else throw new Error("progress failed");
+    } catch {
+      toast.error("Couldn't save your progress. Please try again.");
+    }
   };
 
   const totalLessons = course?.modules?.reduce((acc: number, m: any) => acc + (m.lessons?.length || 0), 0) || 0;
@@ -191,7 +187,7 @@ export default function Learn() {
             <span className="lms-progress-pct">{progressPct}%</span>
           </div>
           {isAdmin && (
-            <a href="/admin" className="lms-admin-btn">⚙</a>
+            <a href="/admin" className="lms-admin-btn" aria-label="Open admin">⚙</a>
           )}
           <button
             className="lms-outline-btn"
@@ -227,6 +223,8 @@ export default function Learn() {
                   key={activeLesson.id}
                   src={embedUrl}
                   title={activeLesson.title}
+                  loading="lazy"
+                  referrerPolicy="strict-origin-when-cross-origin"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                 />
@@ -345,12 +343,14 @@ export default function Learn() {
               <button
                 className={`lms-stab${sidebarTab === "content" ? " active" : ""}`}
                 onClick={() => setSidebarTab("content")}
+                aria-pressed={sidebarTab === "content"}
               >
                 Lessons
               </button>
               <button
                 className={`lms-stab${sidebarTab === "notes" ? " active" : ""}`}
                 onClick={() => setSidebarTab("notes")}
+                aria-pressed={sidebarTab === "notes"}
               >
                 Notes
               </button>
@@ -376,6 +376,7 @@ export default function Learn() {
                     {/* Module header — clickable accordion */}
                     <button
                       className="lms-module-header"
+                      aria-expanded={isOpen}
                       onClick={() => setOpenModules(prev => {
                         const next = new Set(prev);
                         isOpen ? next.delete(mod.id) : next.add(mod.id);

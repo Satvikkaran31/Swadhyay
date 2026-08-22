@@ -113,9 +113,17 @@ export default function BookingModal({ onClose, initialSessionType = "one-on-one
     }
   };
 
+  const bookingLink = import.meta.env.VITE_BOOKING_LINK;
+
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-container" onClick={(e) => e.stopPropagation()}>
+      <div
+        className="modal-container"
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Schedule a session"
+      >
         <button className="modal-close" onClick={onClose} aria-label="Close">
           ✕
         </button>
@@ -215,6 +223,7 @@ export default function BookingModal({ onClose, initialSessionType = "one-on-one
                       type="button"
                       className={`session-card${form.sessionType === st.value ? " selected" : ""}`}
                       onClick={() => setForm({ ...form, sessionType: st.value })}
+                      aria-pressed={form.sessionType === st.value}
                     >
                       <span className="session-card-icon">{st.icon}</span>
                       <span className="session-card-label">{st.label}</span>
@@ -258,6 +267,7 @@ export default function BookingModal({ onClose, initialSessionType = "one-on-one
                         type="button"
                         className={`slot-pill${form.time === slot ? " selected" : ""}`}
                         onClick={() => setForm({ ...form, time: slot })}
+                        aria-pressed={form.time === slot}
                       >
                         {slot}
                       </button>
@@ -277,17 +287,18 @@ export default function BookingModal({ onClose, initialSessionType = "one-on-one
                 {loading ? "Processing…" : "Schedule on Google Meet"}
               </button>
 
-              <div className="modal-divider">OR</div>
-
-              <button
-                className="Teams"
-                type="button"
-                onClick={() =>
-                  window.open(import.meta.env.VITE_BOOKING_LINK, "_blank")
-                }
-              >
-                📅 Schedule on Microsoft Teams
-              </button>
+              {bookingLink && (
+                <>
+                  <div className="modal-divider">OR</div>
+                  <button
+                    className="Teams"
+                    type="button"
+                    onClick={() => window.open(bookingLink, "_blank", "noopener,noreferrer")}
+                  >
+                    📅 Schedule on Microsoft Teams
+                  </button>
+                </>
+              )}
 
               {loading && <div className="loader" />}
             </form>

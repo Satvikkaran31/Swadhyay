@@ -61,6 +61,11 @@ export default function Booking() {
 
   const currentType = SESSION_TYPES.find(t => t.id === selectedType) ?? SESSION_TYPES[1];
 
+  // Decorative hero calendar — always shows a plausible near-future date
+  const calDate = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000);
+  const calMonth = calDate.toLocaleDateString("en-IN", { month: "long", year: "numeric" }).toUpperCase();
+  const calWeekday = calDate.toLocaleDateString("en-IN", { weekday: "long" });
+
   return (
     <>
       <Navbar />
@@ -83,10 +88,10 @@ export default function Booking() {
             <div className="bk-hero-ring bk-ring-1" />
             <div className="bk-hero-ring bk-ring-2" />
             <div className="bk-hero-cal">
-              <div className="bk-cal-header">JULY 2026</div>
+              <div className="bk-cal-header">{calMonth}</div>
               <div className="bk-cal-body">
-                <span className="bk-cal-day-num">22</span>
-                <span className="bk-cal-day-name">Tuesday</span>
+                <span className="bk-cal-day-num">{calDate.getDate()}</span>
+                <span className="bk-cal-day-name">{calWeekday}</span>
               </div>
             </div>
             <div className="bk-chip bk-chip-1" style={{ animation: "floaty 7s ease-in-out infinite" }}>
@@ -112,6 +117,7 @@ export default function Booking() {
                   key={t.id}
                   className={`bk-session-row${selectedType === t.id ? " active" : ""}`}
                   onClick={() => setSelectedType(t.id)}
+                  aria-pressed={selectedType === t.id}
                 >
                   <div className="bk-session-copy">
                     <div className="bk-session-name">{t.name}</div>
@@ -142,7 +148,7 @@ export default function Booking() {
             <div className="bk-faq-list">
               {FAQS.map((f, i) => (
                 <div key={i} className="bk-faq-item">
-                  <button className="bk-faq-q" onClick={() => setOpenFaq(openFaq === i ? -1 : i)}>
+                  <button className="bk-faq-q" onClick={() => setOpenFaq(openFaq === i ? -1 : i)} aria-expanded={openFaq === i}>
                     <span>{f.q}</span>
                     <span
                       className="bk-faq-arrow"
@@ -197,7 +203,6 @@ export default function Booking() {
       </section>
 
       <Footer />
-      <a href="https://wa.me/919810059991" className="whatsapp-float" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">💬</a>
 
       {modalOpen && (
         <BookingModal

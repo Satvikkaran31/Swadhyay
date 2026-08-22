@@ -5,21 +5,10 @@ import Footer from "../components/Footer";
 import { useUser } from "../context/UserProvider";
 import { useTriggerGoogleLogin } from "../utils/googleLoginHelper";
 import { useRazorpay } from "../hooks/useRazorpay";
+import { toEmbedUrl } from "../utils/videoEmbed";
 import "../styles/CourseDetail.css";
 
 const API = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
-
-function toEmbedUrl(url: string | null | undefined) {
-  if (!url) return null;
-  const ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
-  if (ytMatch) return `https://www.youtube.com/embed/${ytMatch[1]}?rel=0&modestbranding=1`;
-  const vimeoMatch = url.match(/vimeo\.com\/(\d+)/);
-  if (vimeoMatch) return `https://player.vimeo.com/video/${vimeoMatch[1]}`;
-  if (/iframe\.mediadelivery\.net\/embed\//.test(url)) return url;
-  const bunnyPlay = url.match(/video\.bunnycdn\.com\/play\/(\d+)\/([\w-]+)/);
-  if (bunnyPlay) return `https://iframe.mediadelivery.net/embed/${bunnyPlay[1]}/${bunnyPlay[2]}`;
-  return null;
-}
 
 function fmtDuration(secs: number) {
   const h = Math.floor(secs / 3600);
@@ -330,6 +319,8 @@ export default function CourseDetail() {
               <iframe
                 src={toEmbedUrl(previewLesson.video_url) ?? ""}
                 title={previewLesson.title}
+                loading="lazy"
+                referrerPolicy="strict-origin-when-cross-origin"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
               />
@@ -395,6 +386,7 @@ export default function CourseDetail() {
                         <button
                           className="cd-mod-header"
                           onClick={() => setOpenModule(isOpen ? null : mod.id)}
+                          aria-expanded={isOpen}
                         >
                           <span className="cd-mod-num">{num}</span>
                           <div style={{ flex: 1 }}>
@@ -534,6 +526,8 @@ export default function CourseDetail() {
                     onMouseLeave={() => setHoverStar(0)}
                     onClick={() => setReviewRating(n)}
                     type="button"
+                    aria-label={`${n} star${n !== 1 ? "s" : ""}`}
+                    aria-pressed={reviewRating === n}
                   >★</button>
                 ))}
               </div>
@@ -608,10 +602,13 @@ export default function CourseDetail() {
           <div className="cd-instructor-band-orb" />
           <div className="rv cd-instructor-band-grid">
             <div className="cd-instructor-portrait">
-              {instructor.avatar_url && (
+              {instructor.avatar_url ? (
                 <img src={instructor.avatar_url} alt={instructor.name} />
+              ) : (
+                <span className="cd-instructor-portrait-initial" aria-hidden="true">
+                  {(instructor.name || "?")[0]}
+                </span>
               )}
-              <span className="cd-instructor-portrait-label">portrait — {instructor.name}</span>
             </div>
             <div>
               <span className="mono-label mono-label--light">Your guide</span>

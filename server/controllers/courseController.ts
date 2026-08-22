@@ -1,17 +1,18 @@
 import pool from '../utils/db.js';
 import { slugify } from '../utils/slugify.js';
 
+// Videos are hosted on YouTube. Vimeo is retained for any legacy lessons.
 const ALLOWED_VIDEO_HOSTS = [
-  'youtube.com', 'www.youtube.com', 'youtu.be',
-  'vimeo.com', 'player.vimeo.com',
-  'iframe.mediadelivery.net', 'video.bunnycdn.com',
+  'youtube.com', 'www.youtube.com', 'm.youtube.com', 'music.youtube.com',
+  'youtu.be', 'youtube-nocookie.com', 'www.youtube-nocookie.com',
+  'vimeo.com', 'www.vimeo.com', 'player.vimeo.com',
 ];
 
 function isAllowedVideoUrl(url) {
   if (!url) return true;
   try {
-    const { hostname } = new URL(url);
-    return ALLOWED_VIDEO_HOSTS.includes(hostname);
+    const { protocol, hostname } = new URL(url);
+    return protocol === 'https:' && ALLOWED_VIDEO_HOSTS.includes(hostname);
   } catch {
     return false;
   }
@@ -288,7 +289,7 @@ export async function batchSaveCourse(req, res) {
       for (const lesson of mod.lessons ?? []) {
         if (lesson.video_url && !isAllowedVideoUrl(lesson.video_url)) {
           await client.query('ROLLBACK');
-          return res.status(400).json({ error: `Lesson "${lesson.title}": video URL must be YouTube or Vimeo` });
+          return res.status(400).json({ error: `Lesson "${lesson.title}": video URL must be a YouTube link` });
         }
       }
     }
@@ -442,7 +443,7 @@ export async function createLesson(req, res) {
   const ALLOWED_TYPES = ['video', 'text'];
   if (type && !ALLOWED_TYPES.includes(type)) return res.status(400).json({ error: 'Lesson type must be video or text' });
   if (!isAllowedVideoUrl(video_url)) {
-    return res.status(400).json({ error: 'Video URL must be from YouTube or Vimeo' });
+    return res.status(400).json({ error: 'Video URL must be a YouTube link' });
   }
   try {
     const { rows } = await pool.query(
@@ -460,7 +461,7 @@ export async function updateLesson(req, res) {
   const { id } = req.params;
   const { title, type, content, video_url, duration, position, is_preview } = req.body;
   if (!isAllowedVideoUrl(video_url)) {
-    return res.status(400).json({ error: 'Video URL must be from YouTube or Vimeo' });
+    return res.status(400).json({ error: 'Video URL must be a YouTube link' });
   }
   try {
     const { rows } = await pool.query(

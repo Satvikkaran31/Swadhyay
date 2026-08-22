@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import nehaPortrait from "../assets/profilepicture.webp";
 import "../styles/WhoAmI.css";
 
 const VALUES = [
@@ -80,9 +81,7 @@ export default function WhoAmI() {
               inward journey — for leaders, professionals and young people ready to grow.
             </p>
           </div>
-          <div className="wa-mission-visual">
-            <span className="wa-visual-caption">image — reflection / mirror</span>
-          </div>
+          <div className="wa-mission-visual" aria-hidden="true" />
         </div>
       </section>
 
@@ -109,7 +108,7 @@ export default function WhoAmI() {
           <div className="wa-neha-portrait-wrap">
             <div className="wa-portrait-ring" />
             <div className="wa-portrait-img">
-              <span className="wa-portrait-caption">portrait — Neha</span>
+              <img src={nehaPortrait} alt="Neha Sharma" className="wa-portrait-photo" loading="lazy" />
             </div>
             <div className="wa-portrait-badge" style={{ animation: "floaty 7s ease-in-out infinite" }}>
               <div className="wa-badge-title">PCC · ICF Certified</div>
@@ -177,7 +176,6 @@ export default function WhoAmI() {
       </section>
 
       <Footer />
-      <a href="https://wa.me/919810059991" className="whatsapp-float" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">💬</a>
     </>
   );
 }

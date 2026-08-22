@@ -946,12 +946,11 @@
   height: 300px;
   border-radius: 180px 180px 22px 22px;
   overflow: hidden;
-  background: repeating-linear-gradient(135deg, #234A40, #234A40 14px, #2A5346 14px, #2A5346 28px);
+  background: linear-gradient(160deg, #2A5346 0%, #16362E 100%);
   border: 1px solid rgba(255,255,255,.1);
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
-  padding-bottom: 18px;
 }
 
 .cd-instructor-portrait img {
@@ -962,12 +961,11 @@
   object-fit: cover;
 }
 
-.cd-instructor-portrait-label {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 12px;
-  color: rgba(246,242,234,.6);
-  position: relative;
-  z-index: 1;
+.cd-instructor-portrait-initial {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 96px;
+  color: rgba(246,242,234,.85);
 }
 
 .cd-instructor-band-name {

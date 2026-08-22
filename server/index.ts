@@ -76,7 +76,7 @@ app.use((_req, res, next) => {
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: https:",
     "font-src 'self' data:",
-    "frame-src www.youtube.com player.vimeo.com iframe.mediadelivery.net checkout.razorpay.com accounts.google.com",
+    "frame-src www.youtube-nocookie.com www.youtube.com player.vimeo.com checkout.razorpay.com accounts.google.com",
     "frame-ancestors 'none'",
     "connect-src 'self' https://api.razorpay.com",
     "worker-src blob:",

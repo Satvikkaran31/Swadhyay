@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import "../styles/SeriesListing.css";
@@ -23,7 +23,6 @@ function SkeletonCard() {
 export default function SeriesListing() {
   const [series, setSeries] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
   useEffect(() => {
     fetch(`${API}/api/series`)
@@ -59,10 +58,10 @@ export default function SeriesListing() {
         ) : (
           <div className="sl-grid">
             {series.map(s => (
-              <div
+              <Link
                 key={s.id}
+                to={`/series/${s.slug}`}
                 className="sl-card"
-                onClick={() => navigate(`/series/${s.slug}`)}
               >
                 {s.thumbnail_url ? (
                   <img src={s.thumbnail_url} alt={s.title} className="sl-card-thumb" />
@@ -84,15 +83,10 @@ export default function SeriesListing() {
                     <span className="sl-course-count">
                       {s.course_count ?? 0} course{s.course_count !== 1 ? "s" : ""}
                     </span>
-                    <button
-                      className="sl-card-btn"
-                      onClick={e => { e.stopPropagation(); navigate(`/series/${s.slug}`); }}
-                    >
-                      View Series →
-                    </button>
+                    <span className="sl-card-btn">View Series →</span>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         )}

@@ -196,6 +196,7 @@ export default function Home() {
                   ref={el => { tabRefs.current[i] = el; }}
                   className={`home-svc-tab${svcIdx === i ? " active" : ""}`}
                   onClick={() => setSvcIdx(i)}
+                  aria-pressed={svcIdx === i}
                 >
                   {s.label}
                 </button>
@@ -268,9 +269,7 @@ export default function Home() {
             </p>
             <Link to="/whoami" className="home-mission-cta">Read our story →</Link>
           </div>
-          <div className="home-mission-visual">
-            <span className="home-mission-caption">image — reflection / mirror</span>
-          </div>
+          <div className="home-mission-visual" aria-hidden="true" />
         </div>
       </section>
 
@@ -299,6 +298,7 @@ export default function Home() {
                     boxShadow: series === key ? "0 8px 22px -8px rgba(0,0,0,.5)" : "none",
                   }}
                   onClick={() => setSeries(key)}
+                  aria-pressed={series === key}
                 >
                   {SERIES[key].label}
                 </button>
@@ -397,16 +397,6 @@ export default function Home() {
       </section>
 
       <Footer />
-
-      <a
-        href="https://wa.me/919810059991"
-        className="whatsapp-float"
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Chat on WhatsApp"
-      >
-        💬
-      </a>
     </>
   );
 }

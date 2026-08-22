@@ -1,10 +1,8 @@
 import { useState, useEffect, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import "../styles/Courses.css";
-
-const API = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
 
 /* ── Per-series design metadata ───────────────────────────────────── */
 type SeriesKey = "youth" | "leadership" | "board";
@@ -79,8 +77,6 @@ const SERIES_ORDER: SeriesKey[] = ["youth", "leadership", "board"];
 
 export default function Courses() {
   const [activeSeries, setActiveSeries] = useState<SeriesKey>("youth");
-  const [apiCourses, setApiCourses] = useState<any[]>([]);
-  const navigate = useNavigate();
 
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const sliderRef = useRef<HTMLDivElement>(null);
@@ -100,12 +96,6 @@ export default function Courses() {
     window.addEventListener("resize", positionSlider);
     return () => window.removeEventListener("resize", positionSlider);
   }, [activeSeries]);
-
-  useEffect(() => {
-    fetch(`${API}/api/courses`).then(r => r.json()).then(d => {
-      if (Array.isArray(d)) setApiCourses(d);
-    }).catch(() => {});
-  }, []);
 
   useEffect(() => {
     const t0 = document.timeline?.currentTime ?? 0;
@@ -200,15 +190,13 @@ export default function Courses() {
                 ))}
               </div>
             </div>
-            <div className="ser-thumb">
-              <span className="ser-thumb-caption">image — {meta.title}</span>
-            </div>
+            <div className="ser-thumb" aria-hidden="true" />
           </div>
 
           {/* course grid */}
           <div className="ser-course-grid">
             {courses.map(c => (
-              <div key={c.num} className="ser-course-card lift" onClick={() => navigate("/courses/" + c.title.toLowerCase().replace(/\s+/g, "-"))}>
+              <Link key={c.num} to="/series" className="ser-course-card lift">
                 <div className="ser-course-thumb">
                   <span className="ser-course-tag" style={{ background: meta.accent }}>
                     {c.tag}
@@ -223,7 +211,7 @@ export default function Courses() {
                     <span style={{ color: meta.accentText, fontWeight: 700 }}>{c.price}</span>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
@@ -265,7 +253,6 @@ export default function Courses() {
       </section>
 
       <Footer />
-      <a href="https://wa.me/919810059991" className="whatsapp-float" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">💬</a>
     </>
   );
 }

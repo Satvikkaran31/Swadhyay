@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import { useUser } from "../context/UserProvider";
 import "../styles/Admin.css";
 
@@ -161,8 +162,9 @@ function CourseList({ courses, onNew, onSelect, onDelete, onRefresh }) {
         body: JSON.stringify({ is_published: !c.is_published }),
       });
       onRefresh();
+      toast.success(c.is_published ? "Course unpublished" : "Course published");
     } catch {
-      alert("Failed to update publish status. Please try again.");
+      toast.error("Failed to update publish status. Please try again.");
     } finally {
       setTogglingId(null);
     }
@@ -619,8 +621,8 @@ function CourseEditor({ courseId, onSave, onCancel }) {
                         )}
                         {(!(lesson as any).type || (lesson as any).type === "video") && (
                           <div className="admin-form-group">
-                            <label>Video URL (YouTube or Vimeo)</label>
-                            <input value={lesson.video_url || ""} onChange={e => setLessonField(mi, li, "video_url", e.target.value)} placeholder="https://youtube.com/watch?v=…" />
+                            <label>YouTube video URL</label>
+                            <input value={lesson.video_url || ""} onChange={e => setLessonField(mi, li, "video_url", e.target.value)} placeholder="https://www.youtube.com/watch?v=…" />
                           </div>
                         )}
                         <div className="admin-lesson-footer">
@@ -1231,9 +1233,15 @@ function SeriesTab() {
   useEffect(load, []);
 
   const handleDelete = async (id: number) => {
-    await apiFetch(`/api/series/${id}`, { method: "DELETE" });
-    setDeletingId(null);
-    load();
+    try {
+      await apiFetch(`/api/series/${id}`, { method: "DELETE" });
+      toast.success("Series deleted");
+      load();
+    } catch (err: any) {
+      toast.error(err.message || "Could not delete series");
+    } finally {
+      setDeletingId(null);
+    }
   };
 
   if (view !== "list") {
@@ -1342,9 +1350,15 @@ function TestimonialsTab() {
   };
 
   const handleDelete = async (id: number) => {
-    await apiFetch(`/api/testimonials/${id}`, { method: "DELETE" });
-    setDeletingId(null);
-    load();
+    try {
+      await apiFetch(`/api/testimonials/${id}`, { method: "DELETE" });
+      toast.success("Testimonial deleted");
+      load();
+    } catch (err: any) {
+      toast.error(err.message || "Could not delete testimonial");
+    } finally {
+      setDeletingId(null);
+    }
   };
 
   const setField = (field, val) => setEditingItem(e => ({ ...e, [field]: val }));
@@ -1665,8 +1679,15 @@ function LeadsPanel() {
   };
 
   const handleDelete = async (id: number) => {
-    await apiFetch(`/api/crm/leads/${id}`, { method: 'DELETE' });
-    setDeletingId(null); load();
+    try {
+      await apiFetch(`/api/crm/leads/${id}`, { method: 'DELETE' });
+      toast.success("Lead deleted");
+      load();
+    } catch (err: any) {
+      toast.error(err.message || "Could not delete lead");
+    } finally {
+      setDeletingId(null);
+    }
   };
 
   const openSendModal = async () => {
@@ -1932,8 +1953,15 @@ function TemplatesPanel() {
   };
 
   const handleDelete = async (id: number) => {
-    await apiFetch(`/api/crm/templates/${id}`, { method: 'DELETE' });
-    setDeletingId(null); load();
+    try {
+      await apiFetch(`/api/crm/templates/${id}`, { method: 'DELETE' });
+      toast.success("Template deleted");
+      load();
+    } catch (err: any) {
+      toast.error(err.message || "Could not delete template");
+    } finally {
+      setDeletingId(null);
+    }
   };
 
   const loadPreview = async (id: number) => {
@@ -2184,8 +2212,15 @@ function AutomationsPanel() {
   };
 
   const handleDelete = async (id: number) => {
-    await apiFetch(`/api/crm/automations/${id}`, { method: 'DELETE' });
-    setDeletingId(null); load();
+    try {
+      await apiFetch(`/api/crm/automations/${id}`, { method: 'DELETE' });
+      toast.success("Automation deleted");
+      load();
+    } catch (err: any) {
+      toast.error(err.message || "Could not delete automation");
+    } finally {
+      setDeletingId(null);
+    }
   };
 
   const toggleActive = async (auto: any) => {
@@ -2417,13 +2452,23 @@ export default function Admin() {
   }, [user?.role]);
 
   const handleDeleteCourse = async (id) => {
-    await apiFetch(`/api/courses/${id}`, { method: "DELETE" });
-    loadCourses();
+    try {
+      await apiFetch(`/api/courses/${id}`, { method: "DELETE" });
+      toast.success("Course deleted");
+      loadCourses();
+    } catch (err: any) {
+      toast.error(err.message || "Could not delete course");
+    }
   };
 
   const handleDeleteArticle = async (id) => {
-    await apiFetch(`/api/articles/${id}`, { method: "DELETE" });
-    loadArticles();
+    try {
+      await apiFetch(`/api/articles/${id}`, { method: "DELETE" });
+      toast.success("Article deleted");
+      loadArticles();
+    } catch (err: any) {
+      toast.error(err.message || "Could not delete article");
+    }
   };
 
   const navigateTo = (id: string) => {

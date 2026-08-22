@@ -170,10 +170,10 @@ export default function SeriesDetail() {
               <h2 className="sd-section-title">Courses in This Series</h2>
               <div className="sd-courses-grid">
                 {series.courses.map((course: any) => (
-                  <div
+                  <Link
                     key={course.id}
+                    to={`/courses/${course.slug}`}
                     className="sd-course-card"
-                    onClick={() => navigate(`/courses/${course.slug}`)}
                   >
                     {/* Thumbnail */}
                     <div className="sd-thumb">
@@ -217,16 +217,10 @@ export default function SeriesDetail() {
                       )}
 
                       <div className="sd-card-footer">
-                        <Link
-                          to={`/courses/${course.slug}`}
-                          className="sd-view-link"
-                          onClick={e => e.stopPropagation()}
-                        >
-                          View Course →
-                        </Link>
+                        <span className="sd-view-link">View Course →</span>
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             </>

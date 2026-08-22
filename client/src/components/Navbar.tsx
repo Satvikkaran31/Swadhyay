@@ -141,6 +141,8 @@ export default function Navbar({ aboutRef }: { aboutRef?: unknown }) {
                     className="nav-user-pill"
                     onClick={() => setUserMenuOpen(o => !o)}
                     aria-label="User menu"
+                    aria-haspopup="true"
+                    aria-expanded={userMenuOpen}
                   >
                     {user.picture ? (
                       <img src={user.picture} alt={user.name} className="nav-user-avatar" referrerPolicy="no-referrer" />
@@ -205,7 +207,7 @@ export default function Navbar({ aboutRef }: { aboutRef?: unknown }) {
                 )}
               </Link>
             )}
-            <button className="nav-hamburger" onClick={() => setMenuOpen(o => !o)} aria-label="Toggle menu">
+            <button className="nav-hamburger" onClick={() => setMenuOpen(o => !o)} aria-label="Toggle menu" aria-expanded={menuOpen}>
               <span /><span /><span />
             </button>
           </div>

@@ -64,11 +64,11 @@ function useSEO({ title, description, path, keywords, noindex = false }) {
     updateMeta('og:description', description, true);
     updateMeta('og:url', `https://swadhyay.co${path}`, true);
     updateMeta('og:type', 'website', true);
-    updateMeta('og:image', 'https://swadhyay.co/src/assets/hero-page-5.png', true);
+    updateMeta('og:image', 'https://swadhyay.co/og-cover.webp', true);
     updateMeta('twitter:card', 'summary_large_image');
     updateMeta('twitter:title', title);
     updateMeta('twitter:description', description);
-    updateMeta('twitter:image', 'https://swadhyay.co/src/assets/hero-page-5.png');
+    updateMeta('twitter:image', 'https://swadhyay.co/og-cover.webp');
 
     if (noindex) {
       updateMeta('robots', 'noindex, nofollow');
