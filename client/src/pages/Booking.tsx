@@ -3,6 +3,8 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import BookingModal from "../components/BookingModal";
 import RazorpayButton from "../components/RazorpayButton";
+import { useUser } from "../context/UserProvider";
+import { useTriggerGoogleLogin } from "../utils/googleLoginHelper";
 import "../styles/Booking.css";
 
 const SESSION_TYPES = [
@@ -40,12 +42,21 @@ const FAQS = [
 ];
 
 export default function Booking() {
+  const { user, setUser } = useUser();
+  const login = useTriggerGoogleLogin(setUser, "/booking");
   const [selectedType, setSelectedType] = useState("one-on-one");
   const [modalOpen, setModalOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState(0);
   const [showPay, setShowPay] = useState(false);
   const [amount, setAmount] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
+
+  // Booking requires an authenticated account (the session is booked under it).
+  // Prompt Google login instead of opening a form that would fail on submit.
+  const handleBookClick = () => {
+    if (!user) { login(); return; }
+    setModalOpen(true);
+  };
 
   useEffect(() => {
     const t0 = document.timeline?.currentTime ?? 0;
@@ -134,9 +145,9 @@ export default function Booking() {
               <button
                 className="home-btn-primary"
                 style={{ fontSize: 17, padding: "18px 38px" }}
-                onClick={() => setModalOpen(true)}
+                onClick={handleBookClick}
               >
-                Book — {currentType.name} →
+                {user ? `Book — ${currentType.name} →` : "Log in to book →"}
               </button>
               <span className="bk-zoom-note">All sessions held privately on Zoom · IST</span>
             </div>

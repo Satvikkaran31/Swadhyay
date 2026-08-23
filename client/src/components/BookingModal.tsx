@@ -179,6 +179,8 @@ export default function BookingModal({ onClose, initialSessionType = "one-on-one
                     placeholder="you@example.com"
                     onChange={handleChange}
                     required
+                    readOnly={!!user}
+                    title={user ? "Your session is booked under your account email" : undefined}
                   />
                 </div>
               </div>

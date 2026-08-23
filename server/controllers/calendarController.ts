@@ -1,8 +1,18 @@
 import { google } from "googleapis";
 import { DateTime } from "luxon";
+import rateLimit from "express-rate-limit";
 import mailer from "../utils/mailer.js";
 import pool from "../utils/db.js";
 import { upsertLeadQuietly } from "./crmController.js";
+
+// Throttle booking creation to curb calendar-invite / email spam
+export const bookingLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 10,
+  message: { error: "Too many booking attempts, please try again later." },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 const oauth2Client = new google.auth.OAuth2(
   process.env.GOOGLE_CLIENT_ID,
@@ -27,9 +37,15 @@ function escapeHtml(str: string): string {
 }
 
 export const bookSession = async (req, res) => {
-  const { name, email, date, time, sessionType, meetingType, occupation, organization } = req.body;
+  const { name, date, time, sessionType, meetingType, occupation, organization } = req.body;
 
-  if (!name || !email || !date || !time || !sessionType || !meetingType || !occupation || !organization) {
+  // Bind the booking to the authenticated account. Never trust a client-supplied
+  // recipient — otherwise any logged-in user could send calendar invites and
+  // confirmation emails to arbitrary addresses.
+  const email = req.session?.user?.email;
+  if (!email) return res.status(401).json({ error: "Not authenticated" });
+
+  if (!name || !date || !time || !sessionType || !meetingType || !occupation || !organization) {
     return res.status(400).json({ error: "Missing required fields" });
   }
 
