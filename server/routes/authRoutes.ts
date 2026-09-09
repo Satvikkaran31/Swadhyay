@@ -67,7 +67,7 @@ router.post('/google', authLimiter, async (req, res) => {
        ON CONFLICT (google_id) DO UPDATE
          SET name    = EXCLUDED.name,
              picture = EXCLUDED.picture,
-             role    = CASE WHEN lower(users.email) = ANY((SELECT admin_emails FROM vals))
+             role    = CASE WHEN lower(users.email) = ANY($5::text[])
                             THEN 'admin' ELSE users.role END
        RETURNING id, name, email, picture, role, linkedin_url`,
       [payload.sub, payload.name, payload.email, payload.picture, adminEmails]
