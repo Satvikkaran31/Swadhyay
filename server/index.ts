@@ -73,6 +73,9 @@ app.use(cors({ origin: allowed_origins, credentials: true }));
 app.use((_req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-Frame-Options', 'DENY');
+  // Keep the opener link to popups we open (Google Sign-In) so its window.closed
+  // check works and the code can post back — silences the COOP warnings.
+  res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
   // API origin the built frontend calls (VITE_API_BASE_URL). Allowed in connect-src
