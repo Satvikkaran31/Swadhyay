@@ -12,6 +12,7 @@ const router = express.Router();
 
 // Public routes — no admin required
 router.get('/unsubscribe', unsubscribeLead);
+router.post('/unsubscribe', unsubscribeLead); // RFC 8058 List-Unsubscribe one-click
 router.get('/track/open/:token', trackOpen);
 
 // All CRM routes below require admin

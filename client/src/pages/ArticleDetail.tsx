@@ -16,6 +16,19 @@ function readingTime(content: string): number {
   return Math.max(1, Math.ceil(words / 200));
 }
 
+// Article bodies are authored with a leading "# Title" that duplicates the
+// title already shown in the hero. Drop that first H1 when it matches, so the
+// page doesn't render the headline twice.
+function stripDuplicateTitle(content: string, title: string): string {
+  if (!content) return content;
+  const m = content.match(/^\s*#\s+(.+?)\s*(?:\n|$)/);
+  if (m) {
+    const norm = (s: string) => s.replace(/\s+/g, ' ').trim().toLowerCase();
+    if (norm(m[1]) === norm(title || '')) return content.slice(m[0].length);
+  }
+  return content;
+}
+
 function formatDate(iso: string | undefined): string {
   if (!iso) return '';
   try {
@@ -237,7 +250,7 @@ export default function ArticleDetail() {
                 className="art-detail-prose"
                 dangerouslySetInnerHTML={{
                   __html: DOMPurify.sanitize(
-                    marked.parse(article.content || '') as string,
+                    marked.parse(stripDuplicateTitle(article.content || '', article.title)) as string,
                   ),
                 }}
               />

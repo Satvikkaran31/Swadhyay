@@ -2,6 +2,7 @@ import express from 'express';
 import rateLimit from 'express-rate-limit';
 import { OAuth2Client } from 'google-auth-library';
 import pool from '../utils/db.js';
+import { captureLeadFromLogin } from '../controllers/analyticsController.js';
 
 const ALLOWED_REDIRECT_URIS = [
   'postmessage',
@@ -27,7 +28,7 @@ const authLimiter = rateLimit({
 });
 
 router.post('/google', authLimiter, async (req, res) => {
-  const { code, redirect_uri } = req.body;
+  const { code, redirect_uri, visitor_id } = req.body;
 
   if (!ALLOWED_REDIRECT_URIS.includes(redirect_uri)) {
     return res.status(400).json({ error: 'Invalid redirect URI' });
@@ -83,6 +84,8 @@ router.post('/google', authLimiter, async (req, res) => {
       req.session.user = user;
       req.session.save((saveErr) => {
         if (saveErr) return res.status(500).json({ error: 'Session not saved' });
+        // Auto-capture this authenticated visitor as a CRM lead (non-blocking).
+        captureLeadFromLogin(user, typeof visitor_id === 'string' ? visitor_id : null);
         res.json({ success: true, user: req.session.user });
       });
     });

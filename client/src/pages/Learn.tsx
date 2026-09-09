@@ -36,6 +36,48 @@ export default function Learn() {
   const activeLessonRef = useRef<HTMLButtonElement | null>(null);
   useEffect(() => () => { if (noteSaveTimer.current) clearTimeout(noteSaveTimer.current); }, []);
 
+  // ── Course-completion flow (review → book a 1-on-1) ──
+  const [showComplete, setShowComplete] = useState(false);
+  const [completeStep, setCompleteStep] = useState<"review" | "booking">("review");
+  const [cmpRating, setCmpRating] = useState(0);
+  const [cmpHoverStar, setCmpHoverStar] = useState(0);
+  const [cmpTakeaway, setCmpTakeaway] = useState("");
+  const [cmpImprove, setCmpImprove] = useState("");
+  const [cmpSubmitting, setCmpSubmitting] = useState(false);
+  const completePromptedRef = useRef(false);
+
+  const completeKey = course ? `sw-course-complete-${course.id}` : "";
+  const dismissComplete = () => {
+    try { if (completeKey) localStorage.setItem(completeKey, "1"); } catch { /* storage blocked */ }
+    setShowComplete(false);
+  };
+
+  const submitCompletionReview = async () => {
+    if (!cmpRating) return;
+    setCmpSubmitting(true);
+    const body = [
+      cmpTakeaway.trim() && `Biggest takeaway: ${cmpTakeaway.trim()}`,
+      cmpImprove.trim() && `Could be improved: ${cmpImprove.trim()}`,
+    ].filter(Boolean).join("\n\n");
+    try {
+      const res = await fetch(`${API}/api/courses/${slug}/reviews`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ rating: cmpRating, body }),
+      });
+      // A prior review (409/400) shouldn't block the flow — thank them and move on.
+      if (!res.ok && res.status >= 500) throw new Error("server");
+      toast.success("Thanks for your feedback!");
+      setCompleteStep("booking");
+    } catch {
+      toast.error("Couldn't save your review, but you can still book a session.");
+      setCompleteStep("booking");
+    } finally {
+      setCmpSubmitting(false);
+    }
+  };
+
   useEffect(() => {
     if (!authLoading && !user) navigate(`/courses/${slug}`);
   }, [authLoading, user]);
@@ -144,6 +186,19 @@ export default function Learn() {
 
   const totalLessons = course?.modules?.reduce((acc: number, m: any) => acc + (m.lessons?.length || 0), 0) || 0;
   const progressPct = totalLessons > 0 ? Math.round((completedIds.size / totalLessons) * 100) : 0;
+
+  // When the course reaches 100%, prompt for a review + a 1-on-1 — once per
+  // course (tracked in localStorage so revisiting a done course won't nag).
+  useEffect(() => {
+    if (!course || totalLessons === 0 || progressPct < 100) return;
+    if (completePromptedRef.current) return;
+    let seen = false;
+    try { seen = !!localStorage.getItem(`sw-course-complete-${course.id}`); } catch { /* storage blocked */ }
+    if (seen) return;
+    completePromptedRef.current = true;
+    setCompleteStep("review");
+    setShowComplete(true);
+  }, [progressPct, course, totalLessons]);
 
   const allLessons = course?.modules?.flatMap((m: any) => m.lessons ?? []) ?? [];
   const currentIdx = allLessons.findIndex((l: any) => l.id === activeLesson?.id);
@@ -303,6 +358,7 @@ export default function Learn() {
               className="lms-strip-next"
               onClick={goNext}
               disabled={!nextLesson}
+              aria-label="Next lesson"
             >
               <span className="lms-strip-next-label">Next</span>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -498,6 +554,90 @@ export default function Learn() {
           )}
         </aside>
       </div>
+
+      {/* ── Course-completion modal: review → book a 1-on-1 ── */}
+      {showComplete && (
+        <div className="lms-cmp-overlay" role="dialog" aria-modal="true" aria-label="Course complete">
+          <div className="lms-cmp-modal">
+            {completeStep === "review" ? (
+              <>
+                <div className="lms-cmp-badge">🎉</div>
+                <h2 className="lms-cmp-title">You finished {course.title}!</h2>
+                <p className="lms-cmp-sub">Congratulations. Before you go — how was it? Your feedback helps others and shapes what comes next.</p>
+
+                <div className="lms-cmp-field">
+                  <label className="lms-cmp-label">How would you rate this course?</label>
+                  <div className="lms-cmp-stars" role="radiogroup" aria-label="Course rating">
+                    {[1, 2, 3, 4, 5].map(n => (
+                      <button
+                        key={n}
+                        type="button"
+                        className={`lms-cmp-star${n <= (cmpHoverStar || cmpRating) ? " on" : ""}`}
+                        onMouseEnter={() => setCmpHoverStar(n)}
+                        onMouseLeave={() => setCmpHoverStar(0)}
+                        onClick={() => setCmpRating(n)}
+                        aria-label={`${n} star${n !== 1 ? "s" : ""}`}
+                        aria-pressed={cmpRating === n}
+                      >★</button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="lms-cmp-field">
+                  <label className="lms-cmp-label" htmlFor="cmp-takeaway">What's your biggest takeaway?</label>
+                  <textarea
+                    id="cmp-takeaway"
+                    className="lms-cmp-textarea"
+                    value={cmpTakeaway}
+                    onChange={e => setCmpTakeaway(e.target.value)}
+                    placeholder="One thing you'll carry forward…"
+                    rows={2}
+                  />
+                </div>
+
+                <div className="lms-cmp-field">
+                  <label className="lms-cmp-label" htmlFor="cmp-improve">Anything we could improve? <span className="lms-cmp-optional">(optional)</span></label>
+                  <textarea
+                    id="cmp-improve"
+                    className="lms-cmp-textarea"
+                    value={cmpImprove}
+                    onChange={e => setCmpImprove(e.target.value)}
+                    placeholder="Be honest — it helps."
+                    rows={2}
+                  />
+                </div>
+
+                <div className="lms-cmp-actions">
+                  <button className="lms-cmp-skip" onClick={() => setCompleteStep("booking")}>Skip</button>
+                  <button className="lms-cmp-primary" onClick={submitCompletionReview} disabled={!cmpRating || cmpSubmitting}>
+                    {cmpSubmitting ? "Submitting…" : "Submit review"}
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="lms-cmp-badge">🌱</div>
+                <h2 className="lms-cmp-title">Want to go deeper?</h2>
+                <p className="lms-cmp-sub">
+                  A course plants the seed — a 1-on-1 with Neha helps you apply it to your own situation.
+                  Book a private session to turn what you've learned into real change.
+                </p>
+                <div className="lms-cmp-actions lms-cmp-actions-book">
+                  <button className="lms-cmp-skip" onClick={dismissComplete}>Maybe later</button>
+                  <button className="lms-cmp-primary" onClick={() => { dismissComplete(); navigate("/booking"); }}>
+                    Book a 1-on-1 →
+                  </button>
+                </div>
+                {progressPct === 100 && (
+                  <Link to={`/courses/${slug}/certificate`} className="lms-cmp-cert-link" onClick={dismissComplete}>
+                    🎓 Get your certificate
+                  </Link>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

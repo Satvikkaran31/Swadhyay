@@ -4,6 +4,7 @@ import { useGoogleLogin } from '@react-oauth/google';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import { getVisitorId } from './analytics';
 
 export function useTriggerGoogleLogin(setUser, navigateTo = "/") {
   const navigate = useNavigate();
@@ -23,7 +24,8 @@ export function useTriggerGoogleLogin(setUser, navigateTo = "/") {
 
         const response = await axios.post(`${apiBase}/api/auth/google`, {
           code: codeResponse.code,
-          redirect_uri: 'postmessage'
+          redirect_uri: 'postmessage',
+          visitor_id: getVisitorId(),
         }, {
           withCredentials: true
         });

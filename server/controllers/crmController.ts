@@ -4,11 +4,16 @@ import mailer from '../utils/mailer.js';
 import validator from 'validator';
 
 const VALID_STATUSES = ['new', 'contacted', 'qualified', 'converted', 'lost'];
-const VALID_SOURCES  = ['inquiry', 'newsletter', 'manual', 'booking'];
+const VALID_SOURCES  = ['inquiry', 'newsletter', 'manual', 'booking', 'login', 'visitor'];
 const VALID_CATS     = ['welcome', 'follow-up', 'promotional', 'nurture', 'general'];
 
 function esc(s: string) {
-  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
 
 function substitute(template: string, vars: Record<string, string>): string {
@@ -28,6 +33,26 @@ function buildVars(lead: any, extra: Record<string, string> = {}): Record<string
     unsubscribe_link: `${apiBase}/api/crm/unsubscribe?token=${lead.unsubscribe_token || ''}`,
     ...extra,
   };
+}
+
+// Guarantee every outbound marketing email carries a working opt-out (CAN-SPAM /
+// GDPR): a visible footer link if the template author didn't include one, plus the
+// List-Unsubscribe headers Gmail/Apple use to render a native unsubscribe button.
+function ensureUnsubscribe(html: string, unsubUrl: string): { html: string; headers: Record<string, string> } {
+  const already = html.includes(unsubUrl) || html.includes('/api/crm/unsubscribe');
+  const footer = already ? '' :
+    `<hr style="border:none;border-top:1px solid #e5e5e5;margin:28px 0 12px">` +
+    `<p style="font:12px system-ui,sans-serif;color:#999;text-align:center">` +
+    `You're receiving this because you connected with Swadhyay. ` +
+    `<a href="${unsubUrl}" style="color:#999">Unsubscribe</a>.</p>`;
+  const body = footer
+    ? (html.includes('</body>') ? html.replace('</body>', `${footer}</body>`) : html + footer)
+    : html;
+  const headers: Record<string, string> = {
+    'List-Unsubscribe': `<${unsubUrl}>, <mailto:${process.env.ADMIN_EMAIL || ''}?subject=unsubscribe>`,
+    'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+  };
+  return { html: body, headers };
 }
 
 // ── LEADS ─────────────────────────────────────────────────────────────────────
@@ -243,7 +268,8 @@ export const sendToLeads = async (req, res) => {
     for (const lead of leads) {
       const vars = buildVars(lead, extra_vars);
       const subject = substitute(t.subject, vars);
-      const rawHtml = substitute(t.body, vars);
+      const unsubUrl = `${apiBase}/api/crm/unsubscribe?token=${lead.unsubscribe_token || ''}`;
+      const { html: rawHtml, headers: unsubHeaders } = ensureUnsubscribe(substitute(t.body, vars), unsubUrl);
       const trackingToken = crypto.randomUUID();
       const pixel = `<img src="${apiBase}/api/crm/track/open/${trackingToken}" width="1" height="1" alt="" style="display:none">`;
       const trackedHtml = rawHtml.includes('</body>')
@@ -255,11 +281,12 @@ export const sendToLeads = async (req, res) => {
 
       try {
         await mailer.sendMail({
-          from:    { name: 'Neha Verma · Swadhyay', address: process.env.MAIL_USER as string },
+          from:    { name: 'Neha Sharma · Swadhyay', address: process.env.MAIL_USER as string },
           to:      lead.email,
           subject,
           html:    trackedHtml,
           replyTo: process.env.ADMIN_EMAIL,
+          headers: unsubHeaders,
         });
         results.sent++;
       } catch (err: any) {
@@ -364,16 +391,23 @@ export const getCRMStats = async (_req, res) => {
 // ── UNSUBSCRIBE ───────────────────────────────────────────────────────────────
 
 export const unsubscribeLead = async (req, res) => {
-  const { token } = req.query;
-  if (!token) return res.status(400).send('<p>Invalid unsubscribe link.</p>');
+  // Token may arrive in the query (email link / one-click GET) or the body.
+  const token = req.query.token || req.body?.token;
+  // RFC 8058 one-click: mail providers POST here with no browser Origin — ack plainly.
+  const isOneClick = req.method === 'POST';
+  if (!token) {
+    return isOneClick ? res.status(400).end() : res.status(400).send('<p>Invalid unsubscribe link.</p>');
+  }
   try {
     const { rowCount } = await pool.query(
       `UPDATE leads SET unsubscribed = TRUE, unsubscribed_at = NOW() WHERE unsubscribe_token = $1`,
       [token]
     );
+    if (isOneClick) return res.status(rowCount ? 200 : 404).end();
     if (!rowCount) return res.status(404).send('<p>Link not found or already processed.</p>');
     res.send(`<!DOCTYPE html><html><head><title>Unsubscribed</title></head><body style="font-family:system-ui;max-width:480px;margin:80px auto;text-align:center;color:#333"><h2>You've been unsubscribed</h2><p>You won't receive further emails from Swadhyay. <a href="https://swadhyay.co">Return to site</a></p></body></html>`);
   } catch {
+    if (isOneClick) return res.status(500).end();
     res.status(500).send('<p>Something went wrong. Please try again.</p>');
   }
 };
@@ -417,11 +451,16 @@ export const createAutomation = async (req, res) => {
   const { name, trigger_source, delay_hours = 0, template_id, is_active = true } = req.body;
   if (!name?.trim()) return res.status(400).json({ error: 'name is required' });
   if (!template_id) return res.status(400).json({ error: 'template_id is required' });
+  const dh = Number(delay_hours);
+  if (!Number.isFinite(dh) || dh < 0) return res.status(400).json({ error: 'delay_hours must be a non-negative number' });
+  if (trigger_source != null && trigger_source !== '' && !VALID_SOURCES.includes(trigger_source)) {
+    return res.status(400).json({ error: 'Invalid trigger_source' });
+  }
   try {
     const { rows } = await pool.query(
       `INSERT INTO email_automations (name, trigger_source, delay_hours, template_id, is_active)
        VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-      [name.trim(), trigger_source || null, Number(delay_hours), template_id, is_active]
+      [name.trim(), trigger_source || null, dh, template_id, is_active]
     );
     res.status(201).json(rows[0]);
   } catch { res.status(500).json({ error: 'Failed to create automation' }); }
@@ -430,6 +469,13 @@ export const createAutomation = async (req, res) => {
 export const updateAutomation = async (req, res) => {
   const { id } = req.params;
   const { name, trigger_source, delay_hours, template_id, is_active } = req.body;
+  if (delay_hours !== undefined) {
+    const dh = Number(delay_hours);
+    if (!Number.isFinite(dh) || dh < 0) return res.status(400).json({ error: 'delay_hours must be a non-negative number' });
+  }
+  if (trigger_source !== undefined && trigger_source !== null && trigger_source !== '' && !VALID_SOURCES.includes(trigger_source)) {
+    return res.status(400).json({ error: 'Invalid trigger_source' });
+  }
   try {
     const { rows } = await pool.query(
       `UPDATE email_automations
@@ -512,7 +558,8 @@ export async function runPendingAutomations() {
       const vars = buildVars(run);
       const subject = substitute(tmpl[0].subject, vars);
       const trackingToken = crypto.randomUUID();
-      const rawHtml = substitute(tmpl[0].body, vars);
+      const unsubUrl = `${apiBase}/api/crm/unsubscribe?token=${run.unsubscribe_token || ''}`;
+      const { html: rawHtml, headers: unsubHeaders } = ensureUnsubscribe(substitute(tmpl[0].body, vars), unsubUrl);
       const pixel = `<img src="${apiBase}/api/crm/track/open/${trackingToken}" width="1" height="1" alt="" style="display:none">`;
       const html = rawHtml.includes('</body>')
         ? rawHtml.replace('</body>', `${pixel}</body>`)
@@ -522,11 +569,12 @@ export async function runPendingAutomations() {
       let errMsg: string | null = null;
       try {
         await mailer.sendMail({
-          from:    { name: 'Neha Verma · Swadhyay', address: process.env.MAIL_USER as string },
+          from:    { name: 'Neha Sharma · Swadhyay', address: process.env.MAIL_USER as string },
           to:      run.email,
           subject,
           html,
           replyTo: process.env.ADMIN_EMAIL,
+          headers: unsubHeaders,
         });
       } catch (err: any) {
         status = 'failed';

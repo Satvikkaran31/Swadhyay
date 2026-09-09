@@ -16,9 +16,10 @@
 .nf-orb {
   position: absolute;
   top: -80px;
-  right: -40px;
+  right: 0;
   width: 400px;
   height: 400px;
+  max-width: 80vw;
   border-radius: 999px;
   background: radial-gradient(circle, rgba(95,200,184,.3) 0%, rgba(95,200,184,0) 70%);
   filter: blur(24px);

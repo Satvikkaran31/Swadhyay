@@ -1827,7 +1827,7 @@ function LeadsPanel() {
                   {lead.name}
                   {lead.unsubscribed && <span className="crm-unsub-badge" title={`Unsubscribed ${lead.unsubscribed_at ? new Date(lead.unsubscribed_at).toLocaleDateString() : ''}`}>unsub</span>}
                 </td>
-                <td style={{ color: '#666', fontSize: '0.85rem' }}>{lead.email}</td>
+                <td style={{ color: 'var(--fg-mid)', fontSize: '0.85rem' }}>{lead.email}</td>
                 <td><span className={`crm-source-badge crm-source-${lead.source}`}>{lead.source}</span></td>
                 <td>
                   <select
@@ -1838,7 +1838,7 @@ function LeadsPanel() {
                     {CRM_STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
                   </select>
                 </td>
-                <td style={{ whiteSpace: 'nowrap', fontSize: '0.8rem', color: '#888' }}>
+                <td style={{ whiteSpace: 'nowrap', fontSize: '0.8rem', color: 'var(--fg-muted)' }}>
                   {formatDateShort(lead.created_at)}
                 </td>
                 <td>
@@ -2055,8 +2055,8 @@ function TemplatesPanel() {
                 <tr key={t.id}>
                   <td style={{ fontWeight: 500 }}>{t.name}</td>
                   <td><span className={`crm-cat-badge crm-cat-${t.category}`}>{t.category}</span></td>
-                  <td style={{ maxWidth: 240, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '0.85rem', color: '#666' }}>{t.subject}</td>
-                  <td style={{ whiteSpace: 'nowrap', fontSize: '0.8rem', color: '#888' }}>{formatDateShort(t.updated_at)}</td>
+                  <td style={{ maxWidth: 240, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '0.85rem', color: 'var(--fg-mid)' }}>{t.subject}</td>
+                  <td style={{ whiteSpace: 'nowrap', fontSize: '0.8rem', color: 'var(--fg-muted)' }}>{formatDateShort(t.updated_at)}</td>
                   <td>
                     <div className="admin-actions">
                       {deletingId === t.id ? (
@@ -2099,7 +2099,7 @@ function HistoryPanel() {
     <div className="admin-section">
       <div className="admin-section-header">
         <h2>Email History</h2>
-        <span style={{ fontSize: '0.85rem', color: '#888' }}>{logs.length} records (last 300)</span>
+        <span style={{ fontSize: '0.85rem', color: 'var(--fg-muted)' }}>{logs.length} records (last 300)</span>
       </div>
 
       {logs.length === 0 ? (
@@ -2124,14 +2124,14 @@ function HistoryPanel() {
               <tr key={log.id}>
                 <td style={{ fontSize: '0.85rem' }}>
                   <div style={{ fontWeight: 500 }}>{log.to_name || log.to_email}</div>
-                  {log.to_name && <div style={{ color: '#888', fontSize: '0.78rem' }}>{log.to_email}</div>}
+                  {log.to_name && <div style={{ color: 'var(--fg-muted)', fontSize: '0.78rem' }}>{log.to_email}</div>}
                 </td>
                 <td style={{ fontSize: '0.82rem' }}>
                   {log.template_name ? (
                     <><span className={`crm-cat-badge crm-cat-${log.category}`}>{log.category}</span> {log.template_name}</>
                   ) : '—'}
                 </td>
-                <td style={{ maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '0.82rem', color: '#555' }}>
+                <td style={{ maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '0.82rem', color: 'var(--fg-mid)' }}>
                   {log.subject}
                 </td>
                 <td>
@@ -2143,9 +2143,9 @@ function HistoryPanel() {
                     <span className="crm-open-badge" title={`First opened ${log.opened_at ? new Date(log.opened_at).toLocaleString() : ''}`}>
                       👁 {log.open_count}
                     </span>
-                  ) : <span style={{ color: '#bbb' }}>—</span>}
+                  ) : <span style={{ color: 'var(--fg-muted)' }}>—</span>}
                 </td>
-                <td style={{ whiteSpace: 'nowrap', fontSize: '0.78rem', color: '#888' }}>
+                <td style={{ whiteSpace: 'nowrap', fontSize: '0.78rem', color: 'var(--fg-muted)' }}>
                   {formatDate(log.sent_at)}
                 </td>
               </tr>
@@ -2236,7 +2236,7 @@ function AutomationsPanel() {
       <div className="admin-section-header">
         <div>
           <h2>Email Automations</h2>
-          <p style={{ margin: '2px 0 0', fontSize: '0.82rem', color: '#888' }}>
+          <p style={{ margin: '2px 0 0', fontSize: '0.82rem', color: 'var(--fg-muted)' }}>
             Rules that auto-send emails when a new lead enters the system.
           </p>
         </div>
@@ -2305,7 +2305,7 @@ function AutomationsPanel() {
               <tr key={auto.id} style={{ opacity: auto.is_active ? 1 : 0.55 }}>
                 <td style={{ fontWeight: 500 }}>{auto.name}</td>
                 <td><span className={`crm-source-badge crm-source-${auto.trigger_source || 'manual'}`}>{auto.trigger_source || 'any'}</span></td>
-                <td style={{ fontSize: '0.82rem', color: '#666' }}>
+                <td style={{ fontSize: '0.82rem', color: 'var(--fg-mid)' }}>
                   {auto.delay_hours === 0 ? 'Immediately' : `After ${auto.delay_hours}h`}
                 </td>
                 <td style={{ fontSize: '0.82rem' }}>
@@ -2352,6 +2352,240 @@ function AutomationsPanel() {
 
 // ── CRM Stats bar ──────────────────────────────────────────────────────────
 
+// ── Analytics panel ───────────────────────────────────────────────────────────
+
+const RANGES = [
+  { days: 7,  label: '7d' },
+  { days: 30, label: '30d' },
+  { days: 90, label: '90d' },
+];
+
+// Horizontal bar row used by the top-courses / pages / sources / devices lists.
+function AnBar({ label, sub, value, max, suffix }: { label: string; sub?: string; value: number; max: number; suffix?: string }) {
+  const pct = max > 0 ? Math.round((value / max) * 100) : 0;
+  return (
+    <div className="an-bar-row">
+      <div className="an-bar-head">
+        <span className="an-bar-label" title={label}>{label}</span>
+        <span className="an-bar-val">{value.toLocaleString('en-IN')}{suffix || ''}</span>
+      </div>
+      <div className="an-bar-track"><div className="an-bar-fill" style={{ width: `${pct}%` }} /></div>
+      {sub && <span className="an-bar-sub">{sub}</span>}
+    </div>
+  );
+}
+
+// Zero-dependency SVG area chart for the daily traffic timeseries.
+function AnSparkline({ data }: { data: Array<{ day: string; page_views: number; visitors: number }> }) {
+  if (!data.length) return <div className="admin-empty">No traffic yet.</div>;
+  const W = 720, H = 160, P = 4;
+  const max = Math.max(1, ...data.map(d => d.page_views));
+  const stepX = data.length > 1 ? (W - P * 2) / (data.length - 1) : 0;
+  const x = (i: number) => P + i * stepX;
+  const y = (v: number) => H - P - (v / max) * (H - P * 2);
+  const line = data.map((d, i) => `${i === 0 ? 'M' : 'L'}${x(i).toFixed(1)},${y(d.page_views).toFixed(1)}`).join(' ');
+  const area = `${line} L${x(data.length - 1).toFixed(1)},${H - P} L${x(0).toFixed(1)},${H - P} Z`;
+  const peak = data.reduce((a, b) => (b.page_views > a.page_views ? b : a), data[0]);
+  return (
+    <div className="an-chart-wrap">
+      <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" className="an-chart" role="img" aria-label="Daily page views">
+        <defs>
+          <linearGradient id="anFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="var(--teal)" stopOpacity="0.35" />
+            <stop offset="100%" stopColor="var(--teal)" stopOpacity="0" />
+          </linearGradient>
+        </defs>
+        <path d={area} fill="url(#anFill)" />
+        <path d={line} fill="none" stroke="var(--teal-deep)" strokeWidth="2" vectorEffect="non-scaling-stroke" />
+      </svg>
+      <div className="an-chart-meta">
+        <span>{data[0]?.day}</span>
+        <span>Peak {peak.page_views.toLocaleString('en-IN')} views · {peak.day}</span>
+        <span>{data[data.length - 1]?.day}</span>
+      </div>
+    </div>
+  );
+}
+
+function AnalyticsPanel() {
+  const [days, setDays] = useState(30);
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+    apiFetch(`/api/analytics/overview?days=${days}`)
+      .then(d => setData(d))
+      .catch(() => setData(null))
+      .finally(() => setLoading(false));
+  }, [days]);
+
+  if (loading && !data) return <div className="admin-empty">Loading analytics…</div>;
+  if (!data) return <div className="admin-empty">Could not load analytics.</div>;
+
+  const k = data.kpis;
+  const fn = data.funnel;
+  const leadRate = fn.visitors > 0 ? (fn.leads / fn.visitors) * 100 : 0;
+  const enrollRate = fn.leads > 0 ? (fn.enrollments / fn.leads) * 100 : 0;
+
+  const kpiCards = [
+    { label: 'Unique visitors', val: k.unique_visitors },
+    { label: 'Page views', val: k.page_views },
+    { label: 'Course views', val: k.course_views },
+    { label: 'Known visitors', val: k.known_visitors, hint: 'logged-in' },
+    { label: 'New leads', val: k.new_leads },
+    { label: 'Enrollments', val: k.enrollments },
+  ];
+
+  const courseMax = Math.max(1, ...data.top_courses.map((c: any) => c.views));
+  const pageMax   = Math.max(1, ...data.top_pages.map((p: any) => p.views));
+  const srcMax    = Math.max(1, ...data.sources.map((s: any) => s.visitors));
+  const devMax    = Math.max(1, ...data.devices.map((d: any) => d.visitors));
+
+  return (
+    <div className="an-panel">
+      <div className="an-toolbar">
+        <h2 className="an-title">Site Analytics</h2>
+        <div className="an-range">
+          {RANGES.map(r => (
+            <button
+              key={r.days}
+              className={`an-range-btn${days === r.days ? ' active' : ''}`}
+              onClick={() => setDays(r.days)}
+            >{r.label}</button>
+          ))}
+        </div>
+      </div>
+
+      {/* KPI cards */}
+      <div className="an-kpi-grid">
+        {kpiCards.map(c => (
+          <div key={c.label} className="an-kpi">
+            <span className="an-kpi-val">{Number(c.val).toLocaleString('en-IN')}</span>
+            <span className="an-kpi-lbl">{c.label}{c.hint && <em> · {c.hint}</em>}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* Traffic timeseries */}
+      <div className="an-card">
+        <div className="an-card-head"><h3>Traffic — daily page views</h3></div>
+        <AnSparkline data={data.timeseries} />
+      </div>
+
+      {/* Funnel */}
+      <div className="an-card">
+        <div className="an-card-head"><h3>Acquisition funnel</h3></div>
+        <div className="an-funnel">
+          <div className="an-funnel-stage">
+            <span className="an-funnel-num">{fn.visitors.toLocaleString('en-IN')}</span>
+            <span className="an-funnel-lbl">Visitors</span>
+          </div>
+          <div className="an-funnel-arrow"><span>{leadRate.toFixed(1)}%</span>→</div>
+          <div className="an-funnel-stage">
+            <span className="an-funnel-num">{fn.leads.toLocaleString('en-IN')}</span>
+            <span className="an-funnel-lbl">Leads</span>
+          </div>
+          <div className="an-funnel-arrow"><span>{enrollRate.toFixed(1)}%</span>→</div>
+          <div className="an-funnel-stage">
+            <span className="an-funnel-num">{fn.enrollments.toLocaleString('en-IN')}</span>
+            <span className="an-funnel-lbl">Enrollments</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Two-column: top courses + top pages */}
+      <div className="an-two-col">
+        <div className="an-card">
+          <div className="an-card-head"><h3>Most viewed courses</h3></div>
+          {data.top_courses.length === 0 ? <div className="admin-empty">No course views yet.</div> : (
+            data.top_courses.map((c: any) => (
+              <AnBar key={c.course_id} label={c.title} sub={`${c.unique_visitors} unique visitors`} value={c.views} max={courseMax} />
+            ))
+          )}
+        </div>
+        <div className="an-card">
+          <div className="an-card-head"><h3>Top pages</h3></div>
+          {data.top_pages.length === 0 ? <div className="admin-empty">No page views yet.</div> : (
+            data.top_pages.map((p: any) => (
+              <AnBar key={p.path} label={p.path} value={p.views} max={pageMax} />
+            ))
+          )}
+        </div>
+      </div>
+
+      {/* Two-column: sources + devices */}
+      <div className="an-two-col">
+        <div className="an-card">
+          <div className="an-card-head"><h3>Traffic sources</h3></div>
+          {data.sources.length === 0 ? <div className="admin-empty">No data yet.</div> : (
+            data.sources.map((s: any) => (
+              <AnBar key={s.source} label={s.source} value={s.visitors} max={srcMax} suffix=" visitors" />
+            ))
+          )}
+        </div>
+        <div className="an-card">
+          <div className="an-card-head"><h3>Devices</h3></div>
+          {data.devices.length === 0 ? <div className="admin-empty">No data yet.</div> : (
+            data.devices.map((d: any) => (
+              <AnBar key={d.device} label={d.device} value={d.visitors} max={devMax} suffix=" visitors" />
+            ))
+          )}
+        </div>
+      </div>
+
+      {/* Most engaged leads */}
+      <div className="an-card">
+        <div className="an-card-head"><h3>Most engaged leads</h3><span className="an-card-sub">by activity score</span></div>
+        {data.top_leads.length === 0 ? <div className="admin-empty">No engaged leads yet.</div> : (
+          <table className="admin-table">
+            <thead><tr><th>Lead</th><th>Source</th><th>Status</th><th>Views</th><th>Score</th><th>Last seen</th></tr></thead>
+            <tbody>
+              {data.top_leads.map((l: any) => (
+                <tr key={l.id}>
+                  <td style={{ fontSize: '0.85rem' }}>
+                    <div style={{ fontWeight: 500 }}>{l.name}</div>
+                    <div style={{ color: 'var(--fg-muted)', fontSize: '0.78rem' }}>{l.email}</div>
+                  </td>
+                  <td><span className={`crm-source-badge crm-source-${l.source}`}>{l.source}</span></td>
+                  <td><span className={`crm-status-pill ${STATUS_COLORS[l.status] || ''}`}>{l.status}</span></td>
+                  <td style={{ textAlign: 'center' }}>{l.page_view_count}</td>
+                  <td>
+                    <div className="an-score">
+                      <div className="an-score-track"><div className="an-score-fill" style={{ width: `${l.engagement_score}%` }} /></div>
+                      <span className="an-score-num">{l.engagement_score}</span>
+                    </div>
+                  </td>
+                  <td style={{ whiteSpace: 'nowrap', fontSize: '0.78rem', color: 'var(--fg-muted)' }}>{l.last_seen_at ? formatDate(l.last_seen_at) : '—'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+
+      {/* Recent activity */}
+      <div className="an-card">
+        <div className="an-card-head"><h3>Live activity</h3><span className="an-card-sub">latest 20 events</span></div>
+        {data.recent_activity.length === 0 ? <div className="admin-empty">No activity yet.</div> : (
+          <div className="an-feed">
+            {data.recent_activity.map((a: any, i: number) => (
+              <div key={i} className="an-feed-row">
+                <span className={`an-feed-dot an-ev-${a.event_type}`} />
+                <span className="an-feed-ev">{a.event_type.replace('_', ' ')}</span>
+                <span className="an-feed-path">{a.course_title || a.path || '—'}</span>
+                <span className="an-feed-who">{a.person || 'anonymous'}</span>
+                <span className="an-feed-dev">{a.device}</span>
+                <span className="an-feed-time">{formatDate(a.created_at)}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function CRMStatsBar() {
   const [stats, setStats] = useState<any>(null);
   useEffect(() => {
@@ -2387,9 +2621,10 @@ function CRMStatsBar() {
 // ── CRM Tab (wrapper) ──────────────────────────────────────────────────────
 
 function CRMTab() {
-  const [subTab, setSubTab] = useState<'leads' | 'templates' | 'automations' | 'history'>('leads');
+  const [subTab, setSubTab] = useState<'analytics' | 'leads' | 'templates' | 'automations' | 'history'>('analytics');
 
   const tabs: Array<{ key: typeof subTab; label: string }> = [
+    { key: 'analytics',   label: 'Analytics' },
     { key: 'leads',       label: 'Leads' },
     { key: 'templates',   label: 'Templates' },
     { key: 'automations', label: 'Automations' },
@@ -2410,6 +2645,7 @@ function CRMTab() {
           </button>
         ))}
       </div>
+      {subTab === 'analytics'   && <AnalyticsPanel />}
       {subTab === 'leads'       && <LeadsPanel />}
       {subTab === 'templates'   && <TemplatesPanel />}
       {subTab === 'automations' && <AutomationsPanel />}
@@ -2432,6 +2668,19 @@ export default function Admin() {
   const [editingArticle, setEditingArticle] = useState(null);
   const [courses, setCourses] = useState([]);
   const [articles, setArticles] = useState([]);
+
+  // Theme toggle — the admin renders no Navbar, so it carries its own control,
+  // sharing the same storage key + <html data-theme> the rest of the site uses.
+  const [isDark, setIsDark] = useState(() => {
+    const stored = localStorage.getItem("sw-theme");
+    if (stored === "dark") return true;
+    if (stored === "light") return false;
+    return window.matchMedia?.("(prefers-color-scheme: dark)").matches ?? false;
+  });
+  useEffect(() => {
+    document.documentElement.dataset.theme = isDark ? "dark" : "light";
+    localStorage.setItem("sw-theme", isDark ? "dark" : "light");
+  }, [isDark]);
 
   useEffect(() => {
     if (loading) return;
@@ -2557,6 +2806,26 @@ export default function Admin() {
             <span className="admin-topbar-breadcrumb">{getBreadcrumb()}</span>
           </div>
           <div className="admin-topbar-user">
+            <button
+              className="admin-theme-btn"
+              onClick={() => setIsDark(d => !d)}
+              aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+              title={isDark ? "Switch to light mode" : "Switch to dark mode"}
+            >
+              {isDark ? (
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="5" />
+                  <line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" />
+                  <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                  <line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" />
+                  <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                </svg>
+              ) : (
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                </svg>
+              )}
+            </button>
             {user?.picture ? (
               <img src={user.picture} alt={user.name} className="admin-user-avatar" style={{ borderRadius: "50%", objectFit: "cover" }} referrerPolicy="no-referrer" />
             ) : (

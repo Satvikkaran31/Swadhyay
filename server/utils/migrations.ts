@@ -210,7 +210,7 @@ const migrations = [
     updated_at  TIMESTAMPTZ DEFAULT NOW()
   )`,
   `INSERT INTO instructor_profiles (name, title, bio, is_primary)
-   SELECT 'Neha Verma',
+   SELECT 'Neha Sharma',
           'Executive & Life Coach · 25+ years of experience',
           'Neha is a certified executive and life coach who has worked with leaders, young professionals, and organisations across India. Her coaching integrates evidence-based practices with deep human presence — helping clients move from clarity of mind to clarity of self.',
           true
@@ -289,7 +289,7 @@ const migrations = [
   <p style="text-align:center;margin:36px 0;">
     <a href="{{booking_link}}" style="background:#0c241c;color:#f4f1e9;padding:14px 28px;border-radius:8px;text-decoration:none;font-size:14px;display:inline-block;">Book a free 20-min call →</a>
   </p>
-  <p style="line-height:1.75;color:#333;">With warmth,<br><strong>Neha Verma</strong><br><span style="color:#888;font-size:13px;">Executive &amp; Life Coach · Swadhyay</span></p>
+  <p style="line-height:1.75;color:#333;">With warmth,<br><strong>Neha Sharma</strong><br><span style="color:#888;font-size:13px;">Executive &amp; Life Coach · Swadhyay</span></p>
   <hr style="border:none;border-top:1px solid #ddd;margin:32px 0;">
   <p style="font-size:11px;color:#aaa;text-align:center;">Swadhyay · swadhyay.co · You''re receiving this because you connected with us.</p>
 </div></body></html>',
@@ -392,6 +392,41 @@ const migrations = [
     status         TEXT DEFAULT 'pending',
     UNIQUE(automation_id, lead_id)
   )`,
+
+  // ── ANALYTICS: raw visitor event stream ──────────────────────────────────────
+  // One row per tracked interaction (page_view, course_view, cta_click, …). An
+  // anonymous browser is identified by visitor_id (a UUID kept in localStorage);
+  // once the visitor logs in, user_id/lead_id link the same stream to a person.
+  `CREATE TABLE IF NOT EXISTS page_views (
+    id           BIGSERIAL PRIMARY KEY,
+    visitor_id   TEXT NOT NULL,
+    user_id      INT REFERENCES users(id) ON DELETE SET NULL,
+    lead_id      INT REFERENCES leads(id) ON DELETE SET NULL,
+    event_type   TEXT NOT NULL DEFAULT 'page_view',
+    path         TEXT,
+    course_id    INT REFERENCES courses(id) ON DELETE SET NULL,
+    referrer     TEXT,
+    utm_source   TEXT,
+    utm_medium   TEXT,
+    utm_campaign TEXT,
+    device       TEXT,
+    created_at   TIMESTAMPTZ DEFAULT NOW()
+  )`,
+  `CREATE INDEX IF NOT EXISTS idx_page_views_created_at ON page_views(created_at DESC)`,
+  `CREATE INDEX IF NOT EXISTS idx_page_views_visitor    ON page_views(visitor_id)`,
+  `CREATE INDEX IF NOT EXISTS idx_page_views_course     ON page_views(course_id) WHERE course_id IS NOT NULL`,
+  `CREATE INDEX IF NOT EXISTS idx_page_views_event      ON page_views(event_type)`,
+
+  // ── CRM: lead engagement / auto-capture fields ───────────────────────────────
+  // visitor_id ties an identified lead back to their anonymous browsing history;
+  // engagement_score is a lightweight lead-quality score (0–100) recomputed from
+  // recency + volume of activity so the admin can prioritise who to contact.
+  `ALTER TABLE leads ADD COLUMN IF NOT EXISTS visitor_id       TEXT`,
+  `ALTER TABLE leads ADD COLUMN IF NOT EXISTS first_seen_at    TIMESTAMPTZ`,
+  `ALTER TABLE leads ADD COLUMN IF NOT EXISTS last_seen_at     TIMESTAMPTZ`,
+  `ALTER TABLE leads ADD COLUMN IF NOT EXISTS page_view_count  INT DEFAULT 0`,
+  `ALTER TABLE leads ADD COLUMN IF NOT EXISTS engagement_score INT DEFAULT 0`,
+  `CREATE INDEX IF NOT EXISTS idx_leads_visitor ON leads(visitor_id) WHERE visitor_id IS NOT NULL`,
 ];
 
 export async function runMigrations() {

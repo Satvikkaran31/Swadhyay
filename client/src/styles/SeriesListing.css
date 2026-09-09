@@ -198,6 +198,11 @@
   .sl-body { padding: 0 1.25rem 4rem; }
   .sl-grid { grid-template-columns: 1fr; }
 }
-  .sl-card-title { color: #e2e8f0; }
-  .sl-card-desc { color: #9ca3af; }
+
+/* ── Dark mode ─────────────────────────────────────────────────── */
+:root[data-theme="dark"] .sl-card-title { color: #e2e8f0; }
+:root[data-theme="dark"] .sl-card-desc { color: #9ca3af; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .sl-card-title { color: #e2e8f0; }
+  :root:not([data-theme="light"]) .sl-card-desc { color: #9ca3af; }
 }

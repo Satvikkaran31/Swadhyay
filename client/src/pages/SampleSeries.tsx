@@ -165,7 +165,7 @@ export default function SampleSeries() {
         <section className="ss-instructor-cta">
           <div className="ss-instructor-cta-avatar">N</div>
           <div>
-            <p className="ss-instructor-cta-name">Neha Verma</p>
+            <p className="ss-instructor-cta-name">Neha Sharma</p>
             <p className="ss-instructor-cta-role">Executive & Life Coach · 25+ years</p>
             <p className="ss-instructor-cta-quote">
               "The Swadhyay Youth Series is my love letter to every young professional who is trying to figure out

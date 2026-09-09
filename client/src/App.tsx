@@ -1,13 +1,18 @@
-import React, { Component, useRef, Suspense, lazy, useEffect, useState } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import React, { Component, Suspense, lazy, useEffect, useState } from "react";
+import { BrowserRouter, HashRouter, Routes, Route, useLocation } from "react-router-dom";
+
+// The offline preview build is opened straight from a file:// index.html, where
+// the History API can't push real paths — so it uses hash routing. The normal
+// build keeps clean BrowserRouter URLs.
+const Router = import.meta.env.VITE_DEMO ? HashRouter : BrowserRouter;
 import { Toaster } from "react-hot-toast";
-import Navbar from "./components/Navbar";
 import ScrollToTop from "./components/ScrollToTop";
 import WhatsAppFloat from "./components/WhatsAppFloat";
 import LinkedInModal from "./components/LinkedInModal";
 import Home from "./pages/Home";
 import ArticleDetail from './pages/ArticleDetail';
 import { useUser } from "./context/UserProvider";
+import { track } from "./utils/analytics";
 
 // Lazy-load pages
 const Booking     = lazy(() => import("./pages/Booking"));
@@ -108,6 +113,16 @@ class ErrorBoundary extends Component<{ children: React.ReactNode }, { crashed: 
   }
 }
 
+// Fires a page_view on every client-side navigation. Anonymous visitors are
+// recognised by a localStorage visitor_id; logged-in users resolve server-side.
+function AnalyticsTracker() {
+  const location = useLocation();
+  useEffect(() => {
+    track("page_view", { path: location.pathname });
+  }, [location.pathname]);
+  return null;
+}
+
 function LinkedInGate() {
   const { user, loading, setUser } = useUser();
   const [show, setShow] = useState(false);
@@ -134,8 +149,6 @@ function LinkedInGate() {
 }
 
 export default function App() {
-  const aboutRef = useRef(null);
-
   useEffect(() => {
     const structuredData = {
       "@context": "https://schema.org",
@@ -161,6 +174,7 @@ export default function App() {
   return (
     <Router>
       <Toaster position="top-center" toastOptions={{ duration: 4000 }} />
+      <AnalyticsTracker />
       <LinkedInGate />
       <ScrollToTop />
       <WhatsAppFloat />

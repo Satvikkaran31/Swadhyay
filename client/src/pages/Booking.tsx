@@ -38,7 +38,7 @@ const FAQS = [
   { q: "What happens in a coaching session?", a: "Each session is a focused, confidential conversation between you and Neha. We explore your current challenges, clarify your goals, and identify concrete next steps. Sessions are tailored entirely to you — no generic advice." },
   { q: "How many sessions will I need?", a: "This varies by person and goal. Many clients see meaningful shifts after 3–6 sessions. We recommend starting with a Discovery Call so Neha can give you an honest assessment of what support would be most useful." },
   { q: "What is EFT and how is it different from coaching?", a: "EFT (Emotional Freedom Technique) combines targeted coaching conversations with a gentle tapping practice on acupressure points. It can accelerate breakthroughs on emotional and mindset blocks that talk-based coaching alone may not reach." },
-  { q: "Are sessions online or in person?", a: "All sessions are held privately over Zoom, so you can join from anywhere. A calendar invite with the link arrives as soon as you book." },
+  { q: "Are sessions online or in person?", a: "All sessions are held privately over Google Meet, so you can join from anywhere. A calendar invite with the link arrives as soon as you book." },
 ];
 
 export default function Booking() {
@@ -109,7 +109,7 @@ export default function Booking() {
               <span className="bk-chip-dot" />10:30 AM
             </div>
             <div className="bk-chip bk-chip-2" style={{ animation: "floaty 6.5s ease-in-out infinite .8s" }}>
-              <span className="bk-chip-dot" />on Zoom
+              <span className="bk-chip-dot" />on Meet
             </div>
           </div>
         </div>
@@ -149,7 +149,7 @@ export default function Booking() {
               >
                 {user ? `Book — ${currentType.name} →` : "Log in to book →"}
               </button>
-              <span className="bk-zoom-note">All sessions held privately on Zoom · IST</span>
+              <span className="bk-zoom-note">All sessions held privately on Google Meet · IST</span>
             </div>
           </div>
 
@@ -182,7 +182,15 @@ export default function Booking() {
             <button className="bk-pay-toggle" onClick={() => setShowPay(v => !v)}>
               {showPay ? "▲ Hide payment" : "↓ Already have a quoted amount? Pay here"}
             </button>
-            {showPay && (
+            {showPay && (!user ? (
+              <div className="bk-pay-card">
+                <h3 className="bk-pay-title">Pay for your session</h3>
+                <p style={{ color: "var(--fg-mid)", fontSize: "0.9rem", margin: "0 0 1rem" }}>
+                  Please log in first so we can link this payment to your account and email your receipt.
+                </p>
+                <button className="home-btn-primary" onClick={() => login()}>Log in to pay →</button>
+              </div>
+            ) : (
               <div className="bk-pay-card">
                 <h3 className="bk-pay-title">Pay for your session</h3>
                 <div className="bk-pay-row">
@@ -208,7 +216,7 @@ export default function Booking() {
                   <span>Secure payment via Razorpay</span>
                 </div>
               </div>
-            )}
+            ))}
           </div>
         </div>
       </section>

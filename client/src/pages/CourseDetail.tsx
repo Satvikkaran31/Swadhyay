@@ -6,6 +6,7 @@ import { useUser } from "../context/UserProvider";
 import { useTriggerGoogleLogin } from "../utils/googleLoginHelper";
 import { useRazorpay } from "../hooks/useRazorpay";
 import { toEmbedUrl } from "../utils/videoEmbed";
+import { track } from "../utils/analytics";
 import "../styles/CourseDetail.css";
 
 const API = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
@@ -109,6 +110,7 @@ export default function CourseDetail() {
         if (data.error) { navigate("/courses"); return; }
         setCourse(data);
         setLoading(false);
+        track("course_view", { course_id: data.id, path: `/courses/${slug}` });
         if (data.modules?.length > 0) setOpenModule(data.modules[0].id);
       })
       .catch(() => setLoading(false));

@@ -31,6 +31,7 @@ import seriesRoutes from "./routes/seriesRoutes.js";
 import instructorRoutes from "./routes/instructorRoutes.js";
 import webhookRoutes from "./routes/webhookRoutes.js";
 import crmRoutes from "./routes/crmRoutes.js";
+import analyticsRoutes from "./routes/analyticsRoutes.js";
 
 if (process.env.SENTRY_DSN) {
   Sentry.init({ dsn: process.env.SENTRY_DSN, tracesSampleRate: 0.1 });
@@ -95,6 +96,9 @@ app.use(bodyParser.json({ limit: '2mb' }));
 // Block state-changing requests from absent or unrecognized origins (CSRF defense)
 app.use((req, _res, next) => {
   if (['GET', 'HEAD', 'OPTIONS'].includes(req.method)) return next();
+  // RFC 8058 one-click List-Unsubscribe POSTs come from mail providers with no
+  // browser Origin; they authenticate via the secret token, so exempt this path.
+  if (req.path === '/api/crm/unsubscribe') return next();
   const origin = req.headers.origin;
   if (!origin || !allowed_origins.includes(origin)) {
     return _res.status(403).json({ error: 'Forbidden' });
@@ -138,6 +142,7 @@ app.use("/api/newsletter", newsletterRoutes);
 app.use("/api/series", seriesRoutes);
 app.use("/api/instructor", instructorRoutes);
 app.use("/api/crm", crmRoutes);
+app.use("/api/analytics", analyticsRoutes);
 
 app.get("/sitemap.xml", async (_req, res) => {
   try {

@@ -21,11 +21,12 @@ interface MailOptions {
   html?: string;
   text?: string;
   replyTo?: string;
+  headers?: Record<string, string>;
 }
 
 // Drop-in replacement for nodemailer's transporter.sendMail()
 export default {
-  sendMail({ from, to, subject, html, text, replyTo }: MailOptions) {
+  sendMail({ from, to, subject, html, text, replyTo, headers }: MailOptions) {
     return getResend().emails.send({
       from: formatFrom(from ?? (process.env.MAIL_USER as string)),
       to: Array.isArray(to) ? to : [to],
@@ -33,6 +34,7 @@ export default {
       html,
       text,
       replyTo,
+      ...(headers ? { headers } : {}),
     });
   },
 };

@@ -43,6 +43,26 @@
   --ink-body:      var(--fg-body);
   --body-on-light: var(--fg-mid);
   --body-muted:    var(--fg-mid);
+
+  /* ── Shared design tokens (theme-invariant) ──
+     Previously defined only in Admin.css :root, which is code-split and
+     loads solely on /admin. Components used elsewhere (e.g. RazorpayButton
+     on /booking, the /preview sample pages) reference these without a
+     fallback, so off the admin route the gradient/shadow/font collapsed to
+     invalid values. Defining them globally keeps every page consistent. */
+  --font-primary:      'Poppins', sans-serif;
+  --font-hero-title:   'Caveat', cursive;
+  --white:             #FFFFFF;
+  --text-primary:      #F4F1E9;
+  --gradient-start:    var(--dark);
+  --gradient-mid:      #0E2E24;
+  --gradient-end:      #12463A;
+  --accent-green:      var(--teal);
+  --accent-dark-green: var(--teal-deep);
+  --button-primary:    var(--teal-deep);
+  --border-radius-xsm: 8px;
+  --border-radius-sm:  14px;
+  --shadow-default:    0 4px 24px -8px rgba(0, 0, 0, .14);
 }
 
 /* ── Dark via system preference ─────────────────────────────────── */

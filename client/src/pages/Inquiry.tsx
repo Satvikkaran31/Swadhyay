@@ -158,7 +158,7 @@ export default function Inquiry() {
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  pattern="^[\w\.-]+@[\w\.-]+\.\w{2,}$"
+                  pattern="[\w.\-]+@[\w.\-]+\.\w{2,}"
                   required
                   placeholder="Enter your email address"
                   maxLength={100}
@@ -178,7 +178,7 @@ export default function Inquiry() {
                   placeholder="Enter your phone number (optional)"
                   disabled={isSubmitting}
                   maxLength={15}
-                  pattern="[0-9+ -]{7,15}"
+                  pattern="[0-9+ \-]{7,15}"
                   title="Phone number can include digits, spaces, dashes, or +"
                 />
               </div>

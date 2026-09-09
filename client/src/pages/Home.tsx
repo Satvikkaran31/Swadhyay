@@ -137,33 +137,96 @@ export default function Home() {
       {/* ── HERO ──────────────────────────────────────────────────────── */}
       <section className="home-hero sw-page-pad">
         <div className="home-hero-orb" />
+        <div className="home-hero-orb home-hero-orb--2" />
+        <div className="home-hero-grid" />
         <div className="home-hero-inner">
-          <span className="rv mono-label mono-label--light" style={{ display: "block", marginBottom: 22, animationDelay: "0s" }}>
-            a space for inner work
-          </span>
-          <h1 className="rv home-hero-h1" style={{ animationDelay: ".08s" }}>
-            Coaching for self-mastery{" "}
-            <span style={{ fontWeight: 500 }}>&amp; elevated leadership</span>
-          </h1>
-          <p className="rv home-hero-sub" style={{ animationDelay: ".16s" }}>
-            A guided inner process for leaders, professionals and youngsters —
-            lead with presence, clarity and empathy.
-          </p>
-          <div className="rv home-hero-ctas" style={{ animationDelay: ".24s" }}>
-            <Link to="/booking" className="home-btn-primary">Book a session →</Link>
-            <Link to="/series" className="home-btn-ghost">Explore courses</Link>
+          <div className="home-hero-copy">
+            <span className="rv mono-label mono-label--light" style={{ display: "block", marginBottom: 22, animationDelay: "0s" }}>
+              a space for inner work
+            </span>
+            <h1 className="rv home-hero-h1" style={{ animationDelay: ".08s" }}>
+              Coaching for self-mastery{" "}
+              <span style={{ fontWeight: 500 }}>&amp; elevated leadership</span>
+            </h1>
+            <p className="rv home-hero-sub" style={{ animationDelay: ".16s" }}>
+              A guided inner process for leaders, professionals and youngsters —
+              lead with presence, clarity and empathy.
+            </p>
+            <div className="rv home-hero-ctas" style={{ animationDelay: ".24s" }}>
+              <Link to="/booking" className="home-btn-primary">Book a session →</Link>
+              <Link to="/series" className="home-btn-ghost">Explore courses</Link>
+            </div>
+            <div className="rv home-hero-stats" style={{ animationDelay: ".32s" }}>
+              {[
+                { val: "700+", label: "Coaching hours" },
+                { val: "PCC",  label: "ICF certified" },
+                { val: "380+", label: "People guided" },
+              ].map(s => (
+                <div key={s.label}>
+                  <div className="home-stat-val">{s.val}</div>
+                  <div className="home-stat-label mono-label mono-label--muted">{s.label}</div>
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="rv home-hero-stats" style={{ animationDelay: ".32s" }}>
-            {[
-              { val: "700+", label: "Coaching hours" },
-              { val: "PCC",  label: "ICF certified" },
-              { val: "380+", label: "People guided" },
-            ].map(s => (
-              <div key={s.label}>
-                <div className="home-stat-val">{s.val}</div>
-                <div className="home-stat-label mono-label mono-label--muted">{s.label}</div>
-              </div>
-            ))}
+
+          <div className="rv home-hero-media" style={{ animationDelay: ".2s" }}>
+            <div className="home-hero-disc" />
+            <svg
+              className="home-hero-viz"
+              viewBox="0 0 520 520"
+              role="img"
+              aria-label="Concentric rings radiating from a glowing centre — a symbol of inner reflection and growth"
+            >
+              <defs>
+                <radialGradient id="hvCore" cx="50%" cy="45%" r="55%">
+                  <stop offset="0%" stopColor="#B7F0E5" />
+                  <stop offset="55%" stopColor="#5FC8B8" />
+                  <stop offset="100%" stopColor="#2E8C78" />
+                </radialGradient>
+                <radialGradient id="hvGlow" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stopColor="rgba(95,200,184,.45)" />
+                  <stop offset="100%" stopColor="rgba(95,200,184,0)" />
+                </radialGradient>
+              </defs>
+
+              {/* concentric ripple rings — expanding awareness */}
+              <g fill="none" stroke="#5FC8B8">
+                <circle cx="260" cy="260" r="232" strokeOpacity=".10" />
+                <circle cx="260" cy="260" r="182" strokeOpacity=".16" />
+                <circle cx="260" cy="260" r="132" strokeOpacity=".24" strokeDasharray="2 9" />
+                <circle cx="260" cy="260" r="90"  strokeOpacity=".34" />
+              </g>
+
+              {/* nodes orbiting along the rings — the journey / practices */}
+              <circle cx="260" cy="28" r="6" fill="#5FC8B8">
+                <animateTransform attributeName="transform" type="rotate" from="0 260 260" to="360 260 260" dur="26s" repeatCount="indefinite" />
+              </circle>
+              <circle cx="260" cy="78" r="5" fill="#B7F0E5">
+                <animateTransform attributeName="transform" type="rotate" from="360 260 260" to="0 260 260" dur="19s" repeatCount="indefinite" />
+              </circle>
+              <circle cx="260" cy="170" r="4" fill="#F6F2EA">
+                <animateTransform attributeName="transform" type="rotate" from="0 260 260" to="360 260 260" dur="13s" repeatCount="indefinite" />
+              </circle>
+
+              {/* glowing core — the self / inner light */}
+              <circle cx="260" cy="260" r="120" fill="url(#hvGlow)">
+                <animate attributeName="r" values="112;126;112" dur="6s" repeatCount="indefinite" />
+              </circle>
+              <circle cx="260" cy="260" r="46" fill="url(#hvCore)">
+                <animate attributeName="r" values="44;49;44" dur="6s" repeatCount="indefinite" />
+              </circle>
+              {/* spark motif inside the core */}
+              <path
+                d="M260 231 C264 251 269 256 289 260 C269 264 264 269 260 289 C256 269 251 264 231 260 C251 256 256 251 260 231 Z"
+                fill="#F6F2EA"
+                fillOpacity=".92"
+              />
+            </svg>
+
+            <div className="hv-chip hv-chip--1"><i aria-hidden="true">✦</i>Presence</div>
+            <div className="hv-chip hv-chip--2"><i aria-hidden="true">◇</i>Clarity</div>
+            <div className="hv-chip hv-chip--3"><i aria-hidden="true">❍</i>Empathy</div>
           </div>
         </div>
       </section>
@@ -177,6 +240,17 @@ export default function Home() {
           ))}
         </div>
       </div>
+
+      {/* ── PHILOSOPHY QUOTE ──────────────────────────────────────────── */}
+      <section className="home-quote sw-page-pad">
+        <div className="rv home-quote-inner">
+          <span className="home-quote-mark" aria-hidden="true">✦</span>
+          <blockquote className="home-quote-text">
+            "Who looks outside, dreams. Who looks inside, awakens."
+          </blockquote>
+          <cite className="home-quote-cite mono-label">— Carl Jung</cite>
+        </div>
+      </section>
 
       {/* ── SERVICES ──────────────────────────────────────────────────── */}
       <section className="home-services sw-page-pad">
@@ -258,10 +332,7 @@ export default function Home() {
         <div className="rv home-mission-card">
           <div className="home-mission-copy">
             <span className="mono-label" style={{ color: "#0E766B" }}>Our mission</span>
-            <p className="home-mission-quote">
-              "Who looks outside, dreams. Who looks inside, awakens."
-            </p>
-            <span className="mono-label" style={{ color: "#0E766B", display: "block", marginTop: 12 }}>— Carl Jung</span>
+            <h2 className="home-mission-title">Self-study is the deepest work</h2>
             <p className="home-mission-body">
               Swadhyay — a Sanskrit word for self-study — is about deeply understanding oneself:
               our thoughts, beliefs, desires and behaviours. That self-awareness is the trait

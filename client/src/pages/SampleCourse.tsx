@@ -120,7 +120,7 @@ export default function SampleCourse() {
             <span>{COURSE.modules.length} modules</span>
           </div>
 
-          <p className="sc-hero-instructor">By <strong>Neha Verma</strong> · Executive & Life Coach</p>
+          <p className="sc-hero-instructor">By <strong>Neha Sharma</strong> · Executive & Life Coach</p>
         </div>
 
         {/* Floating CTA card */}
@@ -194,7 +194,7 @@ export default function SampleCourse() {
           <div className="sc-instructor-card">
             <div className="sc-instructor-avatar">N</div>
             <div className="sc-instructor-info">
-              <h3>Neha Verma</h3>
+              <h3>Neha Sharma</h3>
               <p className="sc-instructor-title">Executive & Life Coach · 25+ years of experience</p>
               <div className="sc-instructor-stats">
                 <span>★ 4.9 instructor rating</span>

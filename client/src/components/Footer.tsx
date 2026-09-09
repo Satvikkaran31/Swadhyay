@@ -42,6 +42,7 @@ export default function Footer({ compact = false }: FooterProps) {
             <Link to="/booking">Schedule</Link>
             <Link to="/series">Learning</Link>
             <Link to="/pricing">Pricing</Link>
+            <Link to="/contact-us">Contact</Link>
           </div>
         </div>
         <div className="footer-col">

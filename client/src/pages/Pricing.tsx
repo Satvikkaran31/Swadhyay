@@ -12,7 +12,7 @@ const PLANS = [
     featured: false,
     desc: "One private coaching conversation, whenever you need it.",
     cta: "Book a session",
-    features: ["60-minute 1-on-1 session", "Held privately over Zoom", "Personalised reflection notes", "Free 30-min discovery call"],
+    features: ["60-minute 1-on-1 session", "Held privately over Google Meet", "Personalised reflection notes", "Free 30-min discovery call"],
   },
   {
     name: "Journey (6 sessions)",
@@ -30,13 +30,13 @@ const PLANS = [
     featured: false,
     desc: "Guided tapping to release stress, anxiety and blocks.",
     cta: "Book EFT session",
-    features: ["45-minute guided session", "Held privately over Zoom", "Take-home tapping sequence", "Free 30-min discovery call"],
+    features: ["45-minute guided session", "Held privately over Google Meet", "Take-home tapping sequence", "Free 30-min discovery call"],
   },
 ];
 
 const FAQS = [
   { q: "How do I know which option is right for me?", a: "Start with the free discovery call. We'll talk through where you are and what you're hoping for, and I'll recommend the path that fits — no pressure to commit." },
-  { q: "Are sessions online or in person?", a: "All sessions are held privately over Zoom, so you can join from anywhere. A calendar invite with the link arrives as soon as you book." },
+  { q: "Are sessions online or in person?", a: "All sessions are held privately over Google Meet, so you can join from anywhere. A calendar invite with the link arrives as soon as you book." },
   { q: "What is your cancellation policy?", a: "Life happens. Reschedule or cancel up to 24 hours before your session at no charge. Within 24 hours, the session is counted as held." },
   { q: "Can I combine courses with coaching?", a: "Absolutely — many clients pair a self-paced course with one-on-one sessions. The all-access bundle also includes monthly live group calls." },
 ];
@@ -117,7 +117,7 @@ export default function Pricing() {
             </div>
           ))}
         </div>
-        <p className="rv pr-note">All prices in INR · GST included · Sessions held online via Zoom</p>
+        <p className="rv pr-note">All prices in INR · GST included · Sessions held online via Google Meet</p>
       </section>
 
       {/* ── COURSES NOTE ──────────────────────────────────────────────── */}

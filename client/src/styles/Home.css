@@ -2,8 +2,8 @@
 .home-hero {
   position: relative;
   background: linear-gradient(165deg, #0F2A21 0%, #0B1F18 100%);
-  padding-top: 184px;
-  padding-bottom: 128px;
+  padding-top: 168px;
+  padding-bottom: 112px;
   overflow: hidden;
 }
 .home-hero-orb {
@@ -18,17 +18,44 @@
   animation: drift 16s ease-in-out infinite;
   pointer-events: none;
 }
+.home-hero-orb--2 {
+  top: auto;
+  right: auto;
+  bottom: -220px;
+  left: -140px;
+  width: 520px;
+  height: 520px;
+  background: radial-gradient(circle, rgba(46,140,120,.20), transparent 68%);
+  animation-duration: 22s;
+  animation-direction: reverse;
+}
+/* Faint dot-grid texture, fading out toward the bottom */
+.home-hero-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: radial-gradient(rgba(246,242,234,.05) 1px, transparent 1.4px);
+  background-size: 26px 26px;
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, transparent 72%);
+          mask-image: linear-gradient(180deg, #000 0%, transparent 72%);
+}
 .home-hero-inner {
   position: relative;
-  max-width: 940px;
+  z-index: 1;
+  max-width: 1180px;
   margin: 0 auto;
-  text-align: center;
+  display: grid;
+  grid-template-columns: minmax(0, 1.04fr) minmax(0, 0.96fr);
+  gap: 48px;
+  align-items: center;
+  text-align: left;
 }
+.home-hero-copy { max-width: 600px; }
 .home-hero-h1 {
   font-family: 'Poppins', sans-serif;
   font-weight: 300;
-  font-size: 80px;
-  line-height: 1.03;
+  font-size: 66px;
+  line-height: 1.04;
   letter-spacing: -.035em;
   color: #F6F2EA;
   margin: 0;
@@ -39,22 +66,22 @@
   font-size: 19px;
   line-height: 1.6;
   color: #A9BBB0;
-  max-width: 540px;
-  margin: 26px auto 0;
+  max-width: 500px;
+  margin: 26px 0 0;
 }
 .home-hero-ctas {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 14px;
-  margin-top: 40px;
+  margin-top: 38px;
   flex-wrap: wrap;
   align-items: center;
 }
 .home-hero-stats {
   display: flex;
-  justify-content: center;
-  gap: 56px;
-  margin-top: 72px;
+  justify-content: flex-start;
+  gap: 48px;
+  margin-top: 56px;
   flex-wrap: wrap;
 }
 .home-stat-val {
@@ -64,6 +91,74 @@
   color: #F6F2EA;
 }
 .home-stat-label { margin-top: 6px; }
+
+/* ── Hero portrait / media column ─────────────────────────────────── */
+.home-hero-media {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  min-height: 480px;
+}
+/* Soft glow disc that grounds the cut-out portrait */
+.home-hero-disc {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 430px;
+  height: 430px;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 50% 42%, rgba(95,200,184,.34), rgba(95,200,184,.08) 55%, transparent 70%);
+  filter: blur(2px);
+}
+.home-hero-viz {
+  position: relative;
+  z-index: 2;
+  width: 460px;
+  max-width: 100%;
+  height: auto;
+  filter: drop-shadow(0 24px 54px rgba(0,0,0,.4));
+  animation: heroFloat 8s ease-in-out infinite;
+}
+/* Floating glass theme chips — echo the hero's "presence, clarity, empathy" */
+.hv-chip {
+  position: absolute;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 15px;
+  border-radius: 999px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  font-size: 13.5px;
+  color: #F6F2EA;
+  white-space: nowrap;
+  background: rgba(11,31,24,.6);
+  border: 1px solid rgba(95,200,184,.28);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 16px 36px rgba(0,0,0,.36);
+  animation: heroFloat 8s ease-in-out infinite;
+}
+.hv-chip i {
+  font-style: normal;
+  color: #5FC8B8;
+  font-size: 13px;
+}
+.hv-chip--1 { top: 14%;  left: -2%;  animation-delay: -1s; }
+.hv-chip--2 { top: 44%;  right: -4%; animation-delay: -3.5s; }
+.hv-chip--3 { bottom: 12%; left: 6%;  animation-delay: -5.5s; }
+@keyframes heroFloat {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-12px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .home-hero-viz,
+  .hv-chip { animation: none; }
+}
 
 /* ── Shared buttons ───────────────────────────────────────────────── */
 .home-btn-primary {
@@ -128,6 +223,42 @@
   font-family: 'Poppins', sans-serif;
   font-size: 22px;
   color: #B9C6BC;
+}
+
+/* ── PHILOSOPHY QUOTE BAND ────────────────────────────────────────── */
+.home-quote {
+  background: var(--bg-card);
+  border-top: 1px solid rgba(14,118,107,.12);
+  border-bottom: 1px solid rgba(14,118,107,.12);
+  padding-top: 92px;
+  padding-bottom: 92px;
+}
+.home-quote-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+.home-quote-mark {
+  display: inline-block;
+  color: var(--teal-deep);
+  font-size: 22px;
+  margin-bottom: 24px;
+}
+.home-quote-text {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300;
+  font-size: 40px;
+  line-height: 1.3;
+  letter-spacing: -.02em;
+  color: var(--fg-head);
+  margin: 0;
+  text-wrap: balance;
+}
+.home-quote-cite {
+  display: block;
+  margin-top: 26px;
+  color: var(--teal-deep);
+  font-style: normal;
 }
 
 /* ── SERVICES ─────────────────────────────────────────────────────── */
@@ -400,6 +531,15 @@
   line-height: 1.28;
   color: #16362E;
   margin: 20px 0 0;
+}
+.home-mission-title {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300;
+  font-size: 34px;
+  line-height: 1.2;
+  letter-spacing: -.02em;
+  color: var(--fg-head);
+  margin: 16px 0 0;
 }
 .home-mission-body {
   font-family: 'Poppins', sans-serif;
@@ -684,8 +824,23 @@
 
 /* ── Responsive ───────────────────────────────────────────────────── */
 @media (max-width: 920px) {
+  .home-hero-inner    { grid-template-columns: 1fr; gap: 8px; text-align: center; justify-items: center; }
+  .home-hero-copy     { max-width: 640px; order: 2; }
+  .home-hero-media    { order: 1; min-height: 360px; margin-bottom: 12px; }
+  .home-hero-sub      { margin-left: auto; margin-right: auto; }
+  .home-hero-ctas,
+  .home-hero-stats    { justify-content: center; }
   .home-hero-h1       { font-size: 52px; }
-  .home-hero          { padding-top: 132px; }
+  .home-hero          { padding-top: 128px; }
+  .home-hero-viz      { width: 320px; }
+  .home-hero-disc     { width: 300px; height: 300px; }
+  .hv-chip            { font-size: 12.5px; padding: 7px 12px; }
+  .hv-chip--1         { top: 8%;  left: 2%; }
+  .hv-chip--2         { top: 42%; right: 0; }
+  .hv-chip--3         { bottom: 10%; left: 8%; }
+  .home-quote         { padding-top: 60px; padding-bottom: 60px; }
+  .home-quote-text    { font-size: 27px; }
+  .home-mission-title { font-size: 28px; }
   .home-svc-h2        { font-size: 36px; }
   .home-svc-card      { grid-template-columns: 1fr; }
   .home-svc-panel     { display: none; }

@@ -1,9 +1,31 @@
+/* ── Banner theme tokens: light by default, dark keeps the current look ── */
+.cd-hero, .cd-instructor-band {
+  --cdb-h: #12362B;
+  --cdb-text: var(--fg-mid);
+  --cdb-accent: #0E766B;
+  --cdb-badge-border: rgba(12,36,28,.22);
+  --cdb-glass: rgba(12,36,28,.05);
+  --cdb-glass-border: rgba(12,36,28,.12);
+}
+.cd-hero {
+  --cdb-bg: radial-gradient(100% 90% at 90% -10%, rgba(95,200,184,.20) 0%, rgba(95,200,184,0) 60%), linear-gradient(168deg, #EAF3EF 0%, #F1EEE4 55%, #E8EFE8 100%);
+}
+.cd-instructor-band {
+  --cdb-bg: radial-gradient(120% 90% at 88% -10%, rgba(95,200,184,.18) 0%, rgba(95,200,184,0) 55%), linear-gradient(160deg, #EDEAD8 0%, #F4F1E9 70%);
+}
+:root[data-theme="dark"] .cd-hero, :root[data-theme="dark"] .cd-instructor-band { --cdb-h: #F4F1E9; --cdb-text: #B9C6BC; --cdb-accent: #8FE0D4; --cdb-badge-border: rgba(255,255,255,.24); --cdb-glass: rgba(255,255,255,.08); --cdb-glass-border: rgba(255,255,255,.17); }
+:root[data-theme="dark"] .cd-hero { --cdb-bg: radial-gradient(100% 90% at 90% -10%, #155E55 0%, rgba(21,94,85,0) 60%), linear-gradient(168deg, #123B2F 0%, #0F2E24 45%, #0C2419 100%); }
+:root[data-theme="dark"] .cd-instructor-band { --cdb-bg: radial-gradient(120% 90% at 88% -10%, #155E55 0%, rgba(21,94,85,0) 55%), linear-gradient(160deg, #123B2F 0%, #0C2419 70%); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .cd-hero, :root:not([data-theme="light"]) .cd-instructor-band { --cdb-h: #F4F1E9; --cdb-text: #B9C6BC; --cdb-accent: #8FE0D4; --cdb-badge-border: rgba(255,255,255,.24); --cdb-glass: rgba(255,255,255,.08); --cdb-glass-border: rgba(255,255,255,.17); }
+  :root:not([data-theme="light"]) .cd-hero { --cdb-bg: radial-gradient(100% 90% at 90% -10%, #155E55 0%, rgba(21,94,85,0) 60%), linear-gradient(168deg, #123B2F 0%, #0F2E24 45%, #0C2419 100%); }
+  :root:not([data-theme="light"]) .cd-instructor-band { --cdb-bg: radial-gradient(120% 90% at 88% -10%, #155E55 0%, rgba(21,94,85,0) 55%), linear-gradient(160deg, #123B2F 0%, #0C2419 70%); }
+}
+
 /* ── HERO ─────────────────────────────────────────────────────────── */
 .cd-hero {
   position: relative;
-  background:
-    radial-gradient(100% 90% at 90% -10%, #155E55 0%, rgba(21,94,85,0) 60%),
-    linear-gradient(168deg, #123B2F 0%, #0F2E24 45%, #0C2419 100%);
+  background: var(--cdb-bg);
   padding-top: 170px;
   padding-bottom: 80px;
   overflow: hidden;
@@ -44,7 +66,7 @@
   font-family: 'Poppins', sans-serif;
   font-weight: 600;
   font-size: 14px;
-  color: #8FE0D4;
+  color: var(--cdb-accent);
   text-decoration: none;
   display: inline-block;
   transition: opacity .2s ease;
@@ -94,8 +116,8 @@
   font-weight: 600;
   font-size: 12px;
   letter-spacing: .06em;
-  color: #CDD7CF;
-  border: 1px solid rgba(255,255,255,.24);
+  color: var(--cdb-text);
+  border: 1px solid var(--cdb-badge-border);
   padding: 7px 14px;
   border-radius: 999px;
 }
@@ -106,7 +128,7 @@
   font-size: 66px;
   line-height: 1.0;
   letter-spacing: -.01em;
-  color: #F4F1E9;
+  color: var(--cdb-h);
   margin: 16px 0 0;
   text-wrap: pretty;
 }
@@ -115,7 +137,7 @@
   font-family: 'Poppins', sans-serif;
   font-size: 19px;
   line-height: 1.6;
-  color: #B9C6BC;
+  color: var(--cdb-text);
   max-width: 500px;
   margin: 20px 0 0;
 }
@@ -133,15 +155,15 @@
   gap: 9px;
   font-family: 'Poppins', sans-serif;
   font-size: 15px;
-  color: #CDD7CF;
+  color: var(--cdb-text);
 }
 
-.cd-hero-stat-icon { color: #8FE0D4; }
+.cd-hero-stat-icon { color: var(--cdb-accent); }
 
 .cd-hero-last-updated {
   font-family: 'Poppins', sans-serif;
   font-size: 13px;
-  color: #8FE0D4;
+  color: var(--cdb-accent);
   margin-top: 12px;
 }
 
@@ -176,14 +198,14 @@
   width: 150px;
   height: 150px;
   border-radius: 999px;
-  background: rgba(255,255,255,.07);
-  border: 1px solid rgba(255,255,255,.16);
+  background: var(--cdb-glass);
+  border: 1px solid var(--cdb-glass-border);
   backdrop-filter: blur(6px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1;
-  color: #F4F1E9;
+  color: var(--cdb-h);
   font-size: 38px;
   padding-left: 6px;
 }
@@ -193,15 +215,15 @@
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  background: rgba(255,255,255,.1);
-  border: 1px solid rgba(255,255,255,.18);
+  background: var(--cdb-glass);
+  border: 1px solid var(--cdb-glass-border);
   backdrop-filter: blur(6px);
   padding: 8px 15px;
   border-radius: 999px;
   font-family: 'Poppins', sans-serif;
   font-weight: 600;
   font-size: 13px;
-  color: #F4F1E9;
+  color: var(--cdb-h);
   white-space: nowrap;
 }
 
@@ -913,9 +935,7 @@
   position: relative;
   padding-top: 96px;
   padding-bottom: 96px;
-  background:
-    radial-gradient(120% 90% at 88% -10%, #155E55 0%, rgba(21,94,85,0) 55%),
-    linear-gradient(160deg, #123B2F 0%, #0C2419 70%);
+  background: var(--cdb-bg);
   overflow: hidden;
 }
 
@@ -973,7 +993,7 @@
   font-weight: 300;
   font-size: 40px;
   line-height: 1.04;
-  color: #F4F1E9;
+  color: var(--cdb-h);
   margin: 10px 0 0;
 }
 
@@ -981,7 +1001,7 @@
   font-family: 'Poppins', sans-serif;
   font-size: 17px;
   line-height: 1.68;
-  color: #B9C6BC;
+  color: var(--cdb-text);
   margin: 16px 0 0;
   max-width: 560px;
 }
@@ -993,7 +1013,7 @@
   font-family: 'Poppins', sans-serif;
   font-weight: 700;
   font-size: 15px;
-  color: #8FE0D4;
+  color: var(--cdb-accent);
   margin-top: 22px;
   text-decoration: none;
   transition: opacity .2s ease;
