@@ -75,15 +75,19 @@ app.use((_req, res, next) => {
   res.setHeader('X-Frame-Options', 'DENY');
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  // API origin the built frontend calls (VITE_API_BASE_URL). Allowed in connect-src
+  // so cross-origin API/analytics calls aren't blocked when the site is served from
+  // a custom domain. Configurable via CSP_CONNECT_SRC (space-separated origins).
+  const apiConnect = process.env.CSP_CONNECT_SRC || "https://swadhyay-pa3f.onrender.com";
   res.setHeader('Content-Security-Policy', [
     "default-src 'self'",
     "script-src 'self' checkout.razorpay.com accounts.google.com",
-    "style-src 'self' 'unsafe-inline'",
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "img-src 'self' data: https:",
-    "font-src 'self' data:",
+    "font-src 'self' data: https://fonts.gstatic.com",
     "frame-src www.youtube-nocookie.com www.youtube.com player.vimeo.com checkout.razorpay.com accounts.google.com",
     "frame-ancestors 'none'",
-    "connect-src 'self' https://api.razorpay.com",
+    `connect-src 'self' https://api.razorpay.com https://accounts.google.com ${apiConnect}`,
     "worker-src blob:",
     "base-uri 'self'",
     "form-action 'self'",
