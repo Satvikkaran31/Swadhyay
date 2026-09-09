@@ -55,16 +55,16 @@ const migrations = [
   // ── Seed: series ───────────────────────────────────────────────────────────
   `INSERT INTO series (slug, title, description, is_published, position)
    VALUES
-     ('swadhyay-youth-series', 'Swadhyay Youth Series',
+     ('swadhyay-youth-series', 'Youth Series',
       'A curated series for young professionals ready to step into their best selves — with confidence, clarity, and purpose.',
       true, 1),
-     ('leadership-coaching', 'Leadership Coaching',
+     ('leadership-coaching', 'Leadership and Board Series',
       'Deep coaching for leaders who want to elevate their presence, communication, and impact — from the inside out.',
       true, 2),
      ('eft-tapping', 'EFT Tapping',
       'Evidence-based Emotional Freedom Techniques to release stress, fear, and anxiety — for anyone seeking calm and resilience.',
       true, 3),
-     ('swadhyay-immersion', 'Swadhyay Immersion',
+     ('swadhyay-immersion', 'Immersions and Retreats',
       'An immersive retreat experience combining deep coaching, somatic work, and community for transformative breakthroughs.',
       true, 4)
    ON CONFLICT (slug) DO NOTHING`,
@@ -76,7 +76,7 @@ const migrations = [
      'Your Best Interview Is Your Best Self',
      'Land your dream role by showing up as your most authentic, confident self.',
      'This course helps young professionals master the inner game of interviews — moving beyond rehearsed answers to genuine, powerful presence. You will learn how to manage nerves, articulate your value, and connect authentically with interviewers.',
-     0,
+     69900,
      true,
      'beginner',
      s.id

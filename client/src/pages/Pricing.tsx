@@ -7,30 +7,30 @@ import "../styles/Pricing.css";
 const PLANS = [
   {
     name: "Single Session",
-    price: "₹3,500",
-    unit: "/ session",
+    price: "₹11,000",
+    unit: "/ 30 min",
     featured: false,
     desc: "One private coaching conversation, whenever you need it.",
     cta: "Book a session",
-    features: ["60-minute 1-on-1 session", "Held privately over Google Meet", "Personalised reflection notes", "Free 30-min discovery call"],
+    features: ["30-minute 1-on-1 session", "Held privately over Google Meet", "Personalised reflection notes", "Free 30-min discovery call"],
   },
   {
     name: "Journey (6 sessions)",
-    price: "₹18,000",
+    price: "₹60,000",
     unit: "/ 6 sessions",
     featured: true,
     desc: "A committed arc of change — our most transformative option.",
     cta: "Start the journey",
-    features: ["Six 60-minute sessions", "Save ₹3,000 vs. single", "Between-session practices", "WhatsApp support throughout", "Free discovery call"],
+    features: ["Six 45-minute sessions", "Save ₹6,000 vs. single", "Between-session practices", "WhatsApp support throughout", "Free discovery call"],
   },
   {
     name: "EFT Session",
-    price: "₹2,800",
-    unit: "/ session",
+    price: "₹5,000",
+    unit: "/ 30 min",
     featured: false,
     desc: "Guided tapping to release stress, anxiety and blocks.",
     cta: "Book EFT session",
-    features: ["45-minute guided session", "Held privately over Google Meet", "Take-home tapping sequence", "Free 30-min discovery call"],
+    features: ["30-minute guided session", "Held privately over Google Meet", "Take-home tapping sequence", "Free 30-min discovery call"],
   },
 ];
 

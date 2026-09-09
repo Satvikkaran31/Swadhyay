@@ -191,7 +191,7 @@ export default function CourseDetail() {
     if (enrolling) return "Processing…";
     if (enrolled) return "Continue Learning →";
     if (course?.price === 0) return "Enroll for free →";
-    return `Enroll — ₹${(course.price / 100).toLocaleString("en-IN")} →`;
+    return `Enroll — ₹${(course.price / 100).toLocaleString("en-IN")} + GST →`;
   };
 
   const totalLessons = course?.modules?.reduce(

@@ -4,22 +4,28 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import "../styles/Courses.css";
 
-/* ── Per-series design metadata ───────────────────────────────────── */
+const API = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+
+/* ── Per-series design metadata (visual only — courses come from the DB) ──── */
 type SeriesKey = "youth" | "leadership" | "board";
+
+type ApiCourse = {
+  slug: string; title: string; short_description: string | null; description: string | null;
+  price: number; level: string | null; series_slug: string | null;
+  total_lessons: number | null; total_duration: number | null;
+};
 
 const SERIES_META: Record<SeriesKey, {
   label: string; kicker: string; title: string; desc: string;
-  count: string; hours: string; accent: string; accentSoft: string;
-  accentText: string; band: string; bandSoft: string;
-  pillars: { t: string; d: string }[];
-  staticCourses: { num: string; tag: string; title: string; desc: string; lessons: string; hrs: string; price: string }[];
+  seriesSlug: string; accent: string; accentSoft: string; accentText: string;
+  band: string; bandSoft: string; pillars: { t: string; d: string }[];
 }> = {
   youth: {
     label: "Youth Series",
     kicker: "Youth Series",
     title: "For young people finding their footing",
     desc: "Step into your best self with confidence, clarity and purpose — built for students and young professionals at the start of their journey.",
-    count: "3", hours: "10 hrs",
+    seriesSlug: "swadhyay-youth-series",
     accent: "#C1852B", accentSoft: "#F4EAD6", accentText: "#8A5E1C",
     band: "#3A2C12", bandSoft: "#5A431C",
     pillars: [
@@ -27,18 +33,13 @@ const SERIES_META: Record<SeriesKey, {
       { t: "Built for beginnings", d: "Language, pace and prompts designed for students and first jobs, not boardrooms." },
       { t: "Reflection, not lecture", d: "Every lesson ends in a practice you actually do — journaling, exercises, small experiments." },
     ],
-    staticCourses: [
-      { num: "01", tag: "START HERE · FREE", title: "Who Am I?", desc: "A guided self-discovery journey to uncover your values, strengths and authentic identity.", lessons: "18 lessons", hrs: "4.5 hrs", price: "Free" },
-      { num: "02", tag: "MOST POPULAR", title: "Your Best Interview Is Your Best Self", desc: "Land your dream role by showing up as your most authentic, grounded self.", lessons: "12 lessons", hrs: "3 hrs", price: "₹1,499" },
-      { num: "03", tag: "BEGINNER", title: "Confidence & Clarity", desc: "Quiet the inner critic and build a steady, self-assured voice in any room.", lessons: "10 lessons", hrs: "2.5 hrs", price: "₹1,299" },
-    ],
   },
   leadership: {
     label: "Leadership & Board",
     kicker: "Leadership & Board Series",
     title: "For leaders turning awareness into action",
     desc: "Turn self-awareness into grounded, values-led leadership — for managers, founders and working professionals ready to lead from within.",
-    count: "3", hours: "12.5 hrs",
+    seriesSlug: "leadership-coaching",
     accent: "#0E766B", accentSoft: "#E7F1EC", accentText: "#0E766B",
     band: "#0C241C", bandSoft: "#16362E",
     pillars: [
@@ -46,18 +47,13 @@ const SERIES_META: Record<SeriesKey, {
       { t: "For working leaders", d: "Built around the pressures managers and founders actually face day to day." },
       { t: "Pairs with coaching", d: "Combine any course with one-on-one sessions for a fully personal path." },
     ],
-    staticCourses: [
-      { num: "01", tag: "CORE", title: "Leading From Within", desc: "Turn self-awareness into everyday leadership presence and steady, values-led decisions.", lessons: "15 lessons", hrs: "5 hrs", price: "₹2,999" },
-      { num: "02", tag: "MOST POPULAR", title: "The Present Leader", desc: "Lead with attention and calm under pressure — presence as your competitive edge.", lessons: "14 lessons", hrs: "4 hrs", price: "₹2,499" },
-      { num: "03", tag: "ADVANCED", title: "Difficult Conversations", desc: "Navigate conflict, feedback and hard calls with clarity, empathy and honesty.", lessons: "11 lessons", hrs: "3.5 hrs", price: "₹2,299" },
-    ],
   },
   board: {
-    label: "Board Retreat",
-    kicker: "Board Retreat",
+    label: "Immersions & Retreats",
+    kicker: "Immersions & Retreats",
     title: "For boards and founding teams at the top",
-    desc: "Facilitated off-sites that realign vision, trust and hard decisions — for boards, founders and senior leadership teams.",
-    count: "3", hours: "By design",
+    desc: "Immersive retreats and facilitated off-sites that realign vision, trust and hard decisions — for boards, founders and senior leadership teams.",
+    seriesSlug: "swadhyay-immersion",
     accent: "#B4653B", accentSoft: "#F3E6DD", accentText: "#9A5A38",
     band: "#2E1B10", bandSoft: "#4A2E1C",
     pillars: [
@@ -65,21 +61,33 @@ const SERIES_META: Record<SeriesKey, {
       { t: "Facilitated, in person", d: "Structured off-sites led by Neha, blending reflection with hard strategic conversations." },
       { t: "Outcomes, not slides", d: "Every retreat ends in shared commitments the room actually owns and acts on." },
     ],
-    staticCourses: [
-      { num: "01", tag: "FLAGSHIP", title: "The Annual Board Retreat", desc: "A two-day off-site to realign vision, trust and decision-making across the leadership team.", lessons: "2 days", hrs: "On-site", price: "On request" },
-      { num: "02", tag: "INTENSIVE", title: "Founders in the Room", desc: "A facilitated reset for founding teams navigating scale, conflict and succession.", lessons: "1 day", hrs: "On-site", price: "On request" },
-      { num: "03", tag: "ADVANCED", title: "Governance & Presence", desc: "Sharpen board dynamics, listening and hard-call clarity under real pressure.", lessons: "6 sessions", hrs: "12 hrs", price: "On request" },
-    ],
   },
 };
 
 const SERIES_ORDER: SeriesKey[] = ["youth", "leadership", "board"];
 
+function fmtPrice(p: number): string {
+  return p === 0 ? "Free" : `₹${(p / 100).toLocaleString("en-IN")} + GST`;
+}
+function fmtDuration(sec: number | null): string {
+  if (!sec) return "Self-paced";
+  const h = sec / 3600;
+  return h >= 1 ? `${(Math.round(h * 10) / 10)} hrs` : `${Math.round(sec / 60)} min`;
+}
+
 export default function Courses() {
   const [activeSeries, setActiveSeries] = useState<SeriesKey>("youth");
+  const [allCourses, setAllCourses] = useState<ApiCourse[]>([]);
 
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const sliderRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    fetch(`${API}/api/courses`)
+      .then(r => r.json())
+      .then(d => { if (Array.isArray(d)) setAllCourses(d); })
+      .catch(() => {});
+  }, []);
 
   const positionSlider = () => {
     const i = SERIES_ORDER.indexOf(activeSeries);
@@ -110,7 +118,8 @@ export default function Courses() {
   }, []);
 
   const meta = SERIES_META[activeSeries];
-  const courses = meta.staticCourses;
+  const courses = allCourses.filter(c => c.series_slug === meta.seriesSlug);
+  const totalSecs = courses.reduce((s, c) => s + (c.total_duration || 0), 0);
 
   return (
     <>
@@ -185,7 +194,7 @@ export default function Courses() {
               <h2 className="ser-series-h2">{meta.title}</h2>
               <p className="ser-series-desc">{meta.desc}</p>
               <div className="ser-chips">
-                {[`${meta.count} courses`, `${meta.hours} of learning`, "Self-paced"].map(c => (
+                {[`${courses.length} ${courses.length === 1 ? "course" : "courses"}`, `${fmtDuration(totalSecs)} of learning`, "Self-paced"].map(c => (
                   <span key={c} className="ser-info-chip" style={{ color: meta.accentText, background: meta.accentSoft }}>{c}</span>
                 ))}
               </div>
@@ -193,22 +202,26 @@ export default function Courses() {
             <div className="ser-thumb" aria-hidden="true" />
           </div>
 
-          {/* course grid */}
+          {/* course grid — real courses from the catalogue */}
           <div className="ser-course-grid">
-            {courses.map(c => (
-              <Link key={c.num} to="/series" className="ser-course-card lift">
+            {courses.length === 0 ? (
+              <div className="ser-course-empty" style={{ gridColumn: "1 / -1", padding: "2.5rem", textAlign: "center", color: "var(--fg-mid, #6b7280)", background: meta.accentSoft, borderRadius: 16 }}>
+                New courses in this series are on the way — check back soon.
+              </div>
+            ) : courses.map((c, i) => (
+              <Link key={c.slug} to={`/courses/${c.slug}`} className="ser-course-card lift">
                 <div className="ser-course-thumb">
                   <span className="ser-course-tag" style={{ background: meta.accent }}>
-                    {c.tag}
+                    {c.price === 0 ? "FREE" : (c.level || "COURSE").toUpperCase()}
                   </span>
-                  <span className="ser-course-num">{c.num}</span>
+                  <span className="ser-course-num">{String(i + 1).padStart(2, "0")}</span>
                 </div>
                 <div className="ser-course-body">
                   <h3 className="ser-course-title">{c.title}</h3>
-                  <p className="ser-course-desc">{c.desc}</p>
+                  <p className="ser-course-desc">{c.short_description || c.description}</p>
                   <div className="ser-course-meta">
-                    <span>▷ {c.lessons} · {c.hrs}</span>
-                    <span style={{ color: meta.accentText, fontWeight: 700 }}>{c.price}</span>
+                    <span>▷ {c.total_lessons || 0} lessons · {fmtDuration(c.total_duration)}</span>
+                    <span style={{ color: meta.accentText, fontWeight: 700 }}>{fmtPrice(c.price)}</span>
                   </div>
                 </div>
               </Link>

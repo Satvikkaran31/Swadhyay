@@ -40,10 +40,10 @@ body.nav-scrolled .nav-unified-pill {
 .navlogo {
   display: inline-flex;
   align-items: center;
-  gap: 9px;
+  gap: 10px;
   font-family: 'Caveat', cursive;
   font-weight: 700;
-  font-size: 26px;
+  font-size: 30px;
   color: #F6F2EA;
   line-height: 1;
   text-decoration: none;
@@ -52,9 +52,12 @@ body.nav-scrolled .nav-unified-pill {
   flex-shrink: 0;
 }
 .navlogo-mark {
-  width: 27px;
-  height: 25px;
+  width: 36px;
+  height: 33px;
   flex-shrink: 0;
+  /* the glyph sits in the lower half of its viewBox — nudge up to optically
+     center it against the wordmark's cap height */
+  transform: translateY(-2px);
 }
 
 /* ── Divider ──────────────────────────────────────────────────────── */

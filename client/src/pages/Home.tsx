@@ -41,49 +41,49 @@ const SERVICES = [
   },
 ];
 
-/* ── series data ──────────────────────────────────────────────────── */
+/* ── series data (design only — courses are loaded from the DB) ─────── */
 type SeriesKey = "youth" | "leadership" | "board";
-const SERIES: Record<SeriesKey, {
-  label: string; accent: string; desc: string;
-  courses: { num: string; tag: string; title: string; desc: string; lessons: string; hrs: string; price: string }[];
-}> = {
+type HomeCourse = {
+  slug: string; title: string; short_description: string | null; description: string | null;
+  price: number; level: string | null; series_slug: string | null;
+  total_lessons: number | null; total_duration: number | null;
+};
+const SERIES: Record<SeriesKey, { label: string; accent: string; desc: string; seriesSlug: string }> = {
   youth: {
     label: "Youth Series",
     accent: "#D8A33C",
     desc: "For young professionals ready to step into their best selves — with confidence, clarity and purpose.",
-    courses: [
-      { num: "01", tag: "START HERE · FREE", title: "Who Am I?", desc: "A guided self-discovery journey to uncover your values, strengths and authentic identity.", lessons: "18 lessons", hrs: "4.5 hrs", price: "Free" },
-      { num: "02", tag: "MOST POPULAR", title: "Your Best Interview Is Your Best Self", desc: "Land your dream role by showing up as your most authentic, grounded self.", lessons: "12 lessons", hrs: "3 hrs", price: "₹1,499" },
-      { num: "03", tag: "BEGINNER", title: "Confidence & Clarity", desc: "Quiet the inner critic and build a steady, self-assured voice in any room.", lessons: "10 lessons", hrs: "2.5 hrs", price: "₹1,299" },
-    ],
+    seriesSlug: "swadhyay-youth-series",
   },
   leadership: {
     label: "Leadership & Board Series",
     accent: "#5FC8B8",
     desc: "For leaders and working professionals turning self-awareness into grounded, values-led leadership.",
-    courses: [
-      { num: "01", tag: "CORE", title: "Leading From Within", desc: "Turn self-awareness into everyday leadership presence and steady, values-led decisions.", lessons: "15 lessons", hrs: "5 hrs", price: "₹2,999" },
-      { num: "02", tag: "MOST POPULAR", title: "The Present Leader", desc: "Lead with attention and calm under pressure — presence as your competitive edge.", lessons: "14 lessons", hrs: "4 hrs", price: "₹2,499" },
-      { num: "03", tag: "ADVANCED", title: "Difficult Conversations", desc: "Navigate conflict, feedback and hard calls with clarity, empathy and honesty.", lessons: "11 lessons", hrs: "3.5 hrs", price: "₹2,299" },
-    ],
+    seriesSlug: "leadership-coaching",
   },
   board: {
-    label: "Board Retreat",
+    label: "Immersions & Retreats",
     accent: "#C27B54",
-    desc: "Facilitated off-sites for founding teams and boards — realigning vision, trust and hard decisions at the very top.",
-    courses: [
-      { num: "01", tag: "FLAGSHIP", title: "The Annual Board Retreat", desc: "A two-day off-site to realign vision, trust and decision-making across the leadership team.", lessons: "2 days", hrs: "On-site", price: "On request" },
-      { num: "02", tag: "INTENSIVE", title: "Founders in the Room", desc: "A facilitated reset for founding teams navigating scale, conflict and succession.", lessons: "1 day", hrs: "On-site", price: "On request" },
-      { num: "03", tag: "ADVANCED", title: "Governance & Presence", desc: "Sharpen board dynamics, listening and hard-call clarity under real pressure.", lessons: "6 sessions", hrs: "12 hrs", price: "On request" },
-    ],
+    desc: "Immersive retreats and facilitated off-sites for founding teams and boards — realigning vision, trust and hard decisions at the very top.",
+    seriesSlug: "swadhyay-immersion",
   },
 };
 
 const API = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
 
+function fmtPrice(p: number): string {
+  return p === 0 ? "Free" : `₹${(p / 100).toLocaleString("en-IN")} + GST`;
+}
+function fmtDuration(sec: number | null): string {
+  if (!sec) return "Self-paced";
+  const h = sec / 3600;
+  return h >= 1 ? `${Math.round(h * 10) / 10} hrs` : `${Math.round(sec / 60)} min`;
+}
+
 export default function Home() {
   const [svcIdx, setSvcIdx] = useState(0);
   const [series, setSeries] = useState<SeriesKey>("youth");
+  const [allCourses, setAllCourses] = useState<HomeCourse[]>([]);
   const [testimonials, setTestimonials] = useState<{ name: string; role: string; quote: string }[]>([]);
   const [testimonialIdx, setTestimonialIdx] = useState(0);
 
@@ -113,6 +113,10 @@ export default function Home() {
       .then(r => r.json())
       .then(d => { if (Array.isArray(d) && d.length) setTestimonials(d); })
       .catch(() => {});
+    fetch(`${API}/api/courses`)
+      .then(r => r.json())
+      .then(d => { if (Array.isArray(d)) setAllCourses(d); })
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -129,6 +133,7 @@ export default function Home() {
 
   const svc = SERVICES[svcIdx];
   const ser = SERIES[series];
+  const serCourses = allCourses.filter(c => c.series_slug === ser.seriesSlug);
 
   return (
     <>
@@ -158,9 +163,9 @@ export default function Home() {
             </div>
             <div className="rv home-hero-stats" style={{ animationDelay: ".32s" }}>
               {[
-                { val: "700+", label: "Coaching hours" },
-                { val: "PCC",  label: "ICF certified" },
-                { val: "380+", label: "People guided" },
+                { val: "1000+", label: "Coaching hours" },
+                { val: "PCC",   label: "& Team Coach" },
+                { val: "380+",  label: "People guided" },
               ].map(s => (
                 <div key={s.label}>
                   <div className="home-stat-val">{s.val}</div>
@@ -380,23 +385,27 @@ export default function Home() {
 
           {/* course cards */}
           <div className="home-course-grid">
-            {ser.courses.map(c => (
-              <Link to="/series" key={c.num} className="home-course-card lift">
+            {serCourses.length === 0 ? (
+              <div className="home-course-empty" style={{ gridColumn: "1 / -1", padding: "2.25rem", textAlign: "center", color: "#6b7280", background: "rgba(0,0,0,.04)", borderRadius: 16 }}>
+                New courses in this series are on the way — check back soon.
+              </div>
+            ) : serCourses.map((c, i) => (
+              <Link to={`/courses/${c.slug}`} key={c.slug} className="home-course-card lift">
                 <div className="home-course-thumb">
                   <span
                     className="home-course-tag"
                     style={{ background: ser.accent, color: "#0C241C" }}
                   >
-                    {c.tag}
+                    {c.price === 0 ? "FREE" : (c.level || "COURSE").toUpperCase()}
                   </span>
-                  <span className="home-course-num">{c.num}</span>
+                  <span className="home-course-num">{String(i + 1).padStart(2, "0")}</span>
                 </div>
                 <div className="home-course-body">
                   <h3 className="home-course-title">{c.title}</h3>
-                  <p className="home-course-desc">{c.desc}</p>
+                  <p className="home-course-desc">{c.short_description || c.description}</p>
                   <div className="home-course-meta">
-                    <span>▷ {c.lessons} · {c.hrs}</span>
-                    <span style={{ color: ser.accent, fontWeight: 700 }}>{c.price}</span>
+                    <span>▷ {c.total_lessons || 0} lessons · {fmtDuration(c.total_duration)}</span>
+                    <span style={{ color: ser.accent, fontWeight: 700 }}>{fmtPrice(c.price)}</span>
                   </div>
                 </div>
               </Link>

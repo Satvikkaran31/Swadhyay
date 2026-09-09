@@ -289,6 +289,9 @@ export default function Learn() {
                 <div className="lms-no-video-inner">
                   <div className="lms-no-video-icon">▷</div>
                   <span>Video coming soon</span>
+                  <p style={{ margin: "8px 0 0", fontSize: "0.85rem", opacity: 0.65, maxWidth: 340, lineHeight: 1.5 }}>
+                    This lesson is being prepared — the content will be added shortly.
+                  </p>
                 </div>
               </div>
             )
@@ -307,6 +310,9 @@ export default function Learn() {
                   <div className="lms-no-video-inner">
                     <div className="lms-no-video-icon">☰</div>
                     <span>Content coming soon</span>
+                    <p style={{ margin: "8px 0 0", fontSize: "0.85rem", opacity: 0.65, maxWidth: 340, lineHeight: 1.5 }}>
+                      This lesson is being prepared — the content will be added shortly.
+                    </p>
                   </div>
                 </div>
               )}
