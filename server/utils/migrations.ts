@@ -14,6 +14,76 @@ const migrations = [
     updated_at    TIMESTAMPTZ DEFAULT NOW()
   )`,
 
+  // ── Core catalogue & user tables (base tables the ALTERs/seeds below depend on) ──
+  `CREATE TABLE IF NOT EXISTS users (
+    id           SERIAL PRIMARY KEY,
+    google_id    VARCHAR(255) NOT NULL UNIQUE,
+    name         VARCHAR(255) NOT NULL,
+    email        VARCHAR(255) NOT NULL UNIQUE,
+    picture      TEXT,
+    role         VARCHAR(50) NOT NULL DEFAULT 'student',
+    linkedin_url TEXT,
+    created_at   TIMESTAMP NOT NULL DEFAULT NOW()
+  )`,
+  `CREATE TABLE IF NOT EXISTS courses (
+    id                SERIAL PRIMARY KEY,
+    slug              VARCHAR(255) NOT NULL UNIQUE,
+    title             VARCHAR(500) NOT NULL,
+    description       TEXT,
+    thumbnail_url     TEXT,
+    price             INTEGER NOT NULL DEFAULT 0 CHECK (price >= 0),
+    is_published      BOOLEAN NOT NULL DEFAULT false,
+    series_id         INTEGER REFERENCES series(id) ON DELETE SET NULL,
+    short_description TEXT,
+    what_youll_learn  TEXT[] DEFAULT '{}',
+    requirements      TEXT[] DEFAULT '{}',
+    level             TEXT DEFAULT 'all-levels',
+    language          TEXT DEFAULT 'English',
+    created_at        TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at        TIMESTAMP NOT NULL DEFAULT NOW()
+  )`,
+  `CREATE TABLE IF NOT EXISTS modules (
+    id          SERIAL PRIMARY KEY,
+    course_id   INTEGER NOT NULL REFERENCES courses(id) ON DELETE CASCADE,
+    title       VARCHAR(500) NOT NULL,
+    description TEXT,
+    position    INTEGER NOT NULL DEFAULT 0,
+    created_at  TIMESTAMP NOT NULL DEFAULT NOW()
+  )`,
+  `CREATE TABLE IF NOT EXISTS lessons (
+    id         SERIAL PRIMARY KEY,
+    module_id  INTEGER NOT NULL REFERENCES modules(id) ON DELETE CASCADE,
+    title      VARCHAR(500) NOT NULL,
+    video_url  TEXT,
+    content    TEXT,
+    duration   INTEGER,
+    type       TEXT NOT NULL DEFAULT 'video' CHECK (type IN ('video', 'text')),
+    position   INTEGER NOT NULL DEFAULT 0,
+    is_preview BOOLEAN NOT NULL DEFAULT false,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW()
+  )`,
+  `CREATE TABLE IF NOT EXISTS enrollments (
+    id          SERIAL PRIMARY KEY,
+    user_id     INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    course_id   INTEGER NOT NULL REFERENCES courses(id) ON DELETE CASCADE,
+    payment_id  VARCHAR(255),
+    enrolled_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    CONSTRAINT enrollments_payment_id_unique UNIQUE (payment_id),
+    UNIQUE (user_id, course_id)
+  )`,
+  `CREATE TABLE IF NOT EXISTS progress (
+    id           SERIAL PRIMARY KEY,
+    user_id      INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    lesson_id    INTEGER NOT NULL REFERENCES lessons(id) ON DELETE CASCADE,
+    completed_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    UNIQUE (user_id, lesson_id)
+  )`,
+  `CREATE INDEX IF NOT EXISTS idx_modules_course_id     ON modules(course_id)`,
+  `CREATE INDEX IF NOT EXISTS idx_lessons_module_id     ON lessons(module_id)`,
+  `CREATE INDEX IF NOT EXISTS idx_enrollments_user_id   ON enrollments(user_id)`,
+  `CREATE INDEX IF NOT EXISTS idx_enrollments_course_id ON enrollments(course_id)`,
+  `CREATE INDEX IF NOT EXISTS idx_progress_user_id      ON progress(user_id)`,
+
   // ── Articles ────────────────────────────────────────────────────────────────
   `CREATE TABLE IF NOT EXISTS articles (
     id SERIAL PRIMARY KEY,
