@@ -45,24 +45,32 @@ router.post('/google', authLimiter, async (req, res) => {
     const payload = ticket.getPayload();
     if (!payload) throw new Error('Empty token payload');
 
+    // Auto-admin emails: ADMIN_EMAIL and/or ADMIN_EMAILS (comma/space separated),
+    // case-insensitive. Anyone else logs in as 'student' (and can be promoted in
+    // the admin panel). Manual promotions are preserved on re-login.
+    const adminEmails = [
+      ...(process.env.ADMIN_EMAIL || '').split(/[,\s]+/),
+      ...(process.env.ADMIN_EMAILS || '').split(/[,\s]+/),
+    ].map(e => e.trim().toLowerCase()).filter(Boolean);
+
     // Upsert user into persistent users table
     const { rows } = await pool.query(
       `WITH vals AS (
          SELECT $1::text AS google_id, $2::text AS name,
                 $3::text AS email,     $4::text AS picture,
-                $5::text AS admin_email
+                $5::text[] AS admin_emails
        )
        INSERT INTO users (google_id, name, email, picture, role)
        SELECT v.google_id, v.name, v.email, v.picture,
-              CASE WHEN v.email = v.admin_email THEN 'admin' ELSE 'student' END
+              CASE WHEN lower(v.email) = ANY(v.admin_emails) THEN 'admin' ELSE 'student' END
        FROM vals v
        ON CONFLICT (google_id) DO UPDATE
          SET name    = EXCLUDED.name,
              picture = EXCLUDED.picture,
-             role    = CASE WHEN users.email = (SELECT admin_email FROM vals)
+             role    = CASE WHEN lower(users.email) = ANY((SELECT admin_emails FROM vals))
                             THEN 'admin' ELSE users.role END
        RETURNING id, name, email, picture, role, linkedin_url`,
-      [payload.sub, payload.name, payload.email, payload.picture, process.env.ADMIN_EMAIL]
+      [payload.sub, payload.name, payload.email, payload.picture, adminEmails]
     );
 
     const dbUser = rows[0];
