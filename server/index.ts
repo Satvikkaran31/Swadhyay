@@ -40,8 +40,12 @@ if (process.env.SENTRY_DSN) {
 const REQUIRED_ENV = [
   "SESSION_SECRET", "POSTGRES_URL", "GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET",
   "RAZORPAY_KEY_ID", "RAZORPAY_KEY_SECRET", "ADMIN_EMAIL",
-  "RESEND_API_KEY", "MAIL_USER",
 ];
+// Email (RESEND_API_KEY, MAIL_USER) is optional — if unset, sending is skipped
+// gracefully (see utils/mailer.ts) so the app still deploys and runs.
+if (!process.env.RESEND_API_KEY) {
+  console.warn("WARN: RESEND_API_KEY not set — email sending is disabled (bookings/contact/CRM emails will be skipped).");
+}
 const missingEnv = REQUIRED_ENV.filter(k => !process.env[k]);
 if (missingEnv.length) {
   console.error(`FATAL: Missing required environment variables: ${missingEnv.join(", ")}`);

@@ -24,9 +24,16 @@ interface MailOptions {
   headers?: Record<string, string>;
 }
 
-// Drop-in replacement for nodemailer's transporter.sendMail()
+// Drop-in replacement for nodemailer's transporter.sendMail().
+// Email is OPTIONAL: if RESEND_API_KEY is not configured, sending is skipped with
+// a warning instead of throwing, so the app runs fine without email set up yet.
 export default {
   sendMail({ from, to, subject, html, text, replyTo, headers }: MailOptions) {
+    if (!process.env.RESEND_API_KEY) {
+      const dest = Array.isArray(to) ? to.join(', ') : to;
+      console.warn(`[mailer] RESEND_API_KEY not set — skipping email to ${dest} ("${subject}")`);
+      return Promise.resolve({ id: null, skipped: true } as any);
+    }
     return getResend().emails.send({
       from: formatFrom(from ?? (process.env.MAIL_USER as string)),
       to: Array.isArray(to) ? to : [to],
