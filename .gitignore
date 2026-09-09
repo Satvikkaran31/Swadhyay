@@ -13,3 +13,6 @@ client/dist-demo/
 *.TMP
 *~RF*.TMP
 .DS_Store
+# Local dev/test scratch scripts
+server/_*.mts
+server/scripts_*.sql
