@@ -19,6 +19,14 @@ export const updateUserRole = async (req, res) => {
     return res.status(400).json({ error: 'Invalid role' });
   }
   try {
+    // Don't let the last remaining admin be demoted — that would lock everyone
+    // out of the admin panel.
+    if (role === 'student') {
+      const { rows: admins } = await pool.query("SELECT id FROM users WHERE role = 'admin'");
+      if (admins.length <= 1 && admins.some(a => a.id === Number(id))) {
+        return res.status(400).json({ error: 'Cannot demote the last admin' });
+      }
+    }
     const { rows } = await pool.query(
       `UPDATE users SET role = $1 WHERE id = $2 RETURNING id, name, email, role`,
       [role, id]

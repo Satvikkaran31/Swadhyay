@@ -470,7 +470,7 @@ export default function Home() {
             </p>
             <div className="home-cta-btns">
               <Link to="/booking" className="home-btn-primary">Book a session →</Link>
-              <Link to="/series" className="home-btn-outline">Browse free courses</Link>
+              <Link to="/courses" className="home-btn-outline">Browse courses</Link>
             </div>
           </div>
         </div>

@@ -767,6 +767,7 @@
 /* ── BOOKING CTA ──────────────────────────────────────────────────── */
 .home-cta-section {
   background: var(--bg-page);
+  padding-top: 112px;
   padding-bottom: 112px;
 }
 .home-cta-card {
@@ -774,7 +775,7 @@
   margin: 0 auto;
   position: relative;
   background:
-    radial-gradient(95% 110% at 88% -5%, #155E55 0%, rgba(21,94,85,0) 60%),
+    radial-gradient(95% 110% at 50% -10%, #155E55 0%, rgba(21,94,85,0) 60%),
     linear-gradient(160deg, #123B2F 0%, #0E2A21 55%, #0C2419 100%);
   border-radius: 34px;
   padding: 84px 72px;
@@ -783,13 +784,13 @@
 .home-cta-glow {
   position: absolute;
   inset: 0;
-  background: radial-gradient(70% 90% at 88% 15%, rgba(43,179,163,.18), transparent 62%);
+  background: radial-gradient(70% 90% at 50% 8%, rgba(43,179,163,.18), transparent 62%);
   pointer-events: none;
 }
 .home-cta-orb {
   position: absolute;
   top: -60px;
-  right: 6%;
+  left: calc(50% - 140px);
   width: 280px;
   height: 280px;
   border-radius: 999px;
@@ -798,7 +799,7 @@
   animation: floaty 8s ease-in-out infinite;
   pointer-events: none;
 }
-.home-cta-copy { position: relative; max-width: 680px; }
+.home-cta-copy { position: relative; max-width: 720px; margin: 0 auto; text-align: center; }
 .home-cta-h2 {
   font-family: 'Poppins', sans-serif;
   font-weight: 300;
@@ -820,7 +821,10 @@
   gap: 16px;
   margin-top: 36px;
   flex-wrap: wrap;
+  justify-content: center;
 }
+/* Softer shadow on the dark CTA card — the default teal glow reads as a messy halo here */
+.home-cta-btns .home-btn-primary { box-shadow: 0 10px 26px -14px rgba(0, 0, 0, .45); }
 
 /* ── Responsive ───────────────────────────────────────────────────── */
 @media (max-width: 920px) {
@@ -853,5 +857,7 @@
   .home-testimonial-quote { font-size: 28px; }
   .home-cta-h2        { font-size: 40px; }
   .home-cta-card      { padding: 56px 32px; }
+  .home-cta-btns      { flex-direction: column; align-items: stretch; }
+  .home-cta-btns a    { text-align: center; }
   .home-hero-stats    { gap: 32px; }
 }

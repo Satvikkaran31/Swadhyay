@@ -7,6 +7,8 @@ import { useTriggerGoogleLogin } from "../utils/googleLoginHelper";
 import { useRazorpay } from "../hooks/useRazorpay";
 import { toEmbedUrl } from "../utils/videoEmbed";
 import { track } from "../utils/analytics";
+import usePageSEO from "../hooks/usePageSEO";
+import nehaPortrait from "../assets/profilepicture.webp";
 import "../styles/CourseDetail.css";
 
 const API = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
@@ -52,6 +54,14 @@ export default function CourseDetail() {
   const [openModule, setOpenModule] = useState<number | null>(null);
   const [previewLesson, setPreviewLesson] = useState<any>(null);
   const [instructor, setInstructor] = useState<any>(null);
+
+  usePageSEO({
+    title: course ? `${course.title} — Swadhyay` : "",
+    description: (course?.short_description || course?.description || "").slice(0, 200),
+    path: `/courses/${slug}`,
+    image: course?.thumbnail_url || null,
+    type: "website",
+  });
 
   const [reviews, setReviews] = useState<any[]>([]);
   const [reviewRating, setReviewRating] = useState(0);
@@ -604,13 +614,8 @@ export default function CourseDetail() {
           <div className="cd-instructor-band-orb" />
           <div className="rv cd-instructor-band-grid">
             <div className="cd-instructor-portrait">
-              {instructor.avatar_url ? (
-                <img src={instructor.avatar_url} alt={instructor.name} />
-              ) : (
-                <span className="cd-instructor-portrait-initial" aria-hidden="true">
-                  {(instructor.name || "?")[0]}
-                </span>
-              )}
+              {/* Use Neha's real portrait (same as the About page), not the DB placeholder */}
+              <img src={nehaPortrait} alt={instructor.name} />
             </div>
             <div>
               <span className="mono-label mono-label--light">Your guide</span>

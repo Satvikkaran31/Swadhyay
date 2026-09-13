@@ -1,5 +1,8 @@
 import pool from '../utils/db.js';
 import mailer from '../utils/mailer.js';
+import validator from 'validator';
+
+const e = (s: unknown) => validator.escape(String(s ?? ''));
 
 export async function enroll(req, res) {
   const userId = req.session.user.id;
@@ -36,8 +39,8 @@ export async function enroll(req, res) {
         subject: `You're enrolled in "${course.title}"`,
         html: `
           <h2>Enrollment confirmed!</h2>
-          <p>Hi ${name},</p>
-          <p>You're now enrolled in <strong>${course.title}</strong>.</p>
+          <p>Hi ${e(name)},</p>
+          <p>You're now enrolled in <strong>${e(course.title)}</strong>.</p>
           <p>Head over to <a href="${process.env.CLIENT_URL || 'https://swadhyay.co'}/my-learning">My Learning</a> to start watching.</p>
           <p>Happy learning!</p>
         `,

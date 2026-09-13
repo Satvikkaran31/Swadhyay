@@ -1,4 +1,4 @@
-import crypto from 'crypto';
+import crypto from 'node:crypto';
 import pool from '../utils/db.js';
 import mailer from '../utils/mailer.js';
 import validator from 'validator';

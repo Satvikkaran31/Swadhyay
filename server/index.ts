@@ -59,13 +59,15 @@ const app = express();
 
 const PGStore = pgSession(session);
 
+// Localhost origins are trusted only outside production, so they can't be used
+// to satisfy CORS or the Origin-based CSRF check against the live API.
 const allowed_origins = [
   "https://swadhyay-pa3f.onrender.com",
-  "http://localhost:3000",
-  "http://localhost:5000",
-  "http://localhost:5173",
   "https://swadhyay.co",
   "https://www.swadhyay.co",
+  ...(process.env.NODE_ENV === "production"
+    ? []
+    : ["http://localhost:3000", "http://localhost:5000", "http://localhost:5173"]),
 ];
 app.use(cors({ origin: allowed_origins, credentials: true }));
 
@@ -155,6 +157,18 @@ app.use("/api/instructor", instructorRoutes);
 app.use("/api/crm", crmRoutes);
 app.use("/api/analytics", analyticsRoutes);
 
+// Lightweight health check for the platform load balancer / uptime monitors.
+// Verifies the process is up AND the database is reachable, without touching
+// sessions or auth. Kept intentionally cheap (SELECT 1).
+app.get("/api/health", async (_req, res) => {
+  try {
+    await pool.query("SELECT 1");
+    res.json({ status: "ok", uptime: process.uptime() });
+  } catch {
+    res.status(503).json({ status: "degraded", error: "database unreachable" });
+  }
+});
+
 app.get("/sitemap.xml", async (_req, res) => {
   try {
     const base = "https://swadhyay.co";
@@ -183,6 +197,16 @@ app.get("/{*any}", (_req, res) => {
 if (process.env.SENTRY_DSN) {
   Sentry.setupExpressErrorHandler(app);
 }
+
+// Global error handler — last middleware. Express 5 forwards rejected async
+// handlers here, so any uncaught error returns clean JSON instead of leaking a
+// stack trace to the client. Full detail is logged server-side (and to Sentry
+// via the handler above).
+app.use((err: any, req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  console.error(`[unhandled] ${req.method} ${req.path}:`, err?.stack || err?.message || err);
+  if (res.headersSent) return;
+  res.status(err?.status || 500).json({ error: "Internal server error" });
+});
 
 runMigrations().then(() => {
   startReminderJob();

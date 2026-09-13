@@ -1,8 +1,24 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import "../styles/NotFound.css";
 
 export default function NotFound() {
+  // Give the soft-404 a real title and tell crawlers not to index it, so
+  // non-existent URLs don't leak into search results. Cleaned up on unmount.
+  useEffect(() => {
+    const prevTitle = document.title;
+    document.title = "Page not found — Swadhyay";
+    const robots = document.createElement("meta");
+    robots.setAttribute("name", "robots");
+    robots.setAttribute("content", "noindex, follow");
+    document.head.appendChild(robots);
+    return () => {
+      document.title = prevTitle;
+      robots.remove();
+    };
+  }, []);
+
   return (
     <div className="nf-page">
       <Navbar />

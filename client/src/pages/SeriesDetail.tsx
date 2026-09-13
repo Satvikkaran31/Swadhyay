@@ -2,27 +2,8 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import usePageSEO from '../hooks/usePageSEO';
 import '../styles/SeriesDetail.css';
-
-function usePageSEO(title: string, description: string, path: string) {
-  useEffect(() => {
-    if (!title) return;
-    document.title = title;
-    const set = (name: string, content: string, prop = false) => {
-      const sel = prop ? `meta[property="${name}"]` : `meta[name="${name}"]`;
-      let el = document.querySelector(sel) as HTMLMetaElement | null;
-      if (!el) { el = document.createElement('meta'); prop ? el.setAttribute('property', name) : el.setAttribute('name', name); document.head.appendChild(el); }
-      el.setAttribute('content', content);
-    };
-    set('description', description);
-    set('og:title', title, true);
-    set('og:description', description, true);
-    set('og:url', `https://swadhyay.co${path}`, true);
-    let link = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
-    if (!link) { link = document.createElement('link'); link.setAttribute('rel', 'canonical'); document.head.appendChild(link); }
-    link.setAttribute('href', `https://swadhyay.co${path}`);
-  }, [title, description, path]);
-}
 
 const API = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
@@ -63,11 +44,11 @@ export default function SeriesDetail() {
   const [series, setSeries] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  usePageSEO(
-    series ? `${series.title} — Swadhyay` : 'Course Series — Swadhyay',
-    series?.description || 'Explore this curated series of courses designed for deep, structured learning.',
-    `/series/${slug}`
-  );
+  usePageSEO({
+    title: series ? `${series.title} — Swadhyay` : 'Course Series — Swadhyay',
+    description: series?.description || 'Explore this curated series of courses designed for deep, structured learning.',
+    path: `/series/${slug}`,
+  });
 
   useEffect(() => {
     fetch(`${API}/api/series/${slug}`)

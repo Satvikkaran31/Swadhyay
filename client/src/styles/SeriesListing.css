@@ -1,9 +1,8 @@
 /* ── Hero ──────────────────────────────────────────────────────── */
 .sl-hero {
   background:
-    repeating-linear-gradient(to right, rgba(0,0,0,0.18) 0, rgba(0,0,0,0.18) 1px, transparent 1px, transparent 3rem),
-    repeating-linear-gradient(to bottom, rgba(0,0,0,0.18) 0, rgba(0,0,0,0.18) 1px, transparent 1px, transparent 3rem),
-    linear-gradient(to bottom right, #1B2B2E, #1E3134);
+    radial-gradient(90% 120% at 50% -20%, #1C6E63 0%, rgba(28,110,99,0) 58%),
+    linear-gradient(168deg, #123B2F 0%, #0F2E24 48%, #0C2419 100%);
   padding: 7rem 2rem 5rem;
   text-align: center;
   border-bottom-left-radius: var(--border-radius-md, 1.5rem);

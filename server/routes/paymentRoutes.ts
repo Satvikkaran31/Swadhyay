@@ -1,5 +1,5 @@
 import express from "express";
-import crypto from "crypto";
+import crypto from "node:crypto";
 import validator from "validator";
 import razorpay from "../utils/razorpay.js";
 import pool from "../utils/db.js";

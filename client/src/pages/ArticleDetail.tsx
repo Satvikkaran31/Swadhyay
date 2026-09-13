@@ -5,6 +5,7 @@ import DOMPurify from 'dompurify';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { articlesData } from '../utils/articlesData';
+import usePageSEO from '../hooks/usePageSEO';
 import '../styles/Articles.css';
 
 marked.setOptions({ breaks: true });
@@ -91,6 +92,20 @@ export default function ArticleDetail() {
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [related, setRelated] = useState<any[]>([]);
+
+  // Derive a plain-text description from the excerpt, or the article body with
+  // Markdown syntax stripped, capped at ~200 chars for search/social snippets.
+  const seoDescription = (
+    article?.excerpt ||
+    (article?.content || '').replace(/[#*_`>[\]()!-]/g, ' ').replace(/\s+/g, ' ').trim()
+  ).slice(0, 200);
+  usePageSEO({
+    title: article ? `${article.title} — Swadhyay` : '',
+    description: seoDescription,
+    path: `/article/${slug}`,
+    image: article?.imageUrl || null,
+    type: 'article',
+  });
 
   useEffect(() => {
     fetch(`${API}/api/articles/${slug}`)
