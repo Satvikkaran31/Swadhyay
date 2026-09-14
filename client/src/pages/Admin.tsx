@@ -419,9 +419,16 @@ function CourseEditor({ courseId, onSave, onCancel }) {
         }),
       });
       isDirty.current = false;
+      toast.success(isNew ? "Course created" : "Course saved");
       onSave();
     } catch (err: any) {
-      setError(err?.message || "Save failed. Please try again.");
+      const msg = err?.status === 401
+        ? "Your session expired — please log in again."
+        : err?.status === 403
+        ? "You don't have admin access on this account (or the request was blocked)."
+        : (err?.message || "Save failed. Please try again.");
+      setError(msg);
+      toast.error(msg);
     } finally {
       setSaving(false);
     }
