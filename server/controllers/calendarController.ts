@@ -209,7 +209,20 @@ export const bookSession = async (req, res) => {
 
     res.status(200).json({ success: true, meetLink });
   } catch (err: any) {
-    console.error("Booking Error:", { message: err.message, response: err.response?.data });
+    const detail = err?.response?.data?.error || err?.response?.data || err?.message || String(err);
+    console.error(`Booking Error (${meetingType}):`, { message: err?.message, detail });
+    // A provider auth/creation failure — e.g. an expired Google refresh token
+    // (invalid_grant), a revoked Zoom/Graph credential, or the meeting link not
+    // being returned — is not a generic crash. Tell the user what to do next
+    // instead of a bare 500 so they can pick another platform.
+    const providerIssue =
+      /invalid_grant|invalid[_ ]?credential|unauthorized|forbidden|token|link (was not|could not)/i
+        .test(JSON.stringify(detail));
+    if (providerIssue) {
+      return res.status(502).json({
+        error: `We couldn't create the ${platformLabel} link right now. Please choose another platform or try again shortly.`,
+      });
+    }
     res.status(500).json({ error: "Failed to book session" });
   }
 };
