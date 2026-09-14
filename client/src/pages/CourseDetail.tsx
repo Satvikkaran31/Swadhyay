@@ -493,27 +493,6 @@ export default function CourseDetail() {
                   Book 1-on-1 instead
                 </Link>
                 {paymentError && <p className="cd-payment-error">{paymentError}</p>}
-                <div className="cd-enroll-divider" />
-                <div className="cd-enroll-includes">
-                  {totalLessons > 0 && (
-                    <div className="cd-enroll-include">
-                      <span className="cd-enroll-include-icon">▷</span>
-                      {totalLessons} on-demand lessons
-                    </div>
-                  )}
-                  <div className="cd-enroll-include">
-                    <span className="cd-enroll-include-icon">❏</span>
-                    Guided reflection workbook (PDF)
-                  </div>
-                  <div className="cd-enroll-include">
-                    <span className="cd-enroll-include-icon">∞</span>
-                    Lifetime access, learn at your pace
-                  </div>
-                  <div className="cd-enroll-include">
-                    <span className="cd-enroll-include-icon">✎</span>
-                    Prompts & exercises for each module
-                  </div>
-                </div>
               </div>
             </div>
           </div>
