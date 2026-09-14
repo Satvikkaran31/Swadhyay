@@ -228,12 +228,6 @@ export default function Dashboard() {
                           >
                             Review
                           </button>
-                          <Link
-                            to={`/courses/${course.slug}/certificate`}
-                            className="dash-cert-link"
-                          >
-                            Get Certificate
-                          </Link>
                         </div>
                       </div>
                     </div>

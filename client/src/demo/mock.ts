@@ -79,7 +79,6 @@ function resolve(method: string, path: string, body: any): Result {
   if (seg[1] === "courses" && seg[2] === "lessons") return ok([]);
   if (seg[1] === "courses" && seg[3] === "learn")
     return ok(F.learn[seg[2]] ?? { error: "Course not found" }, F.learn[seg[2]] ? 200 : 404);
-  if (seg[1] === "courses" && seg[3] === "certificate") return ok(F.certificate);
   if (seg[1] === "courses" && seg[3] === "reviews") {
     if (method === "POST") {
       const b = parseBody(body);

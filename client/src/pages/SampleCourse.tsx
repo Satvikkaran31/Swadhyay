@@ -139,7 +139,7 @@ export default function SampleCourse() {
               {COURSE.price === 0 ? <span className="sc-free">Free</span> : `₹${COURSE.price.toLocaleString("en-IN")}`}
             </div>
             <button className="sc-enroll-btn">Enroll for Free</button>
-            <p className="sc-card-note">Full lifetime access · Certificate on completion</p>
+            <p className="sc-card-note">Full lifetime access</p>
             <ul className="sc-card-includes">
               <li>
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor"/></svg>

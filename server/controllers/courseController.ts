@@ -586,56 +586,6 @@ export async function getLessonResources(req, res) {
   }
 }
 
-export async function getCertificateEligibility(req, res) {
-  const userId = req.session?.user?.id;
-  const isAdmin = req.session?.user?.role === 'admin';
-  if (!userId) return res.status(401).json({ error: 'Authentication required' });
-
-  try {
-    const { rows: courseRows } = await pool.query(
-      'SELECT id, title FROM courses WHERE slug = $1', [req.params.slug]
-    );
-    if (!courseRows.length) return res.status(404).json({ error: 'Course not found' });
-    const course = courseRows[0];
-
-    if (!isAdmin) {
-      const { rows: enroll } = await pool.query(
-        'SELECT id FROM enrollments WHERE user_id = $1 AND course_id = $2',
-        [userId, course.id]
-      );
-      if (!enroll.length) return res.status(403).json({ eligible: false, reason: 'not_enrolled' });
-    }
-
-    const { rows: lessons } = await pool.query(
-      `SELECT l.id FROM lessons l JOIN modules m ON m.id = l.module_id WHERE m.course_id = $1`,
-      [course.id]
-    );
-    const total = lessons.length;
-    if (total === 0) return res.json({ eligible: false, reason: 'no_lessons' });
-
-    const { rows: progress } = await pool.query(
-      `SELECT COUNT(*) AS count, MAX(p.completed_at) AS last_completed
-       FROM progress p
-       JOIN lessons l ON l.id = p.lesson_id
-       JOIN modules m ON m.id = l.module_id
-       WHERE m.course_id = $1 AND p.user_id = $2`,
-      [course.id, userId]
-    );
-    const completed = parseInt(progress[0].count, 10);
-    const eligible = completed >= total;
-    res.json({
-      eligible,
-      completed,
-      total,
-      course_title: course.title,
-      learner_name: req.session.user!.name,
-      completed_at: eligible ? (progress[0].last_completed ?? null) : null,
-    });
-  } catch {
-    res.status(500).json({ error: 'Failed to check certificate eligibility' });
-  }
-}
-
 export async function getAdminCourses(req, res) {
   try {
     const { rows } = await pool.query(

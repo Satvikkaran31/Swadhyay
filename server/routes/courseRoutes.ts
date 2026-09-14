@@ -1,7 +1,7 @@
 import express from 'express';
 import { isAdmin } from '../controllers/adminMiddleware.js';
 import {
-  getCourses, getCourse, getCourseLearning, getCertificateEligibility,
+  getCourses, getCourse, getCourseLearning,
   createCourse, updateCourse, deleteCourse, batchSaveCourse,
   createModule, updateModule, deleteModule,
   createLesson, updateLesson, deleteLesson,
@@ -10,7 +10,6 @@ import {
   getLessonDetail, getLessonResources,
 } from '../controllers/courseController.js';
 import reviewRoutes from './reviewRoutes.js';
-import { ensureAuthenticated } from '../controllers/auth.js';
 
 const router = express.Router();
 
@@ -25,7 +24,6 @@ router.get('/lessons/:id', getLessonDetail);
 // ── Public ───────────────────────────────────────────────��────────────────────
 router.get('/', getCourses);
 router.get('/:slug/learn', getCourseLearning);
-router.get('/:slug/certificate', ensureAuthenticated, getCertificateEligibility);
 router.use('/:slug/reviews', reviewRoutes);
 router.get('/:slug', getCourse);
 

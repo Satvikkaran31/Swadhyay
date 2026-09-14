@@ -480,7 +480,7 @@ export default function CourseDetail() {
                   <span className="cd-enroll-price">{priceDisplay}</span>
                 </div>
                 <p className="cd-enroll-tagline">
-                  {isFree ? "The perfect place to begin your inner work." : "Lifetime access · Certificate on completion"}
+                  {isFree ? "The perfect place to begin your inner work." : "Lifetime access"}
                 </p>
                 <button
                   className="cd-enroll-primary"

@@ -309,15 +309,6 @@
   align-items: center;
   flex-wrap: wrap;
 }
-.dash-cert-link {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 12px;
-  color: #0E766B;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  white-space: nowrap;
-}
-
 /* Sessions */
 .dash-sessions-list {
   background: var(--bg-card);

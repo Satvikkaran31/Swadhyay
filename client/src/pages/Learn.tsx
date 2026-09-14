@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useUser } from "../context/UserProvider";
 import { marked } from "marked";
 import DOMPurify from "dompurify";
@@ -319,13 +319,10 @@ export default function Learn() {
             </div>
           )}
 
-          {/* Certificate strip (100% completion) */}
+          {/* Completion strip (100% completion) */}
           {progressPct === 100 && (
             <div className="lms-cert-strip">
               <span>🎓 You've completed this course</span>
-              <Link to={`/courses/${slug}/certificate`} className="lms-cert-strip-btn">
-                Get Certificate →
-              </Link>
             </div>
           )}
 
@@ -634,11 +631,6 @@ export default function Learn() {
                     Book a 1-on-1 →
                   </button>
                 </div>
-                {progressPct === 100 && (
-                  <Link to={`/courses/${slug}/certificate`} className="lms-cmp-cert-link" onClick={dismissComplete}>
-                    🎓 Get your certificate
-                  </Link>
-                )}
               </>
             )}
           </div>

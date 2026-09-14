@@ -25,7 +25,6 @@ const CourseDetail = lazy(() => import("./pages/CourseDetail"));
 const Learn       = lazy(() => import("./pages/Learn"));
 const MyLearning  = lazy(() => import("./pages/MyLearning"));
 const MySessions  = lazy(() => import("./pages/MySessions"));
-const Certificate = lazy(() => import("./pages/Certificate"));
 const WhoAmI      = lazy(() => import("./pages/WhoAmI"));
 const Inquiry     = lazy(() => import("./pages/Inquiry"));
 const Admin        = lazy(() => import("./pages/Admin"));
@@ -200,7 +199,6 @@ export default function App() {
           {/* CourseDetail and Learn have no Navbar — they render their own layout */}
           <Route path="/courses/:slug" element={<CourseDetail />} />
           <Route path="/courses/:slug/learn" element={<Learn />} />
-          <Route path="/courses/:slug/certificate" element={<Certificate />} />
 
           {/* SeriesDetail handles its own SEO via the series title from the API response */}
           <Route path="/series/:slug" element={<SeriesDetail />} />
