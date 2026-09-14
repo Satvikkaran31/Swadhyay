@@ -22,7 +22,10 @@
   --fg-head:       #12362B;
   --fg-body:       #24261F;
   --fg-mid:        #4A4E44;
-  --fg-muted:      #8FA394;
+  --fg-muted:      #5E7168;
+  /* Teal used for accent TEXT (labels, prices, tags). Deep on light surfaces;
+     lightened in dark themes below so it stays legible on dark backgrounds. */
+  --accent-text:   #0E766B;
 
   /* ── Theme border tokens ── */
   --border-subtle: rgba(12,36,28,.09);
@@ -74,8 +77,9 @@
     --bg-tint:       #0A1C12;
     --fg-head:       #E4F0E8;
     --fg-body:       #C0D8C8;
-    --fg-mid:        #94B0A0;
-    --fg-muted:      #618070;
+    --fg-mid:        #A6C2B2;
+    --fg-muted:      #83A392;
+    --accent-text:   #43C4B2;
     --border-subtle: rgba(255,255,255,.08);
     --border-mid:    rgba(255,255,255,.14);
   }
@@ -89,8 +93,9 @@
   --bg-tint:       #0A1C12;
   --fg-head:       #E4F0E8;
   --fg-body:       #C0D8C8;
-  --fg-mid:        #94B0A0;
-  --fg-muted:      #618070;
+  --fg-mid:        #A6C2B2;
+  --fg-muted:      #83A392;
+  --accent-text:   #43C4B2;
   --border-subtle: rgba(255,255,255,.08);
   --border-mid:    rgba(255,255,255,.14);
 }
@@ -104,7 +109,8 @@
   --fg-head:       #12362B;
   --fg-body:       #24261F;
   --fg-mid:        #4A4E44;
-  --fg-muted:      #8FA394;
+  --fg-muted:      #5E7168;
+  --accent-text:   #0E766B;
   --border-subtle: rgba(12,36,28,.09);
   --border-mid:    rgba(12,36,28,.16);
 }
@@ -172,10 +178,10 @@ h1, h2, h3, h4, h5, h6 { text-wrap: pretty; }
   font-size: 12px;
   letter-spacing: .16em;
   text-transform: uppercase;
-  color: var(--teal-deep);
+  color: var(--accent-text);
 }
 .mono-label--light  { color: var(--teal-soft); }
-.mono-label--muted  { color: var(--mono-muted); }
+.mono-label--muted  { color: var(--fg-muted); }
 
 /* ─── WhatsApp float ─────────────────────────────────────────────── */
 .whatsapp-float {

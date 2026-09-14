@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import BookingModal from "../components/BookingModal";
-import RazorpayButton from "../components/RazorpayButton";
 import { useUser } from "../context/UserProvider";
 import { useTriggerGoogleLogin } from "../utils/googleLoginHelper";
 import "../styles/Booking.css";
@@ -38,7 +37,7 @@ const FAQS = [
   { q: "What happens in a coaching session?", a: "Each session is a focused, confidential conversation between you and Neha. We explore your current challenges, clarify your goals, and identify concrete next steps. Sessions are tailored entirely to you — no generic advice." },
   { q: "How many sessions will I need?", a: "This varies by person and goal. Many clients see meaningful shifts after 3–6 sessions. We recommend starting with a Discovery Call so Neha can give you an honest assessment of what support would be most useful." },
   { q: "What is EFT and how is it different from coaching?", a: "EFT (Emotional Freedom Technique) combines targeted coaching conversations with a gentle tapping practice on acupressure points. It can accelerate breakthroughs on emotional and mindset blocks that talk-based coaching alone may not reach." },
-  { q: "Are sessions online or in person?", a: "All sessions are held privately over Google Meet, so you can join from anywhere. A calendar invite with the link arrives as soon as you book." },
+  { q: "Are sessions online or in person?", a: "All sessions are held privately online — over Google Meet, Zoom, or Microsoft Teams — so you can join from anywhere. A calendar invite with the link arrives as soon as you book." },
 ];
 
 export default function Booking() {
@@ -47,9 +46,6 @@ export default function Booking() {
   const [selectedType, setSelectedType] = useState("one-on-one");
   const [modalOpen, setModalOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState(0);
-  const [showPay, setShowPay] = useState(false);
-  const [amount, setAmount] = useState("");
-  const [isProcessing, setIsProcessing] = useState(false);
 
   // Booking requires an authenticated account (the session is booked under it).
   // Prompt Google login instead of opening a form that would fail on submit.
@@ -149,7 +145,7 @@ export default function Booking() {
               >
                 {user ? `Book — ${currentType.name} →` : "Log in to book →"}
               </button>
-              <span className="bk-zoom-note">All sessions held privately on Google Meet · IST</span>
+              <span className="bk-zoom-note">Held privately on Google Meet, Zoom or Microsoft Teams · IST</span>
             </div>
           </div>
 
@@ -164,7 +160,7 @@ export default function Booking() {
                     <span
                       className="bk-faq-arrow"
                       style={{
-                        color: openFaq === i ? "#0E766B" : "#9AB0A6",
+                        color: openFaq === i ? "var(--accent-text)" : "var(--fg-muted)",
                         transform: openFaq === i ? "rotate(90deg)" : "rotate(0deg)",
                       }}
                     >›</span>
@@ -175,48 +171,6 @@ export default function Booking() {
                 </div>
               ))}
             </div>
-          </div>
-
-          {/* ── PAYMENT ───────────────────────────────────────────────── */}
-          <div className="rv bk-pay-section">
-            <button className="bk-pay-toggle" onClick={() => setShowPay(v => !v)}>
-              {showPay ? "▲ Hide payment" : "↓ Already have a quoted amount? Pay here"}
-            </button>
-            {showPay && (!user ? (
-              <div className="bk-pay-card">
-                <h3 className="bk-pay-title">Pay for your session</h3>
-                <p style={{ color: "var(--fg-mid)", fontSize: "0.9rem", margin: "0 0 1rem" }}>
-                  Please log in first so we can link this payment to your account and email your receipt.
-                </p>
-                <button className="home-btn-primary" onClick={() => login()}>Log in to pay →</button>
-              </div>
-            ) : (
-              <div className="bk-pay-card">
-                <h3 className="bk-pay-title">Pay for your session</h3>
-                <div className="bk-pay-row">
-                  <label className="bk-pay-label" htmlFor="pay-amount">Amount (₹)</label>
-                  <div className="bk-pay-input-wrap">
-                    <span className="bk-pay-symbol">₹</span>
-                    <input
-                      id="pay-amount"
-                      type="text"
-                      className="bk-pay-input"
-                      value={amount}
-                      onChange={e => { if (e.target.value === "" || /^\d*\.?\d*$/.test(e.target.value)) setAmount(e.target.value); }}
-                      placeholder="0.00"
-                      disabled={isProcessing}
-                    />
-                  </div>
-                </div>
-                <RazorpayButton amount={amount} isProcessing={isProcessing} setIsProcessing={setIsProcessing} />
-                <div className="bk-pay-secure">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                  </svg>
-                  <span>Secure payment via Razorpay</span>
-                </div>
-              </div>
-            ))}
           </div>
         </div>
       </section>

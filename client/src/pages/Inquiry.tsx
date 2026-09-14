@@ -184,7 +184,7 @@ export default function Inquiry() {
               </div>
 
               <div className="inq-form-group">
-                <label className="inq-label" htmlFor="linkedin_url">LinkedIn Profile <span style={{ fontWeight: 400, color: "#999" }}>(optional)</span></label>
+                <label className="inq-label" htmlFor="linkedin_url">LinkedIn Profile <span style={{ fontWeight: 400, color: "var(--fg-muted)" }}>(optional)</span></label>
                 <input
                   className="inq-input"
                   type="url"

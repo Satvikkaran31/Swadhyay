@@ -18,13 +18,13 @@
   gap: 0;
   padding: 5px 8px 5px 20px;
   border-radius: 999px;
-  /* Always-on translucent dark pill so the light nav text stays readable over
-     any page background (light hero pages, not just the dark home hero). */
-  background: rgba(12, 36, 28, .55);
-  border: 1px solid rgba(255,255,255,.10);
-  box-shadow: 0 12px 40px -22px rgba(12,36,28,.7);
-  backdrop-filter: blur(14px) saturate(150%);
-  -webkit-backdrop-filter: blur(14px) saturate(150%);
+  /* Transparent at the top of the page; the frosted pill fades in on scroll
+     (see body.nav-scrolled below). */
+  background: transparent;
+  border: 1px solid transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   transition: background .4s ease, border-color .4s ease,
               box-shadow .4s ease, backdrop-filter .4s ease,
               -webkit-backdrop-filter .4s ease;
@@ -37,6 +37,19 @@ body.nav-scrolled .nav-unified-pill {
   backdrop-filter: blur(20px) saturate(160%);
   -webkit-backdrop-filter: blur(20px) saturate(160%);
 }
+
+/* ── Light-hero pages (course detail): dark nav text on the transparent top
+   bar, but ONLY in light theme (the hero is dark in dark theme) and ONLY
+   before scroll (once scrolled the frosted dark pill takes over). ── */
+body:not(.nav-scrolled) .nav-lh-dark .navlink,
+body:not(.nav-scrolled) .nav-lh-dark .nav-theme-btn { color: rgba(12,36,28,.68); }
+body:not(.nav-scrolled) .nav-lh-dark .navlink:hover,
+body:not(.nav-scrolled) .nav-lh-dark .navlink.active,
+body:not(.nav-scrolled) .nav-lh-dark .navlogo,
+body:not(.nav-scrolled) .nav-lh-dark .nav-login-btn { color: #0C241C; }
+body:not(.nav-scrolled) .nav-lh-dark .navlink.active { background: rgba(12,36,28,.08); }
+body:not(.nav-scrolled) .nav-lh-dark .nav-divider { background: rgba(12,36,28,.2); }
+body:not(.nav-scrolled) .nav-lh-dark .nav-login-btn { border-color: rgba(12,36,28,.28); }
 
 /* ── Logo ─────────────────────────────────────────────────────────── */
 .navlogo {
@@ -96,7 +109,7 @@ body.nav-scrolled .nav-unified-pill {
   font-family: 'Poppins', sans-serif;
   font-weight: 700;
   font-size: 14px;
-  color: #FFF;
+  color: #06231B;
   background: #5FC8B8;
   padding: 9px 20px;
   border-radius: 999px;
@@ -107,7 +120,7 @@ body.nav-scrolled .nav-unified-pill {
   transition: background .2s;
   flex-shrink: 0;
 }
-.nav-cta:hover { background: #4fb4a4; color: #FFF; }
+.nav-cta:hover { background: #4fb4a4; color: #06231B; }
 
 /* ── Admin shortcut button ────────────────────────────────────────── */
 .nav-admin-btn {

@@ -131,7 +131,7 @@
 .sl-course-count {
   font-size: 0.8rem;
   font-weight: 600;
-  color: var(--accent-dark-green, #2d7a4f);
+  color: var(--accent-text);
   background: rgba(140,207,157,0.2);
   padding: 0.25rem 0.6rem;
   border-radius: 5px;

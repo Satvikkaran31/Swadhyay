@@ -4,6 +4,16 @@ import rateLimit from "express-rate-limit";
 import mailer from "../utils/mailer.js";
 import pool from "../utils/db.js";
 import { upsertLeadQuietly } from "./crmController.js";
+import { createZoomMeeting, deleteZoomMeeting, isZoomConfigured } from "../utils/zoom.js";
+import { createTeamsMeeting, deleteTeamsEvent, isTeamsConfigured } from "../utils/teams.js";
+
+// Supported video providers and their display labels. Calendly is handled on
+// the client (it schedules on its own hosted page), so it is not listed here.
+const PROVIDER_LABELS: Record<string, string> = {
+  google: "Google Meet",
+  zoom: "Zoom",
+  teams: "Microsoft Teams",
+};
 
 // Throttle booking creation to curb calendar-invite / email spam
 export const bookingLimiter = rateLimit({
@@ -76,14 +86,22 @@ export const bookSession = async (req, res) => {
   const safeOrganization = escapeHtml(organization.trim());
   const safeSessionType = escapeHtml(sessionType.trim());
 
+  // Only known video providers are accepted; the client also offers Calendly,
+  // which books on Calendly's own page and never reaches this endpoint.
+  if (!PROVIDER_LABELS[meetingType]) {
+    return res.status(400).json({ error: "Unsupported meeting platform" });
+  }
+  const platformLabel = PROVIDER_LABELS[meetingType];
+
   try {
     const dateTime = DateTime.fromISO(`${date}T${time}`, { zone: "Asia/Kolkata" });
     const endTime = dateTime.plus({ hours: 1 });
     let meetLink: string | undefined;
     let googleEventId: string | null = null;
+    let providerEventId: string | null = null;
 
-    // 1. Create Google Calendar Event
     if (meetingType === "google") {
+      // Google Meet via a Google Calendar event (adds the Meet link + invites).
       const event = {
         summary: `${safeName} – ${safeSessionType}`,
         description: `Platform: Google Meet\nType: ${safeSessionType}\nOccupation: ${safeOccupation}\nCompany/Institution: ${safeOrganization}`,
@@ -106,7 +124,35 @@ export const bookSession = async (req, res) => {
 
       meetLink = (response as any)?.data?.hangoutLink;
       googleEventId = (response as any)?.data?.id ?? null;
+      providerEventId = googleEventId;
       if (!meetLink) throw new Error("Google Meet link could not be created.");
+    } else if (meetingType === "zoom") {
+      if (!isZoomConfigured()) {
+        return res.status(503).json({ error: "Zoom booking isn't set up yet. Please choose another platform." });
+      }
+      const m = await createZoomMeeting({
+        topic: `${name.trim()} – ${sessionType.trim()}`,
+        startISO: dateTime.toISO() as string,
+        durationMins: 60,
+        timezone: "Asia/Kolkata",
+        agenda: `Type: ${sessionType.trim()} · Occupation: ${occupation.trim()} · Org: ${organization.trim()}`,
+      });
+      meetLink = m.joinUrl;
+      providerEventId = m.meetingId;
+    } else if (meetingType === "teams") {
+      if (!isTeamsConfigured()) {
+        return res.status(503).json({ error: "Microsoft Teams booking isn't set up yet. Please choose another platform." });
+      }
+      const m = await createTeamsMeeting({
+        subject: `${safeName} – ${safeSessionType}`,
+        startISO: dateTime.toISO() as string,
+        endISO: endTime.toISO() as string,
+        timezone: "India Standard Time",
+        bodyHtml: `Type: ${safeSessionType}<br>Occupation: ${safeOccupation}<br>Company/Institution: ${safeOrganization}`,
+        attendeeEmail: email,
+      });
+      meetLink = m.joinUrl;
+      providerEventId = m.eventId;
     }
 
     // 2. Confirmation email to user
@@ -121,9 +167,9 @@ export const bookSession = async (req, res) => {
         <p><strong>Time:</strong> ${escapeHtml(time)} IST</p>
         <p><strong>Session Type:</strong> ${safeSessionType}</p>
         ${meetLink
-          ? `<p><strong>Platform:</strong> Google Meet</p>
+          ? `<p><strong>Platform:</strong> ${platformLabel}</p>
              <p><strong>Meeting Link:</strong> <a href="${meetLink}">${meetLink}</a></p>`
-          : `<p><strong>Platform:</strong> ${escapeHtml(meetingType)}</p>
+          : `<p><strong>Platform:</strong> ${platformLabel}</p>
              <p>You will receive joining details separately.</p>`
         }
         <p>You will receive a calendar invitation shortly.</p>
@@ -151,9 +197,9 @@ export const bookSession = async (req, res) => {
     // 4. Save booking for reminder job
     const sessionStart = DateTime.fromISO(`${date}T${time}`, { zone: "Asia/Kolkata" }).toJSDate();
     await pool.query(
-      `INSERT INTO bookings (google_event_id, user_email, user_name, session_type, meeting_type, session_start, meet_link)
-       VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-      [googleEventId, email, name.trim(), sessionType.trim(), meetingType, sessionStart, meetLink ?? null]
+      `INSERT INTO bookings (google_event_id, event_id, user_email, user_name, session_type, meeting_type, session_start, meet_link)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+      [googleEventId, providerEventId, email, name.trim(), sessionType.trim(), meetingType, sessionStart, meetLink ?? null]
     );
 
     // 6. Auto-capture lead in CRM (best-effort, non-blocking)
@@ -200,8 +246,12 @@ export const cancelBooking = async (req, res) => {
       return res.status(400).json({ error: 'Cannot cancel past sessions' });
     }
 
-    // Best-effort: delete from Google Calendar
-    if (booking.google_event_id) {
+    // Best-effort: remove the meeting from the provider it was created on.
+    if (booking.meeting_type === 'zoom') {
+      deleteZoomMeeting(booking.event_id);
+    } else if (booking.meeting_type === 'teams') {
+      deleteTeamsEvent(booking.event_id);
+    } else if (booking.google_event_id) {
       calendar.events.delete({ calendarId: 'primary', eventId: booking.google_event_id })
         .catch(err => console.error('Google Calendar delete error:', err.message));
     }

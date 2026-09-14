@@ -68,11 +68,11 @@ export default function WhoAmI() {
       <section className="wa-mission sw-page-pad">
         <div className="rv wa-mission-grid">
           <div>
-            <span className="mono-label" style={{ color: "#0E766B" }}>Our mission</span>
+            <span className="mono-label" style={{ color: "var(--accent-text)" }}>Our mission</span>
             <p className="wa-mission-quote">
               "Who looks outside, dreams. Who looks inside, awakens."
             </p>
-            <span className="mono-label" style={{ display: "block", marginTop: 12, color: "#0E766B" }}>
+            <span className="mono-label" style={{ display: "block", marginTop: 12, color: "var(--accent-text)" }}>
               — Carl Jung
             </span>
             <p className="wa-mission-body">

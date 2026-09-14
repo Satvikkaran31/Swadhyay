@@ -12,12 +12,12 @@ type SeriesKey = "youth" | "leadership" | "board";
 type ApiCourse = {
   slug: string; title: string; short_description: string | null; description: string | null;
   price: number; level: string | null; series_slug: string | null;
-  total_lessons: number | null; total_duration: number | null;
+  total_lessons: number | null; total_duration: number | null; thumbnail_url: string | null;
 };
 
 const SERIES_META: Record<SeriesKey, {
   label: string; kicker: string; title: string; desc: string;
-  seriesSlug: string; accent: string; accentSoft: string; accentText: string;
+  seriesSlug: string; image: string; accent: string; accentSoft: string; accentText: string;
   band: string; bandSoft: string; pillars: { t: string; d: string }[];
 }> = {
   youth: {
@@ -26,6 +26,7 @@ const SERIES_META: Record<SeriesKey, {
     title: "For young people finding their footing",
     desc: "Step into your best self with confidence, clarity and purpose — built for students and young professionals at the start of their journey.",
     seriesSlug: "swadhyay-youth-series",
+    image: "/thumbnails/swadhyay-youth-series.webp",
     accent: "#C1852B", accentSoft: "#F4EAD6", accentText: "#8A5E1C",
     band: "#3A2C12", bandSoft: "#5A431C",
     pillars: [
@@ -40,6 +41,7 @@ const SERIES_META: Record<SeriesKey, {
     title: "For leaders turning awareness into action",
     desc: "Turn self-awareness into grounded, values-led leadership — for managers, founders and working professionals ready to lead from within.",
     seriesSlug: "leadership-coaching",
+    image: "/thumbnails/leadership-coaching.webp",
     accent: "#0E766B", accentSoft: "#E7F1EC", accentText: "#0E766B",
     band: "#0C241C", bandSoft: "#16362E",
     pillars: [
@@ -54,6 +56,7 @@ const SERIES_META: Record<SeriesKey, {
     title: "For boards and founding teams at the top",
     desc: "Immersive retreats and facilitated off-sites that realign vision, trust and hard decisions — for boards, founders and senior leadership teams.",
     seriesSlug: "swadhyay-immersion",
+    image: "/thumbnails/swadhyay-immersion.webp",
     accent: "#B4653B", accentSoft: "#F3E6DD", accentText: "#9A5A38",
     band: "#2E1B10", bandSoft: "#4A2E1C",
     pillars: [
@@ -190,7 +193,7 @@ export default function Courses() {
           {/* series header */}
           <div className="rv ser-header-grid">
             <div>
-              <span className="mono-label" style={{ color: "#0E766B" }}>{meta.kicker}</span>
+              <span className="mono-label" style={{ color: "var(--accent-text)" }}>{meta.kicker}</span>
               <h2 className="ser-series-h2">{meta.title}</h2>
               <p className="ser-series-desc">{meta.desc}</p>
               <div className="ser-chips">
@@ -199,7 +202,9 @@ export default function Courses() {
                 ))}
               </div>
             </div>
-            <div className="ser-thumb" aria-hidden="true" />
+            <div className="ser-thumb" aria-hidden="true">
+              {meta.image && <img src={meta.image} alt="" loading="lazy" />}
+            </div>
           </div>
 
           {/* course grid — real courses from the catalogue */}
@@ -211,6 +216,7 @@ export default function Courses() {
             ) : courses.map((c, i) => (
               <Link key={c.slug} to={`/courses/${c.slug}`} className="ser-course-card lift">
                 <div className="ser-course-thumb">
+                  {c.thumbnail_url && <img src={c.thumbnail_url} alt="" loading="lazy" />}
                   <span className="ser-course-tag" style={{ background: meta.accent }}>
                     {c.price === 0 ? "FREE" : (c.level || "COURSE").toUpperCase()}
                   </span>

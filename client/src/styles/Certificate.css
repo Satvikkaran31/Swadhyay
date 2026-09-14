@@ -96,7 +96,7 @@
 
 .cert-presents {
   font-size: 0.95rem;
-  color: #6B7A6F;
+  color: var(--fg-muted);
   margin-bottom: 0.5rem;
 }
 
@@ -127,7 +127,7 @@
 
 .cert-date {
   font-size: 0.88rem;
-  color: #6B7A6F;
+  color: var(--fg-muted);
   margin-bottom: 3rem;
 }
 
@@ -156,7 +156,7 @@
 
 .cert-sig-title {
   font-size: 0.78rem;
-  color: #6B7A6F;
+  color: var(--fg-muted);
 }
 
 /* ── Ineligible state ─────────────────────────────────────────────── */

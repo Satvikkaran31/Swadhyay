@@ -214,6 +214,13 @@
   background: repeating-linear-gradient(135deg, #D8E4DC, #D8E4DC 16px, #CFDDD3 16px, #CFDDD3 32px);
   box-shadow: 0 30px 70px -50px rgba(18,54,43,.5);
 }
+.ser-thumb img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 .ser-thumb-caption {
   position: absolute;
   bottom: 16px;
@@ -244,8 +251,18 @@
 .ser-course-thumb {
   position: relative;
   height: 168px;
+  overflow: hidden;
   background: repeating-linear-gradient(135deg, #DCE6DE, #DCE6DE 15px, #D2DECF 15px, #D2DECF 30px);
 }
+.ser-course-thumb img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* Scrim so the corner number/tag stay legible over a photo */
+.ser-course-thumb img + .ser-course-tag { z-index: 1; }
 .ser-course-tag {
   position: absolute;
   top: 14px;
@@ -257,6 +274,12 @@
   color: #FFF;
   padding: 6px 12px;
   border-radius: 999px;
+  /* White text needs a dark chip to stay legible over any series accent or
+     photo (the light gold/brown accents failed contrast). Overrides the inline
+     accent background set in JSX. */
+  background: rgba(7, 22, 16, .74) !important;
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
 }
 .ser-course-num {
   position: absolute;
@@ -292,7 +315,14 @@
   border-top: 1px solid rgba(18,54,43,.1);
   font-family: 'Poppins', sans-serif;
   font-size: 13px;
-  color: #6B7A6F;
+  color: var(--fg-mid);
+}
+/* Course price carries an inline per-series accent (gold/teal/brown) tuned for
+   the light card; on the dark-theme card those deep tints fail contrast, so
+   lift the price to the theme accent there. */
+:root[data-theme="dark"] .ser-course-meta span[style] { color: var(--accent-text) !important; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .ser-course-meta span[style] { color: var(--accent-text) !important; }
 }
 
 /* ── VALUE BAND ───────────────────────────────────────────────────── */

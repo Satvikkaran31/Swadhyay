@@ -10,6 +10,13 @@ const SESSION_TYPES = [
   { value: "group-coaching", label: "Group Coaching", icon: "👥" },
 ];
 
+// Video platforms the server can generate a live meeting link for.
+const MEETING_PLATFORMS = [
+  { value: "google", label: "Google Meet", icon: "🎥" },
+  { value: "zoom", label: "Zoom", icon: "📹" },
+  { value: "teams", label: "Microsoft Teams", icon: "💠" },
+];
+
 function buildGCalUrl(date, time, sessionType, meetLink) {
   try {
     // Build start in IST, shift to UTC for the URL
@@ -113,7 +120,8 @@ export default function BookingModal({ onClose, initialSessionType = "one-on-one
     }
   };
 
-  const bookingLink = import.meta.env.VITE_BOOKING_LINK;
+  // Calendly hosted scheduling page (falls back to the legacy booking link).
+  const calendlyUrl = import.meta.env.VITE_CALENDLY_URL || import.meta.env.VITE_BOOKING_LINK;
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -285,19 +293,40 @@ export default function BookingModal({ onClose, initialSessionType = "one-on-one
                 />
               </div>
 
+              {/* Meeting platform */}
+              <div>
+                <p className="modal-section-label">Meeting platform</p>
+                <div className="modal-platform-cards">
+                  {MEETING_PLATFORMS.map((mp) => (
+                    <button
+                      key={mp.value}
+                      type="button"
+                      className={`platform-card${form.meetingType === mp.value ? " selected" : ""}`}
+                      onClick={() => setForm({ ...form, meetingType: mp.value })}
+                      aria-pressed={form.meetingType === mp.value}
+                    >
+                      <span className="platform-card-icon">{mp.icon}</span>
+                      <span className="platform-card-label">{mp.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               <button className="gmeet" type="submit" disabled={loading || !form.time}>
-                {loading ? "Processing…" : "Schedule on Google Meet"}
+                {loading
+                  ? "Processing…"
+                  : `Schedule on ${MEETING_PLATFORMS.find((m) => m.value === form.meetingType)?.label ?? "video call"}`}
               </button>
 
-              {bookingLink && (
+              {calendlyUrl && (
                 <>
                   <div className="modal-divider">OR</div>
                   <button
                     className="Teams"
                     type="button"
-                    onClick={() => window.open(bookingLink, "_blank", "noopener,noreferrer")}
+                    onClick={() => window.open(calendlyUrl, "_blank", "noopener,noreferrer")}
                   >
-                    📅 Schedule on Microsoft Teams
+                    📅 Book with Calendly
                   </button>
                 </>
               )}

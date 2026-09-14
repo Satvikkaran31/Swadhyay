@@ -206,12 +206,12 @@
   font-family: 'Poppins', sans-serif;
   font-weight: 700;
   font-size: 18px;
-  color: #0E766B;
+  color: var(--accent-text);
 }
 .bk-session-length {
   font-family: 'Poppins', sans-serif;
   font-size: 13px;
-  color: #6B7A6F;
+  color: var(--fg-muted);
   margin-top: 2px;
 }
 .bk-flow-actions {
@@ -224,7 +224,7 @@
 .bk-zoom-note {
   font-family: 'Poppins', sans-serif;
   font-size: 13px;
-  color: #8FA394;
+  color: var(--fg-muted);
 }
 
 /* ── FAQ ──────────────────────────────────────────────────────────── */
@@ -274,79 +274,6 @@
   color: var(--fg-mid);
   margin: 0;
   padding: 0 0 22px;
-}
-
-/* ── PAYMENT ──────────────────────────────────────────────────────── */
-.bk-pay-toggle {
-  all: unset;
-  cursor: pointer;
-  font-family: 'Poppins', sans-serif;
-  font-size: 15px;
-  color: #0E766B;
-  font-weight: 600;
-  display: block;
-}
-.bk-pay-toggle:hover { color: #0c5e55; }
-.bk-pay-card {
-  background: var(--bg-card);
-  border: 1px solid rgba(18,54,43,.12);
-  border-radius: 22px;
-  padding: 36px;
-  margin-top: 22px;
-  max-width: 500px;
-}
-.bk-pay-title {
-  font-family: 'Poppins', sans-serif;
-  font-weight: 300;
-  font-size: 26px;
-  color: var(--fg-head);
-  margin: 0 0 22px;
-}
-.bk-pay-row {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-bottom: 18px;
-}
-.bk-pay-label {
-  font-family: 'Poppins', sans-serif;
-  font-weight: 600;
-  font-size: 13px;
-  color: var(--fg-mid);
-}
-.bk-pay-input-wrap {
-  display: flex;
-  align-items: center;
-  border: 1px solid rgba(18,54,43,.2);
-  border-radius: 12px;
-  background: var(--bg-raised);
-  overflow: hidden;
-}
-.bk-pay-symbol {
-  padding: 14px 12px 14px 16px;
-  font-family: 'Poppins', sans-serif;
-  font-size: 15px;
-  color: #6B7A6F;
-}
-.bk-pay-input {
-  border: none;
-  outline: none;
-  background: transparent;
-  font-family: 'Poppins', sans-serif;
-  font-size: 15px;
-  color: var(--fg-head);
-  padding: 14px 16px 14px 0;
-  flex: 1;
-  min-width: 0;
-}
-.bk-pay-secure {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-family: 'Poppins', sans-serif;
-  font-size: 13px;
-  color: #8FA394;
-  margin-top: 16px;
 }
 
 /* ── Responsive ───────────────────────────────────────────────────── */

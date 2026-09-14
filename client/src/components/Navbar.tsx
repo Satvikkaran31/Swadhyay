@@ -82,6 +82,10 @@ export default function Navbar({ aboutRef }: { aboutRef?: unknown }) {
   }, [userMenuOpen]);
 
   const p = location.pathname;
+  // Course-detail (/courses/:slug) is the one page with a LIGHT hero in light
+  // theme; the transparent top nav needs dark text there to stay readable
+  // (handled in CSS via .nav-lighthero, light-theme + unscrolled only).
+  const lightHero = /^\/courses\/[^/]+$/.test(p);
   const isActive = (paths: string[]) =>
     paths.some(path => path === "/" ? p === "/" : p === path || p.startsWith(path + "/"));
 
@@ -105,7 +109,7 @@ export default function Navbar({ aboutRef }: { aboutRef?: unknown }) {
     <>
       {/* ── Desktop: single unified pill ── */}
       <div className="nav-desktop">
-        <div className="nav-unified-pill">
+        <div className={`nav-unified-pill${lightHero && !isDark ? " nav-lh-dark" : ""}`}>
           {/* Logo */}
           <Link to="/" className="navlogo"><LogoMark />Swadhyay</Link>
 

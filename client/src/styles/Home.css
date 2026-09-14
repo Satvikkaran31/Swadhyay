@@ -207,22 +207,70 @@
 /* ── TRUST STRIP ──────────────────────────────────────────────────── */
 .home-trust {
   background: #0C241C;
-  padding-top: 22px;
-  padding-bottom: 22px;
+  padding-top: 34px;
+  padding-bottom: 34px;
 }
 .home-trust-inner {
   max-width: 1280px;
   margin: 0 auto;
   display: flex;
   align-items: center;
-  gap: 40px;
-  flex-wrap: wrap;
   justify-content: center;
+  gap: 18px 34px;
+  flex-wrap: wrap;
+}
+.home-trust-items {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
 }
 .home-trust-name {
   font-family: 'Poppins', sans-serif;
-  font-size: 22px;
+  font-size: 20px;
   color: #B9C6BC;
+  white-space: nowrap;
+}
+/* thin vertical separator between credentials */
+.home-trust-sep {
+  width: 1px;
+  height: 26px;
+  background: rgba(255,255,255,.16);
+  flex-shrink: 0;
+}
+/* award credential: framed photo above its label */
+.home-trust-award {
+  margin: 0;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  white-space: normal;
+}
+.home-trust-award-img {
+  width: 240px;
+  height: 156px;
+  border-radius: 14px;
+  object-fit: cover;
+  object-position: center;
+  flex-shrink: 0;
+  background: rgba(255,255,255,.06);
+  border: 2px solid rgba(231,193,91,.6);
+  box-shadow: 0 12px 30px -14px rgba(0,0,0,.7);
+}
+.home-trust-award-cap {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: .01em;
+  color: #E7C15B;
+}
+@media (max-width: 720px) {
+  .home-trust-name { font-size: 17px; white-space: normal; text-align: center; }
+  .home-trust-items { gap: 22px; }
+  .home-trust-sep { display: none; }
+  .home-trust-award-img { width: min(82vw, 300px); height: auto; aspect-ratio: 3 / 2; }
 }
 
 /* ── PHILOSOPHY QUOTE BAND ────────────────────────────────────────── */
@@ -567,9 +615,17 @@
 .home-mission-visual {
   position: relative;
   min-height: 440px;
+  overflow: hidden;
   background:
     radial-gradient(120% 90% at 78% 22%, rgba(255,255,255,.55) 0%, rgba(255,255,255,0) 55%),
     linear-gradient(135deg, #E4ECDD 0%, #D2DBCC 55%, #C6D2C2 100%);
+}
+.home-mission-visual img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 .home-mission-visual::after {
   content: "";
@@ -663,7 +719,15 @@
 .home-course-thumb {
   position: relative;
   height: 168px;
+  overflow: hidden;
   background: repeating-linear-gradient(135deg, #234A40, #234A40 15px, #2A5346 15px, #2A5346 30px);
+}
+.home-course-thumb img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 .home-course-tag {
   position: absolute;

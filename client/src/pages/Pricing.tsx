@@ -81,18 +81,18 @@ export default function Pricing() {
           {PLANS.map(p => (
             <div key={p.name} className={`pr-plan-card lift${p.featured ? " pr-plan-featured" : ""}`}>
               {p.featured && <span className="pr-plan-badge">MOST CHOSEN</span>}
-              <div className="pr-plan-name" style={{ color: p.featured ? "#8FE0D4" : "#0E766B" }}>
+              <div className="pr-plan-name" style={{ color: p.featured ? "#8FE0D4" : "var(--accent-text)" }}>
                 {p.name}
               </div>
               <div className="pr-plan-price-row">
-                <span className="pr-plan-price" style={{ color: p.featured ? "#F4F1E9" : "#12362B" }}>
+                <span className="pr-plan-price" style={{ color: p.featured ? "#F4F1E9" : "var(--fg-head)" }}>
                   {p.price}
                 </span>
-                <span className="pr-plan-unit" style={{ color: p.featured ? "#8FA394" : "#6B7A6F" }}>
+                <span className="pr-plan-unit" style={{ color: p.featured ? "#8FA394" : "var(--fg-muted)" }}>
                   {p.unit}
                 </span>
               </div>
-              <p className="pr-plan-desc" style={{ color: p.featured ? "#B9C6BC" : "#4A4E44" }}>
+              <p className="pr-plan-desc" style={{ color: p.featured ? "#B9C6BC" : "var(--fg-mid)" }}>
                 {p.desc}
               </p>
               <Link
@@ -109,8 +109,8 @@ export default function Pricing() {
               <div className="pr-plan-features">
                 {p.features.map(f => (
                   <div key={f} className="pr-plan-feature">
-                    <span className="pr-plan-check" style={{ color: p.featured ? "#8FE0D4" : "#0E9C8A" }}>✓</span>
-                    <span style={{ color: p.featured ? "#DDE4DC" : "#2A362D" }}>{f}</span>
+                    <span className="pr-plan-check" style={{ color: p.featured ? "#8FE0D4" : "var(--accent-text)" }}>✓</span>
+                    <span style={{ color: p.featured ? "#DDE4DC" : "var(--fg-body)" }}>{f}</span>
                   </div>
                 ))}
               </div>
@@ -124,13 +124,13 @@ export default function Pricing() {
       <section className="pr-courses sw-page-pad">
         <div className="rv pr-courses-grid">
           <div className="pr-courses-light">
-            <span className="pr-courses-kicker" style={{ color: "#0E766B" }}>Self-paced courses</span>
-            <h3 className="pr-courses-title" style={{ color: "#12362B" }}>Buy any course individually</h3>
-            <p className="pr-courses-desc" style={{ color: "#4A4E44" }}>
+            <span className="pr-courses-kicker" style={{ color: "var(--accent-text)" }}>Self-paced courses</span>
+            <h3 className="pr-courses-title" style={{ color: "var(--fg-head)" }}>Buy any course individually</h3>
+            <p className="pr-courses-desc" style={{ color: "var(--fg-mid)" }}>
               Courses range from <strong>Free</strong> to <strong>₹2,999</strong>.
               Lifetime access, learn at your own pace.
             </p>
-            <Link to="/series" className="pr-courses-link" style={{ color: "#0E766B" }}>
+            <Link to="/series" className="pr-courses-link" style={{ color: "var(--accent-text)" }}>
               Browse courses →
             </Link>
           </div>
@@ -163,7 +163,7 @@ export default function Pricing() {
                   <span
                     className="pr-faq-arrow"
                     style={{
-                      color: openFaq === i ? "#0E766B" : "#9AB0A6",
+                      color: openFaq === i ? "var(--accent-text)" : "var(--fg-muted)",
                       transform: openFaq === i ? "rotate(90deg)" : "rotate(0deg)",
                     }}
                   >›</span>

@@ -497,6 +497,34 @@ const migrations = [
   `ALTER TABLE leads ADD COLUMN IF NOT EXISTS page_view_count  INT DEFAULT 0`,
   `ALTER TABLE leads ADD COLUMN IF NOT EXISTS engagement_score INT DEFAULT 0`,
   `CREATE INDEX IF NOT EXISTS idx_leads_visitor ON leads(visitor_id) WHERE visitor_id IS NOT NULL`,
+
+  // ── Seed default thumbnails (self-hosted in client/public/thumbnails) ─────────
+  // Idempotent backfill: fills a context-relevant thumbnail for each seeded
+  // course/series/article ONLY when one hasn't been set, so it never overwrites
+  // an image an admin uploaded later. Filename == slug, so the path derives from
+  // the slug directly.
+  `UPDATE courses SET thumbnail_url = '/thumbnails/' || slug || '.webp'
+   WHERE (thumbnail_url IS NULL OR thumbnail_url = '')
+     AND slug IN (
+       'your-best-interview-is-your-best-self', 'who-am-i', 'leadership-presence',
+       'eft-tapping-managing-fear-stress-anxiety', 'swadhyay-immersion-retreat'
+     )`,
+  `UPDATE series SET thumbnail_url = '/thumbnails/' || slug || '.webp'
+   WHERE (thumbnail_url IS NULL OR thumbnail_url = '')
+     AND slug IN (
+       'swadhyay-youth-series', 'leadership-coaching', 'eft-tapping', 'swadhyay-immersion'
+     )`,
+  `UPDATE articles SET thumbnail_url = '/thumbnails/' || slug || '.webp'
+   WHERE (thumbnail_url IS NULL OR thumbnail_url = '')
+     AND slug IN (
+       'the-question-that-changes-everything',
+       'why-emotional-intelligence-is-the-new-leadership-iq',
+       'eft-tapping-calm-anxious-mind', 'the-hidden-cost-of-not-knowing-your-values',
+       'what-25-years-of-coaching-taught-me-about-fear',
+       'the-interview-mindset-shift-that-gets-people-hired',
+       'leadership-presence-is-not-what-you-think',
+       'swadhyay-the-ancient-word-that-became-my-life-work'
+     )`,
 ];
 
 export async function runMigrations() {

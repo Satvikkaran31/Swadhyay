@@ -7,7 +7,9 @@ import { BrowserRouter, HashRouter, Routes, Route, useLocation } from "react-rou
 const Router = import.meta.env.VITE_DEMO ? HashRouter : BrowserRouter;
 import { Toaster } from "react-hot-toast";
 import ScrollToTop from "./components/ScrollToTop";
-import WhatsAppFloat from "./components/WhatsAppFloat";
+// WhatsApp float hidden for now — re-enable by restoring the import and the
+// <WhatsAppFloat /> render below.
+// import WhatsAppFloat from "./components/WhatsAppFloat";
 import LinkedInModal from "./components/LinkedInModal";
 import Home from "./pages/Home";
 import ArticleDetail from './pages/ArticleDetail';
@@ -177,7 +179,7 @@ export default function App() {
       <AnalyticsTracker />
       <LinkedInGate />
       <ScrollToTop />
-      <WhatsAppFloat />
+      {/* <WhatsAppFloat />  — hidden for now */}
       <ErrorBoundary>
       <Suspense fallback={<LoadingFallback />}>
         <Routes>

@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+// APHC (Asia Pacific HRM Congress) award — Neha receiving the award on stage.
+import maasiAward from "../assets/maasi-award.jpeg";
 import "../styles/Home.css";
 
 /* ── service data ─────────────────────────────────────────────────── */
@@ -46,7 +48,7 @@ type SeriesKey = "youth" | "leadership" | "board";
 type HomeCourse = {
   slug: string; title: string; short_description: string | null; description: string | null;
   price: number; level: string | null; series_slug: string | null;
-  total_lessons: number | null; total_duration: number | null;
+  total_lessons: number | null; total_duration: number | null; thumbnail_url: string | null;
 };
 const SERIES: Record<SeriesKey, { label: string; accent: string; desc: string; seriesSlug: string }> = {
   youth: {
@@ -240,9 +242,21 @@ export default function Home() {
       <div className="home-trust sw-page-pad">
         <div className="home-trust-inner">
           <span className="mono-label mono-label--muted">Trusted across</span>
-          {["Jagriti Yatra", "Global Ethics Coaching", "Fortune 500 Leaders", "Delhi B-School"].map(n => (
-            <span key={n} className="home-trust-name">{n}</span>
-          ))}
+          <div className="home-trust-items">
+            <span className="home-trust-name">Mentor at Jagriti Yatra</span>
+            <span className="home-trust-sep" aria-hidden="true" />
+            <span className="home-trust-name">Global Ethics Coaching</span>
+            <figure className="home-trust-award">
+              <img
+                src={maasiAward}
+                alt="Neha receiving the Asia Pacific HRM Congress (APHC) Award"
+                className="home-trust-award-img"
+                loading="lazy"
+                onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
+              />
+              <figcaption className="home-trust-award-cap">APHC Awardee</figcaption>
+            </figure>
+          </div>
         </div>
       </div>
 
@@ -263,7 +277,7 @@ export default function Home() {
           {/* header row */}
           <div className="rv home-svc-header">
             <div>
-              <span className="mono-label" style={{ color: "#0E766B" }}>Ways to work together</span>
+              <span className="mono-label" style={{ color: "var(--accent-text)" }}>Ways to work together</span>
               <h2 className="home-svc-h2">Three ways to begin the inner work</h2>
             </div>
             {/* sliding tab selector */}
@@ -336,7 +350,7 @@ export default function Home() {
       <section className="home-mission sw-page-pad">
         <div className="rv home-mission-card">
           <div className="home-mission-copy">
-            <span className="mono-label" style={{ color: "#0E766B" }}>Our mission</span>
+            <span className="mono-label" style={{ color: "var(--accent-text)" }}>Our mission</span>
             <h2 className="home-mission-title">Self-study is the deepest work</h2>
             <p className="home-mission-body">
               Swadhyay — a Sanskrit word for self-study — is about deeply understanding oneself:
@@ -345,7 +359,9 @@ export default function Home() {
             </p>
             <Link to="/whoami" className="home-mission-cta">Read our story →</Link>
           </div>
-          <div className="home-mission-visual" aria-hidden="true" />
+          <div className="home-mission-visual" aria-hidden="true">
+            <img src="/thumbnails/mission-self-study.webp" alt="" loading="lazy" />
+          </div>
         </div>
       </section>
 
@@ -392,6 +408,7 @@ export default function Home() {
             ) : serCourses.map((c, i) => (
               <Link to={`/courses/${c.slug}`} key={c.slug} className="home-course-card lift">
                 <div className="home-course-thumb">
+                  {c.thumbnail_url && <img src={c.thumbnail_url} alt="" loading="lazy" />}
                   <span
                     className="home-course-tag"
                     style={{ background: ser.accent, color: "#0C241C" }}
@@ -426,7 +443,7 @@ export default function Home() {
         return (
           <section className="home-testimonial sw-page-pad">
             <div className="rv home-testimonial-inner">
-              <span className="mono-label" style={{ color: "#0E766B" }}>what people say</span>
+              <span className="mono-label" style={{ color: "var(--accent-text)" }}>what people say</span>
               <p className="home-testimonial-quote">"{t.quote}"</p>
               <div className="home-testimonial-attr">
                 <div className="home-testimonial-avatar" />
