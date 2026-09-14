@@ -125,9 +125,9 @@ export default function Pricing() {
         <div className="rv pr-courses-grid">
           <div className="pr-courses-light">
             <span className="pr-courses-kicker" style={{ color: "var(--accent-text)" }}>Self-paced courses</span>
-            <h3 className="pr-courses-title" style={{ color: "var(--fg-head)" }}>Buy any course individually</h3>
+            <h3 className="pr-courses-title" style={{ color: "var(--fg-head)" }}>Explore the self-paced courses</h3>
             <p className="pr-courses-desc" style={{ color: "var(--fg-mid)" }}>
-              Courses range from <strong>Free</strong> to <strong>₹2,999</strong>.
+              Every self-paced course is <strong>free right now</strong>.
               Lifetime access, learn at your own pace.
             </p>
             <Link to="/series" className="pr-courses-link" style={{ color: "var(--accent-text)" }}>

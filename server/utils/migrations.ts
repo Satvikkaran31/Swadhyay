@@ -146,7 +146,7 @@ const migrations = [
      'Your Best Interview Is Your Best Self',
      'Land your dream role by showing up as your most authentic, confident self.',
      'This course helps young professionals master the inner game of interviews — moving beyond rehearsed answers to genuine, powerful presence. You will learn how to manage nerves, articulate your value, and connect authentically with interviewers.',
-     69900,
+     0,
      true,
      'beginner',
      s.id
@@ -525,6 +525,11 @@ const migrations = [
        'leadership-presence-is-not-what-you-think',
        'swadhyay-the-ancient-word-that-became-my-life-work'
      )`,
+
+  // ── TEMPORARY: make every course free so anyone can enroll without payment ────
+  // Runs on each deploy, so it also flips any paid course back to free. REMOVE
+  // this line (and set prices via the admin panel) when re-enabling paid courses.
+  `UPDATE courses SET price = 0 WHERE price <> 0`,
 ];
 
 export async function runMigrations() {
