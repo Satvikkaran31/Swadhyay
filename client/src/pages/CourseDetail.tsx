@@ -8,7 +8,7 @@ import { useRazorpay } from "../hooks/useRazorpay";
 import { toEmbedUrl } from "../utils/videoEmbed";
 import { track } from "../utils/analytics";
 import usePageSEO from "../hooks/usePageSEO";
-import nehaPortrait from "../assets/profilepicture.webp";
+import nehaPortrait from "../assets/maasi-portrait.webp";
 import "../styles/CourseDetail.css";
 
 const API = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";

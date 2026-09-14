@@ -238,25 +238,29 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── TRUST STRIP ───────────────────────────────────────────────── */}
+      {/* ── TRUST / RECOGNITION BAND ──────────────────────────────────── */}
       <div className="home-trust sw-page-pad">
         <div className="home-trust-inner">
-          <span className="mono-label mono-label--muted">Trusted across</span>
-          <div className="home-trust-items">
-            <span className="home-trust-name">Mentor at Jagriti Yatra</span>
-            <span className="home-trust-sep" aria-hidden="true" />
-            <span className="home-trust-name">Global Ethics Coaching</span>
-            <figure className="home-trust-award">
-              <img
-                src={maasiAward}
-                alt="Neha receiving the Asia Pacific HRM Congress (APHC) Award"
-                className="home-trust-award-img"
-                loading="lazy"
-                onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
-              />
-              <figcaption className="home-trust-award-cap">APHC Awardee</figcaption>
-            </figure>
+          <div className="home-trust-copy">
+            <span className="mono-label mono-label--muted">Trusted across</span>
+            <ul className="home-trust-list">
+              <li>Mentor at Jagriti Yatra</li>
+              <li>Global Ethics Coaching</li>
+              <li>APHC Awardee — Asia Pacific HRM Congress</li>
+            </ul>
           </div>
+          <figure className="home-trust-award">
+            <img
+              src={maasiAward}
+              alt="Neha receiving the Asia Pacific HRM Congress (APHC) Award"
+              className="home-trust-award-img"
+              loading="lazy"
+              onError={(e) => { (e.currentTarget as HTMLImageElement).closest("figure")?.remove(); }}
+            />
+            <figcaption className="home-trust-award-cap">
+              Receiving the Asia Pacific HRM Congress (APHC) Award
+            </figcaption>
+          </figure>
         </div>
       </div>
 

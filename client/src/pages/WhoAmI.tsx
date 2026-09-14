@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import nehaPortrait from "../assets/profilepicture.webp";
+import nehaPortrait from "../assets/maasi-portrait.webp";
 import "../styles/WhoAmI.css";
 
 const VALUES = [

@@ -207,70 +207,74 @@
 /* ── TRUST STRIP ──────────────────────────────────────────────────── */
 .home-trust {
   background: #0C241C;
-  padding-top: 34px;
-  padding-bottom: 34px;
+  padding-top: 60px;
+  padding-bottom: 60px;
 }
 .home-trust-inner {
-  max-width: 1280px;
+  max-width: 1120px;
   margin: 0 auto;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto;
   align-items: center;
-  justify-content: center;
-  gap: 18px 34px;
-  flex-wrap: wrap;
+  gap: 56px;
 }
-.home-trust-items {
+.home-trust-list {
+  list-style: none;
+  margin: 20px 0 0;
+  padding: 0;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 30px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 16px;
 }
-.home-trust-name {
+.home-trust-list li {
   font-family: 'Poppins', sans-serif;
-  font-size: 20px;
-  color: #B9C6BC;
-  white-space: nowrap;
+  font-weight: 500;
+  font-size: 23px;
+  line-height: 1.3;
+  color: #DCE6DE;
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
 }
-/* thin vertical separator between credentials */
-.home-trust-sep {
-  width: 1px;
-  height: 26px;
-  background: rgba(255,255,255,.16);
+.home-trust-list li::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--teal, #5FC8B8);
   flex-shrink: 0;
+  transform: translateY(-2px);
 }
-/* award credential: framed photo above its label */
+/* featured award photo */
 .home-trust-award {
   margin: 0;
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  white-space: normal;
 }
 .home-trust-award-img {
-  width: 240px;
-  height: 156px;
-  border-radius: 14px;
+  display: block;
+  width: 480px;
+  max-width: 100%;
+  aspect-ratio: 3 / 2;
   object-fit: cover;
   object-position: center;
-  flex-shrink: 0;
-  background: rgba(255,255,255,.06);
-  border: 2px solid rgba(231,193,91,.6);
-  box-shadow: 0 12px 30px -14px rgba(0,0,0,.7);
+  border-radius: 18px;
+  border: 2px solid rgba(231,193,91,.55);
+  box-shadow: 0 24px 60px -28px rgba(0,0,0,.8);
 }
 .home-trust-award-cap {
+  margin-top: 14px;
+  text-align: center;
   font-family: 'Poppins', sans-serif;
-  font-weight: 600;
-  font-size: 15px;
+  font-size: 13.5px;
   letter-spacing: .01em;
-  color: #E7C15B;
+  color: #93AC9E;
 }
-@media (max-width: 720px) {
-  .home-trust-name { font-size: 17px; white-space: normal; text-align: center; }
-  .home-trust-items { gap: 22px; }
-  .home-trust-sep { display: none; }
-  .home-trust-award-img { width: min(82vw, 300px); height: auto; aspect-ratio: 3 / 2; }
+@media (max-width: 860px) {
+  .home-trust { padding-top: 48px; padding-bottom: 48px; }
+  .home-trust-inner { grid-template-columns: 1fr; gap: 32px; justify-items: center; text-align: center; }
+  .home-trust-copy { display: flex; flex-direction: column; align-items: center; }
+  .home-trust-list li { font-size: 19px; }
+  .home-trust-list li::before { display: none; }
+  .home-trust-award-img { width: min(88vw, 460px); }
 }
 
 /* ── PHILOSOPHY QUOTE BAND ────────────────────────────────────────── */
