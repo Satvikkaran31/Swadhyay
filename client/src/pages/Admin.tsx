@@ -302,6 +302,13 @@ function CourseEditor({ courseId, onSave, onCancel }) {
           })),
         })),
       });
+    }).catch((err: any) => {
+      // Don't silently leave a blank form — surface why the load failed.
+      const msg = err?.status === 401
+        ? "Your session expired — log in again, then reopen this course."
+        : `Couldn't load this course (${err?.message || "error"}). Your edits weren't loaded.`;
+      setError(msg);
+      toast.error(msg);
     });
   }, [courseId]);
 
@@ -2700,10 +2707,16 @@ export default function Admin() {
   }, [user, loading]);
 
   const loadCourses = () =>
-    apiFetch("/api/courses/admin/all").then(d => setCourses(Array.isArray(d) ? d : []));
+    apiFetch("/api/courses/admin/all")
+      .then(d => setCourses(Array.isArray(d) ? d : []))
+      .catch((err: any) => toast.error(
+        err?.status === 401 ? "Session expired — please log in again." : "Couldn't load courses."));
 
   const loadArticles = () =>
-    apiFetch("/api/articles/admin/all").then(d => setArticles(Array.isArray(d) ? d : []));
+    apiFetch("/api/articles/admin/all")
+      .then(d => setArticles(Array.isArray(d) ? d : []))
+      .catch((err: any) => toast.error(
+        err?.status === 401 ? "Session expired — please log in again." : "Couldn't load articles."));
 
   useEffect(() => {
     if (user?.role === "admin") {
