@@ -122,88 +122,10 @@ const migrations = [
   `ALTER TABLE courses ADD COLUMN IF NOT EXISTS level TEXT DEFAULT 'all-levels'`,
   `ALTER TABLE courses ADD COLUMN IF NOT EXISTS language TEXT DEFAULT 'English'`,
 
-  // ── Seed: series ───────────────────────────────────────────────────────────
-  `INSERT INTO series (slug, title, description, is_published, position)
-   VALUES
-     ('swadhyay-youth-series', 'Youth Series',
-      'A curated series for young professionals ready to step into their best selves — with confidence, clarity, and purpose.',
-      true, 1),
-     ('leadership-coaching', 'Leadership and Board Series',
-      'Deep coaching for leaders who want to elevate their presence, communication, and impact — from the inside out.',
-      true, 2),
-     ('eft-tapping', 'EFT Tapping',
-      'Evidence-based Emotional Freedom Techniques to release stress, fear, and anxiety — for anyone seeking calm and resilience.',
-      true, 3),
-     ('swadhyay-immersion', 'Immersions and Retreats',
-      'An immersive retreat experience combining deep coaching, somatic work, and community for transformative breakthroughs.',
-      true, 4)
-   ON CONFLICT (slug) DO NOTHING`,
+  // NOTE: the series + course content seeds were moved OUT of this array into
+  // `contentSeeds` below. They now run ONLY on a fresh database (no courses yet),
+  // so deleting a seeded course in the admin no longer resurrects it on redeploy.
 
-  // ── Seed: courses ──────────────────────────────────────────────────────────
-  `INSERT INTO courses (slug, title, short_description, description, price, is_published, level, series_id)
-   SELECT
-     'your-best-interview-is-your-best-self',
-     'Your Best Interview Is Your Best Self',
-     'Land your dream role by showing up as your most authentic, confident self.',
-     'This course helps young professionals master the inner game of interviews — moving beyond rehearsed answers to genuine, powerful presence. You will learn how to manage nerves, articulate your value, and connect authentically with interviewers.',
-     0,
-     true,
-     'beginner',
-     s.id
-   FROM series s WHERE s.slug = 'swadhyay-youth-series'
-   ON CONFLICT (slug) DO NOTHING`,
-
-  `INSERT INTO courses (slug, title, short_description, description, price, is_published, level, series_id)
-   SELECT
-     'who-am-i',
-     'Who Am I?',
-     'A guided self-discovery journey to uncover your values, strengths, and authentic identity.',
-     'This course takes you through a structured self-assessment process — combining reflective exercises, coaching frameworks, and Neha''s signature methodology — to help you understand who you truly are beneath the roles you play. Ideal for anyone at a crossroads or seeking deeper clarity.',
-     0,
-     true,
-     'all-levels',
-     s.id
-   FROM series s WHERE s.slug = 'swadhyay-youth-series'
-   ON CONFLICT (slug) DO NOTHING`,
-
-  `INSERT INTO courses (slug, title, short_description, description, price, is_published, level, series_id)
-   SELECT
-     'leadership-presence',
-     'Leadership Presence',
-     'Command the room and lead with authenticity, clarity, and executive gravitas.',
-     'This course is designed for leaders who want to move beyond technical competence and develop the inner qualities that define great leadership — presence, emotional intelligence, and the ability to inspire trust. Neha draws on 25+ years of executive coaching to guide you through a transformative process.',
-     0,
-     true,
-     'intermediate',
-     s.id
-   FROM series s WHERE s.slug = 'leadership-coaching'
-   ON CONFLICT (slug) DO NOTHING`,
-
-  `INSERT INTO courses (slug, title, short_description, description, price, is_published, level, series_id)
-   SELECT
-     'eft-tapping-managing-fear-stress-anxiety',
-     'EFT Tapping: Managing Fear, Stress & Anxiety',
-     'Use tapping sequences to calm your nervous system and reclaim peace in minutes.',
-     'Learn the complete EFT (Emotional Freedom Techniques) protocol to process and release fear, stress, and anxiety. This course combines ancient meridian wisdom with modern psychology to give you a practical toolkit for emotional regulation.',
-     0,
-     true,
-     'all-levels',
-     s.id
-   FROM series s WHERE s.slug = 'eft-tapping'
-   ON CONFLICT (slug) DO NOTHING`,
-
-  `INSERT INTO courses (slug, title, short_description, description, price, is_published, level, series_id)
-   SELECT
-     'swadhyay-immersion-retreat',
-     'Swadhyay Immersion Retreat',
-     'A transformative in-person retreat for deep self-discovery and lasting change.',
-     'The Swadhyay Immersion is a curated retreat experience that combines executive coaching, EFT, somatic movement, and group dialogue. Spend dedicated time stepping away from the daily grind to reconnect with yourself and your purpose.',
-     0,
-     true,
-     'all-levels',
-     s.id
-   FROM series s WHERE s.slug = 'swadhyay-immersion'
-   ON CONFLICT (slug) DO NOTHING`,
   `CREATE TABLE IF NOT EXISTS testimonials (
     id SERIAL PRIMARY KEY,
     name TEXT NOT NULL,
@@ -532,6 +454,63 @@ const migrations = [
   `UPDATE courses SET price = 0 WHERE price <> 0`,
 ];
 
+// Content seeds — the starter series + courses. These run ONLY once, on a fresh
+// database (when no courses exist yet). They are intentionally NOT in the
+// `migrations` array (which runs on every deploy), because with ON CONFLICT DO
+// NOTHING a deleted course had no conflict and got re-inserted every redeploy.
+const contentSeeds: string[] = [
+  `INSERT INTO series (slug, title, description, is_published, position)
+   VALUES
+     ('swadhyay-youth-series', 'Youth Series',
+      'A curated series for young professionals ready to step into their best selves — with confidence, clarity, and purpose.',
+      true, 1),
+     ('leadership-coaching', 'Leadership and Board Series',
+      'Deep coaching for leaders who want to elevate their presence, communication, and impact — from the inside out.',
+      true, 2),
+     ('eft-tapping', 'EFT Tapping',
+      'Evidence-based Emotional Freedom Techniques to release stress, fear, and anxiety — for anyone seeking calm and resilience.',
+      true, 3),
+     ('swadhyay-immersion', 'Immersions and Retreats',
+      'An immersive retreat experience combining deep coaching, somatic work, and community for transformative breakthroughs.',
+      true, 4)
+   ON CONFLICT (slug) DO NOTHING`,
+
+  `INSERT INTO courses (slug, title, short_description, description, price, is_published, level, series_id)
+   SELECT 'your-best-interview-is-your-best-self', 'Your Best Interview Is Your Best Self',
+     'Land your dream role by showing up as your most authentic, confident self.',
+     'This course helps young professionals master the inner game of interviews — moving beyond rehearsed answers to genuine, powerful presence. You will learn how to manage nerves, articulate your value, and connect authentically with interviewers.',
+     0, true, 'beginner', s.id
+   FROM series s WHERE s.slug = 'swadhyay-youth-series' ON CONFLICT (slug) DO NOTHING`,
+
+  `INSERT INTO courses (slug, title, short_description, description, price, is_published, level, series_id)
+   SELECT 'who-am-i', 'Who Am I?',
+     'A guided self-discovery journey to uncover your values, strengths, and authentic identity.',
+     'This course takes you through a structured self-assessment process — combining reflective exercises, coaching frameworks, and Neha''s signature methodology — to help you understand who you truly are beneath the roles you play. Ideal for anyone at a crossroads or seeking deeper clarity.',
+     0, true, 'all-levels', s.id
+   FROM series s WHERE s.slug = 'swadhyay-youth-series' ON CONFLICT (slug) DO NOTHING`,
+
+  `INSERT INTO courses (slug, title, short_description, description, price, is_published, level, series_id)
+   SELECT 'leadership-presence', 'Leadership Presence',
+     'Command the room and lead with authenticity, clarity, and executive gravitas.',
+     'This course is designed for leaders who want to move beyond technical competence and develop the inner qualities that define great leadership — presence, emotional intelligence, and the ability to inspire trust. Neha draws on 25+ years of executive coaching to guide you through a transformative process.',
+     0, true, 'intermediate', s.id
+   FROM series s WHERE s.slug = 'leadership-coaching' ON CONFLICT (slug) DO NOTHING`,
+
+  `INSERT INTO courses (slug, title, short_description, description, price, is_published, level, series_id)
+   SELECT 'eft-tapping-managing-fear-stress-anxiety', 'EFT Tapping: Managing Fear, Stress & Anxiety',
+     'Use tapping sequences to calm your nervous system and reclaim peace in minutes.',
+     'Learn the complete EFT (Emotional Freedom Techniques) protocol to process and release fear, stress, and anxiety. This course combines ancient meridian wisdom with modern psychology to give you a practical toolkit for emotional regulation.',
+     0, true, 'all-levels', s.id
+   FROM series s WHERE s.slug = 'eft-tapping' ON CONFLICT (slug) DO NOTHING`,
+
+  `INSERT INTO courses (slug, title, short_description, description, price, is_published, level, series_id)
+   SELECT 'swadhyay-immersion-retreat', 'Swadhyay Immersion Retreat',
+     'A transformative in-person retreat for deep self-discovery and lasting change.',
+     'The Swadhyay Immersion is a curated retreat experience that combines executive coaching, EFT, somatic movement, and group dialogue. Spend dedicated time stepping away from the daily grind to reconnect with yourself and your purpose.',
+     0, true, 'all-levels', s.id
+   FROM series s WHERE s.slug = 'swadhyay-immersion' ON CONFLICT (slug) DO NOTHING`,
+];
+
 export async function runMigrations() {
   for (const sql of migrations) {
     await pool.query(sql).catch(err => {
@@ -539,5 +518,22 @@ export async function runMigrations() {
       throw err;
     });
   }
+
+  // Run content seeds only on a fresh DB (no courses). This preserves admin
+  // deletions across redeploys instead of resurrecting seeded courses.
+  try {
+    const { rows } = await pool.query('SELECT COUNT(*)::int AS n FROM courses');
+    if (rows[0].n === 0) {
+      console.log('Fresh database — seeding starter series + courses');
+      for (const sql of contentSeeds) {
+        await pool.query(sql).catch(err => console.error('Seed failed:', err.message));
+      }
+    } else {
+      console.log(`Skipping content seeds (${rows[0].n} courses already exist — deletions preserved)`);
+    }
+  } catch (err: any) {
+    console.error('Seed check failed:', err.message);
+  }
+
   console.log('Migrations complete');
 }

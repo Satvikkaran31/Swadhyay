@@ -300,8 +300,12 @@ export const getUpcomingBookings = async (req, res) => {
       meetLink: ev.hangoutLink,
     }));
     res.json({ bookings });
-  } catch (err) {
-    console.error("Upcoming bookings error:", err);
-    res.status(500).json({ error: "Failed to fetch upcoming bookings" });
+  } catch (err: any) {
+    // A bad/expired Google refresh token (invalid_grant) shouldn't 500 the admin
+    // dashboard or dump a giant stack every poll. Degrade to an empty list with
+    // a flag the UI can show, and log a single concise line.
+    const detail = err?.response?.data?.error || err?.message || String(err);
+    console.warn("Upcoming bookings: Google Calendar unavailable —", detail);
+    res.json({ bookings: [], calendarError: "Google Calendar isn't connected (check REFRESH_TOKEN)." });
   }
 };
