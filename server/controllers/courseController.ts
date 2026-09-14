@@ -662,19 +662,20 @@ export async function getAdminCourse(req, res) {
          c.created_at, c.updated_at,
          m.id AS m_id, m.title AS m_title, m.description AS m_desc, m.position AS m_pos,
          l.id AS l_id, l.title AS l_title, l.type AS l_type, l.content AS l_content,
-         l.video_url AS l_video_url, l.duration AS l_duration, l.position AS l_pos, l.is_preview AS l_is_preview,
-         r.id AS r_id, r.title AS r_title, r.url AS r_url, r.type AS r_type
+         l.video_url AS l_video_url, l.duration AS l_duration, l.position AS l_pos, l.is_preview AS l_is_preview
        FROM courses c
        LEFT JOIN modules m ON m.course_id = c.id
        LEFT JOIN lessons l ON l.module_id = m.id
-       LEFT JOIN resources r ON r.lesson_id = l.id
        WHERE c.id = $1
-       ORDER BY m.position, l.position, r.id`,
+       ORDER BY m.position, l.position`,
       [req.params.id]
     );
     if (!rows.length) return res.status(404).json({ error: 'Course not found' });
-    res.json(reshapeCourseRows(rows, { includeResources: true }));
-  } catch {
+    // The admin editor doesn't manage per-lesson resources, so we don't join the
+    // `resources` table here — avoids a hard 500 on any DB missing that table.
+    res.json(reshapeCourseRows(rows, { includeVideoUrls: true }));
+  } catch (err: any) {
+    console.error('getAdminCourse error:', err?.message);
     res.status(500).json({ error: 'Failed to fetch course' });
   }
 }
