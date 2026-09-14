@@ -215,7 +215,7 @@ export async function updateCourse(req, res) {
            thumbnail_url      = COALESCE($4, thumbnail_url),
            price              = COALESCE($5, price),
            is_published       = COALESCE($6, is_published),
-           series_id          = $7,
+           series_id          = COALESCE($7, series_id),
            what_youll_learn   = COALESCE($8, what_youll_learn),
            requirements       = COALESCE($9, requirements),
            level              = COALESCE($10, level),
