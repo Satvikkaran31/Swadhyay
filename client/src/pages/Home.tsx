@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-// APHC (Asia Pacific HRM Congress) award — Neha receiving the award on stage.
+// Exemplary Coaching Leader award (Asia Pacific HRM Congress) — Neha on stage.
 import maasiAward from "../assets/maasi-award.jpeg";
 import "../styles/Home.css";
 
@@ -49,6 +49,7 @@ type HomeCourse = {
   slug: string; title: string; short_description: string | null; description: string | null;
   price: number; level: string | null; series_slug: string | null;
   total_lessons: number | null; total_duration: number | null; thumbnail_url: string | null;
+  card_banner: string | null;
 };
 const SERIES: Record<SeriesKey, { label: string; accent: string; desc: string; seriesSlug: string }> = {
   youth: {
@@ -245,7 +246,7 @@ export default function Home() {
           <ul className="home-trust-list">
             <li>Mentor at Jagriti Yatra</li>
             <li>Global Ethics Coaching</li>
-            <li>APHC Awardee — Asia Pacific HRM Congress</li>
+            <li>Exemplary Coaching Leader Awardee — Asia Pacific HRM Congress</li>
           </ul>
         </div>
       </div>
@@ -352,11 +353,11 @@ export default function Home() {
           <div className="home-mission-visual">
             <img
               src={maasiAward}
-              alt="Neha receiving the Asia Pacific HRM Congress (APHC) Award"
+              alt="Neha receiving the Exemplary Coaching Leader award at the Asia Pacific HRM Congress"
               loading="lazy"
             />
             <figcaption className="home-mission-visual-cap">
-              Asia Pacific HRM Congress (APHC) Award
+              Exemplary Coaching Leader Awardee — Asia Pacific HRM Congress
             </figcaption>
           </div>
         </div>
@@ -413,6 +414,9 @@ export default function Home() {
                     {c.price === 0 ? "FREE" : (c.level || "COURSE").toUpperCase()}
                   </span>
                   <span className="home-course-num">{String(i + 1).padStart(2, "0")}</span>
+                  {c.card_banner && (
+                    <span className="home-course-banner">{c.card_banner}</span>
+                  )}
                 </div>
                 <div className="home-course-body">
                   <h3 className="home-course-title">{c.title}</h3>

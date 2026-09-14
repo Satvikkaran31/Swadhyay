@@ -64,27 +64,6 @@ export default function WhoAmI() {
         </div>
       </section>
 
-      {/* ── MISSION ───────────────────────────────────────────────────── */}
-      <section className="wa-mission sw-page-pad">
-        <div className="rv wa-mission-grid">
-          <div>
-            <span className="mono-label" style={{ color: "var(--accent-text)" }}>Our mission</span>
-            <p className="wa-mission-quote">
-              "Who looks outside, dreams. Who looks inside, awakens."
-            </p>
-            <span className="mono-label" style={{ display: "block", marginTop: 12, color: "var(--accent-text)" }}>
-              — Carl Jung
-            </span>
-            <p className="wa-mission-body">
-              Self-awareness is the trait shared by the finest leaders. It fosters compassion,
-              deepens empathy, and turns knowledge into wisdom. Swadhyay exists to guide that
-              inward journey — for leaders, professionals and young people ready to grow.
-            </p>
-          </div>
-          <div className="wa-mission-visual" aria-hidden="true" />
-        </div>
-      </section>
-
       {/* ── VALUES ────────────────────────────────────────────────────── */}
       <section className="wa-values sw-page-pad">
         <div className="rv wa-values-inner">

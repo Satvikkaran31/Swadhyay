@@ -121,6 +121,9 @@ const migrations = [
   `ALTER TABLE courses ADD COLUMN IF NOT EXISTS requirements TEXT[] DEFAULT '{}'`,
   `ALTER TABLE courses ADD COLUMN IF NOT EXISTS level TEXT DEFAULT 'all-levels'`,
   `ALTER TABLE courses ADD COLUMN IF NOT EXISTS language TEXT DEFAULT 'English'`,
+  // Optional small editable banner shown on the course card (e.g. "Bestseller",
+  // "New batch", "50% off"). Admin sets it per course; blank = no banner.
+  `ALTER TABLE courses ADD COLUMN IF NOT EXISTS card_banner TEXT`,
 
   // NOTE: the series + course content seeds were moved OUT of this array into
   // `contentSeeds` below. They now run ONLY on a fresh database (no courses yet),

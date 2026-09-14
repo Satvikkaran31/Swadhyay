@@ -29,6 +29,7 @@ function reshapeCourseRows(rows, { includeResources = false, includeVideoUrls = 
     requirements: r.requirements ?? [],
     level: r.level ?? 'all-levels', language: r.language ?? 'English',
     thumbnail_url: r.thumbnail_url, price: r.price,
+    card_banner: r.card_banner ?? null,
     is_published: r.is_published, created_at: r.created_at, updated_at: r.updated_at,
     series_id: r.series_id,
     series: r.series_title ? { id: r.series_id, title: r.series_title, slug: r.series_slug } : null,
@@ -78,7 +79,7 @@ export async function getCourses(req, res) {
   try {
     const { rows } = await pool.query(
       `SELECT c.id, c.slug, c.title, c.description, c.short_description,
-              c.thumbnail_url, c.price, c.level, c.language, c.created_at,
+              c.thumbnail_url, c.price, c.level, c.language, c.card_banner, c.created_at,
               c.series_id, s.title AS series_title, s.slug AS series_slug,
               COUNT(DISTINCT l.id)::int AS total_lessons,
               COALESCE(SUM(l.duration), 0)::int AS total_duration
@@ -103,7 +104,7 @@ export async function getCourse(req, res) {
       `SELECT
          c.id, c.slug, c.title, c.description, c.short_description,
          c.what_youll_learn, c.requirements, c.level, c.language,
-         c.thumbnail_url, c.price, c.is_published, c.created_at, c.updated_at,
+         c.thumbnail_url, c.price, c.card_banner, c.is_published, c.created_at, c.updated_at,
          c.series_id, s.title AS series_title, s.slug AS series_slug,
          (SELECT COUNT(*)::int FROM enrollments WHERE course_id = c.id) AS enrollment_count,
          m.id AS m_id, m.title AS m_title, m.description AS m_desc, m.position AS m_pos,
@@ -179,6 +180,7 @@ export async function createCourse(req, res) {
     price = 0, is_published = false, series_id = null,
     what_youll_learn = [], requirements = [],
     level = 'all-levels', language = 'English',
+    card_banner = null,
   } = req.body;
   if (!title) return res.status(400).json({ error: 'Title is required' });
   if (price < 0) return res.status(400).json({ error: 'Price cannot be negative' });
@@ -187,10 +189,11 @@ export async function createCourse(req, res) {
   try {
     const { rows } = await pool.query(
       `INSERT INTO courses (slug, title, description, short_description, thumbnail_url, price,
-                            is_published, series_id, what_youll_learn, requirements, level, language)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING *`,
+                            is_published, series_id, what_youll_learn, requirements, level, language, card_banner)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING *`,
       [slug, title, description, short_description, thumbnail_url, price,
-       is_published, series_id || null, what_youll_learn, requirements, level, language]
+       is_published, series_id || null, what_youll_learn, requirements, level, language,
+       card_banner || null]
     );
     res.status(201).json(rows[0]);
   } catch (err: any) {
@@ -203,7 +206,7 @@ export async function updateCourse(req, res) {
   const { id } = req.params;
   const {
     title, description, short_description, thumbnail_url, price, is_published,
-    series_id, what_youll_learn, requirements, level, language,
+    series_id, what_youll_learn, requirements, level, language, card_banner,
   } = req.body;
   if (price !== undefined && price < 0) return res.status(400).json({ error: 'Price cannot be negative' });
   try {
@@ -220,10 +223,11 @@ export async function updateCourse(req, res) {
            requirements       = COALESCE($9, requirements),
            level              = COALESCE($10, level),
            language           = COALESCE($11, language),
+           card_banner        = COALESCE($12, card_banner),
            updated_at         = NOW()
-       WHERE id = $12 RETURNING *`,
+       WHERE id = $13 RETURNING *`,
       [title, description, short_description, thumbnail_url, price, is_published,
-       series_id ?? null, what_youll_learn, requirements, level, language, id]
+       series_id ?? null, what_youll_learn, requirements, level, language, card_banner ?? null, id]
     );
     if (!rows.length) return res.status(404).json({ error: 'Course not found' });
     res.json(rows[0]);
@@ -261,8 +265,9 @@ export async function batchSaveCourse(req, res) {
            requirements      = $9,
            level             = $10,
            language          = $11,
+           card_banner       = $12,
            updated_at        = NOW()
-       WHERE id = $12 RETURNING *`,
+       WHERE id = $13 RETURNING *`,
       [
         courseMeta.title,
         courseMeta.description ?? null,
@@ -275,6 +280,7 @@ export async function batchSaveCourse(req, res) {
         courseMeta.requirements ?? [],
         courseMeta.level ?? 'all-levels',
         courseMeta.language ?? 'English',
+        (courseMeta.card_banner ?? '').trim() || null,
         courseId,
       ]
     );
@@ -658,7 +664,7 @@ export async function getAdminCourse(req, res) {
       `SELECT
          c.id, c.slug, c.title, c.description, c.short_description,
          c.what_youll_learn, c.requirements, c.level, c.language,
-         c.thumbnail_url, c.price, c.is_published, c.series_id,
+         c.thumbnail_url, c.price, c.card_banner, c.is_published, c.series_id,
          c.created_at, c.updated_at,
          m.id AS m_id, m.title AS m_title, m.description AS m_desc, m.position AS m_pos,
          l.id AS l_id, l.title AS l_title, l.type AS l_type, l.content AS l_content,

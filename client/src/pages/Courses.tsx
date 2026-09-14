@@ -13,6 +13,7 @@ type ApiCourse = {
   slug: string; title: string; short_description: string | null; description: string | null;
   price: number; level: string | null; series_slug: string | null;
   total_lessons: number | null; total_duration: number | null; thumbnail_url: string | null;
+  card_banner: string | null;
 };
 
 const SERIES_META: Record<SeriesKey, {
@@ -221,6 +222,9 @@ export default function Courses() {
                     {c.price === 0 ? "FREE" : (c.level || "COURSE").toUpperCase()}
                   </span>
                   <span className="ser-course-num">{String(i + 1).padStart(2, "0")}</span>
+                  {c.card_banner && (
+                    <span className="ser-course-banner">{c.card_banner}</span>
+                  )}
                 </div>
                 <div className="ser-course-body">
                   <h3 className="ser-course-title">{c.title}</h3>

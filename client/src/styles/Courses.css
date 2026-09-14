@@ -289,6 +289,29 @@
   font-size: 38px;
   color: rgba(18,54,43,.16);
 }
+/* Editable banner badge (set per-course from the admin panel) */
+.ser-course-banner {
+  position: absolute;
+  bottom: 14px;
+  left: 14px;
+  z-index: 2;
+  max-width: calc(100% - 28px);
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: #FFF;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(7, 22, 16, .82) !important;
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  box-shadow: 0 4px 14px rgba(7,22,16,.22);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .ser-course-body { padding: 24px 24px 26px; }
 .ser-course-title {
   font-family: 'Poppins', sans-serif;

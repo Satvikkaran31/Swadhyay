@@ -70,9 +70,8 @@ body:not(.nav-scrolled) .nav-lh-dark .nav-login-btn { border-color: rgba(12,36,2
   width: 34px;
   height: 31px;
   flex-shrink: 0;
-  /* The Sacramento wordmark sits low in its line box, so nudge the mark DOWN to
-     optically center it against the visible text (not the line box). */
-  transform: translateY(4px);
+  /* Sit the mark up, inline with the wordmark. */
+  transform: translateY(-4px);
 }
 
 /* ── Divider ──────────────────────────────────────────────────────── */

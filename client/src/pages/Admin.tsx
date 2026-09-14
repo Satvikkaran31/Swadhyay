@@ -31,7 +31,7 @@ function emptyCourse() {
   return {
     title: "", description: "", short_description: "", thumbnail_url: "",
     price: 0, is_published: false, series_id: null as number | null,
-    level: "", language: "English",
+    level: "", language: "English", card_banner: "",
     what_youll_learn: [] as string[], requirements: [] as string[],
     modules: [emptyModule()],
   };
@@ -291,6 +291,7 @@ function CourseEditor({ courseId, onSave, onCancel }) {
         short_description: data.short_description || "",
         level: data.level || "",
         language: data.language || "English",
+        card_banner: data.card_banner || "",
         what_youll_learn: Array.isArray(data.what_youll_learn) ? data.what_youll_learn : [],
         requirements: Array.isArray(data.requirements) ? data.requirements : [],
         series_id: data.series_id || null,
@@ -405,6 +406,7 @@ function CourseEditor({ courseId, onSave, onCancel }) {
           series_id: form.series_id || null,
           level: form.level || null,
           language: form.language || "English",
+          card_banner: (form.card_banner || "").trim() || null,
           what_youll_learn: form.what_youll_learn.filter((s: string) => s.trim()),
           requirements: form.requirements.filter((s: string) => s.trim()),
           modules: form.modules.map((mod, mi) => ({
@@ -478,6 +480,16 @@ function CourseEditor({ courseId, onSave, onCancel }) {
       <div className="admin-form-group">
         <label>Short Description</label>
         <input value={form.short_description || ""} onChange={e => setField("short_description", e.target.value)} placeholder="One-line summary shown on cards" />
+      </div>
+      <div className="admin-form-group">
+        <label>Card Banner</label>
+        <input
+          value={form.card_banner || ""}
+          onChange={e => setField("card_banner", e.target.value)}
+          maxLength={40}
+          placeholder="Short badge shown on the course card, e.g. “New”, “Popular”, “Free this month”"
+        />
+        <span className="admin-label-hint" style={{ display: "block", marginTop: 4 }}>Leave blank for no banner. Keep it short — it shows as a small badge on the card.</span>
       </div>
       <div className="admin-form-group">
         <label>Full Description</label>
