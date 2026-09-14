@@ -217,6 +217,20 @@ const migrations = [
   // ── Module-level description (shown under module title in curriculum) ─────────
   `ALTER TABLE modules ADD COLUMN IF NOT EXISTS description TEXT`,
 
+  // Lesson resources (downloadable links/files). This table was created inline
+  // long ago on some environments but never added to migrations, so prod never
+  // got it — and getAdminCourse LEFT JOINs it, which 500'd the admin course
+  // editor ("Failed to fetch course"). Create it here so every environment has it.
+  `CREATE TABLE IF NOT EXISTS resources (
+    id         SERIAL PRIMARY KEY,
+    lesson_id  INT NOT NULL REFERENCES lessons(id) ON DELETE CASCADE,
+    title      VARCHAR(500) NOT NULL,
+    url        TEXT NOT NULL,
+    type       VARCHAR(50) NOT NULL DEFAULT 'link',
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  )`,
+  `CREATE INDEX IF NOT EXISTS idx_resources_lesson_id ON resources(lesson_id)`,
+
   // ── LinkedIn URL on user profiles ─────────────────────────────────────────────
   `ALTER TABLE users ADD COLUMN IF NOT EXISTS linkedin_url TEXT`,
 
