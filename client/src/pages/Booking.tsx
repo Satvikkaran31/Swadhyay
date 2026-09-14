@@ -1,9 +1,6 @@
 import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import BookingModal from "../components/BookingModal";
-import { useUser } from "../context/UserProvider";
-import { useTriggerGoogleLogin } from "../utils/googleLoginHelper";
 import "../styles/Booking.css";
 
 const SESSION_TYPES = [
@@ -37,22 +34,16 @@ const FAQS = [
   { q: "What happens in a coaching session?", a: "Each session is a focused, confidential conversation between you and Neha. We explore your current challenges, clarify your goals, and identify concrete next steps. Sessions are tailored entirely to you — no generic advice." },
   { q: "How many sessions will I need?", a: "This varies by person and goal. Many clients see meaningful shifts after 3–6 sessions. We recommend starting with a Discovery Call so Neha can give you an honest assessment of what support would be most useful." },
   { q: "What is EFT and how is it different from coaching?", a: "EFT (Emotional Freedom Technique) combines targeted coaching conversations with a gentle tapping practice on acupressure points. It can accelerate breakthroughs on emotional and mindset blocks that talk-based coaching alone may not reach." },
-  { q: "Are sessions online or in person?", a: "All sessions are held privately online — over Google Meet, Zoom, or Microsoft Teams — so you can join from anywhere. A calendar invite with the link arrives as soon as you book." },
+  { q: "Are sessions online or in person?", a: "All sessions are held privately online, so you can join from anywhere. A calendar invite with the join link arrives as soon as you book." },
 ];
 
 export default function Booking() {
-  const { user, setUser } = useUser();
-  const login = useTriggerGoogleLogin(setUser, "/booking");
   const [selectedType, setSelectedType] = useState("one-on-one");
-  const [modalOpen, setModalOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState(0);
 
-  // Booking requires an authenticated account (the session is booked under it).
-  // Prompt Google login instead of opening a form that would fail on submit.
-  const handleBookClick = () => {
-    if (!user) { login(); return; }
-    setModalOpen(true);
-  };
+  // Booking goes through the coach's Microsoft Bookings (Outlook) page for now.
+  // The multi-platform in-app flow (Google Meet / Zoom / Teams) is deferred.
+  const bookingUrl = import.meta.env.VITE_BOOKING_LINK;
 
   useEffect(() => {
     const t0 = document.timeline?.currentTime ?? 0;
@@ -65,8 +56,6 @@ export default function Booking() {
     requestAnimationFrame(arm);
     return () => { document.body.classList.remove("rv-go"); };
   }, []);
-
-  const currentType = SESSION_TYPES.find(t => t.id === selectedType) ?? SESSION_TYPES[1];
 
   // Decorative hero calendar — always shows a plausible near-future date
   const calDate = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000);
@@ -138,14 +127,16 @@ export default function Booking() {
               ))}
             </div>
             <div className="bk-flow-actions">
-              <button
+              <a
                 className="home-btn-primary"
-                style={{ fontSize: 17, padding: "18px 38px" }}
-                onClick={handleBookClick}
+                style={{ fontSize: 17, padding: "18px 38px", opacity: bookingUrl ? 1 : 0.55, pointerEvents: bookingUrl ? "auto" : "none" }}
+                href={bookingUrl || "#"}
+                target="_blank"
+                rel="noopener noreferrer"
               >
-                {user ? `Book — ${currentType.name} →` : "Log in to book →"}
-              </button>
-              <span className="bk-zoom-note">Held privately on Google Meet, Zoom or Microsoft Teams · IST</span>
+                Book with Outlook →
+              </a>
+              <span className="bk-zoom-note">Held privately online · you'll get a calendar invite with the join link · IST</span>
             </div>
           </div>
 
@@ -176,13 +167,6 @@ export default function Booking() {
       </section>
 
       <Footer />
-
-      {modalOpen && (
-        <BookingModal
-          onClose={() => setModalOpen(false)}
-          initialSessionType={currentType.sessionType}
-        />
-      )}
     </>
   );
 }
