@@ -65,6 +65,17 @@
   gap: 18px;
   align-items: flex-start;
 }
+/* email card is a clickable mailto link */
+.inq-info-link {
+  text-decoration: none;
+  color: inherit;
+  transition: border-color .2s, transform .2s;
+}
+.inq-info-link:hover {
+  border-color: var(--accent-text);
+  transform: translateY(-2px);
+}
+.inq-info-link .inq-info-text { color: var(--accent-text); }
 
 .inq-info-icon {
   font-size: 24px;

@@ -67,12 +67,12 @@ body:not(.nav-scrolled) .nav-lh-dark .nav-login-btn { border-color: rgba(12,36,2
   flex-shrink: 0;
 }
 .navlogo-mark {
-  width: 36px;
-  height: 33px;
+  width: 34px;
+  height: 31px;
   flex-shrink: 0;
-  /* the glyph sits in the lower half of its viewBox — nudge up to optically
-     center it against the wordmark's cap height */
-  transform: translateY(-2px);
+  /* The Sacramento wordmark sits low in its line box, so nudge the mark DOWN to
+     optically center it against the visible text (not the line box). */
+  transform: translateY(4px);
 }
 
 /* ── Divider ──────────────────────────────────────────────────────── */

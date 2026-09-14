@@ -34,6 +34,7 @@ export default function Footer({ compact = false }: FooterProps) {
         <div className="footer-brand">
           <span className="footer-logo-text">Swadhyay</span>
           <p>Coaching for self-mastery and elevated leadership. A space for inner work.</p>
+          <a className="footer-email" href="mailto:nehasharma@swadhyay.co">nehasharma@swadhyay.co</a>
         </div>
         <div className="footer-col">
           <div className="footer-col-head">Explore</div>

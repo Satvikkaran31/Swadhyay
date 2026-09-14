@@ -19,6 +19,17 @@
   margin: 14px 0 0;
   max-width: 280px;
 }
+.footer-email {
+  display: inline-block;
+  margin-top: 14px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 14px;
+  color: #B9C6BC;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255,255,255,.18);
+  padding-bottom: 1px;
+}
+.footer-email:hover { color: #5FC8B8; }
 .footer-logo-text {
   font-family: 'Sacramento', cursive;
   font-weight: 700;

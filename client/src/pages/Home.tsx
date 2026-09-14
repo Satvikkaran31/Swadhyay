@@ -238,29 +238,15 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── TRUST / RECOGNITION BAND ──────────────────────────────────── */}
+      {/* ── TRUST STRIP ───────────────────────────────────────────────── */}
       <div className="home-trust sw-page-pad">
         <div className="home-trust-inner">
-          <div className="home-trust-copy">
-            <span className="mono-label mono-label--muted">Trusted across</span>
-            <ul className="home-trust-list">
-              <li>Mentor at Jagriti Yatra</li>
-              <li>Global Ethics Coaching</li>
-              <li>APHC Awardee — Asia Pacific HRM Congress</li>
-            </ul>
-          </div>
-          <figure className="home-trust-award">
-            <img
-              src={maasiAward}
-              alt="Neha receiving the Asia Pacific HRM Congress (APHC) Award"
-              className="home-trust-award-img"
-              loading="lazy"
-              onError={(e) => { (e.currentTarget as HTMLImageElement).closest("figure")?.remove(); }}
-            />
-            <figcaption className="home-trust-award-cap">
-              Receiving the Asia Pacific HRM Congress (APHC) Award
-            </figcaption>
-          </figure>
+          <span className="mono-label mono-label--muted">Trusted across</span>
+          <ul className="home-trust-list">
+            <li>Mentor at Jagriti Yatra</li>
+            <li>Global Ethics Coaching</li>
+            <li>APHC Awardee — Asia Pacific HRM Congress</li>
+          </ul>
         </div>
       </div>
 
@@ -363,8 +349,15 @@ export default function Home() {
             </p>
             <Link to="/whoami" className="home-mission-cta">Read our story →</Link>
           </div>
-          <div className="home-mission-visual" aria-hidden="true">
-            <img src="/thumbnails/mission-self-study.webp" alt="" loading="lazy" />
+          <div className="home-mission-visual">
+            <img
+              src={maasiAward}
+              alt="Neha receiving the Asia Pacific HRM Congress (APHC) Award"
+              loading="lazy"
+            />
+            <figcaption className="home-mission-visual-cap">
+              Asia Pacific HRM Congress (APHC) Award
+            </figcaption>
           </div>
         </div>
       </section>

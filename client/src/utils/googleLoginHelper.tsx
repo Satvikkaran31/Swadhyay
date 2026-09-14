@@ -6,7 +6,7 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { getVisitorId } from './analytics';
 
-export function useTriggerGoogleLogin(setUser, navigateTo = "/") {
+export function useTriggerGoogleLogin(setUser, navigateTo?: string) {
   const navigate = useNavigate();
   // Generate once per mount — prevents CSRF code-substitution attacks
   const state = useMemo(() => crypto.randomUUID(), []);
@@ -32,7 +32,12 @@ export function useTriggerGoogleLogin(setUser, navigateTo = "/") {
 
         const userData = response.data.user;
         setUser(userData);
-        navigate(navigateTo);
+        // Return the user to where they were (e.g. the course they wanted to
+        // enroll in), not the homepage — unless a caller passed an explicit
+        // destination. window.location is used so it reflects the current route
+        // even if this login handler was created on an earlier render.
+        const dest = navigateTo ?? (window.location.pathname + window.location.search);
+        navigate(dest);
       } catch (err) {
         console.error("Login error:", err);
         toast.error("Google login failed. Please try again.");

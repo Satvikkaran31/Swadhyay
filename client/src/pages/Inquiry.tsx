@@ -106,6 +106,13 @@ export default function Inquiry() {
 
           {/* Left: info cards */}
           <div className="inq-left rv">
+            <a className="inq-info-card inq-info-link" href="mailto:nehasharma@swadhyay.co">
+              <span className="inq-info-icon">✉</span>
+              <div>
+                <div className="inq-info-title">Email us</div>
+                <div className="inq-info-text">nehasharma@swadhyay.co</div>
+              </div>
+            </a>
             <div className="inq-info-card">
               <span className="inq-info-icon">◎</span>
               <div>

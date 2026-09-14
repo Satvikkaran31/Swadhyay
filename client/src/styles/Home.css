@@ -207,74 +207,47 @@
 /* ── TRUST STRIP ──────────────────────────────────────────────────── */
 .home-trust {
   background: #0C241C;
-  padding-top: 60px;
-  padding-bottom: 60px;
+  padding-top: 30px;
+  padding-bottom: 30px;
 }
 .home-trust-inner {
   max-width: 1120px;
   margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1fr auto;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 56px;
+  gap: 16px;
+  text-align: center;
 }
 .home-trust-list {
   list-style: none;
-  margin: 20px 0 0;
+  margin: 0;
   padding: 0;
   display: flex;
-  flex-direction: column;
-  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px 30px;
 }
 .home-trust-list li {
   font-family: 'Poppins', sans-serif;
   font-weight: 500;
-  font-size: 23px;
+  font-size: 19px;
   line-height: 1.3;
   color: #DCE6DE;
   display: flex;
-  align-items: baseline;
-  gap: 14px;
+  align-items: center;
+  gap: 12px;
 }
 .home-trust-list li::before {
   content: "";
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   background: var(--teal, #5FC8B8);
   flex-shrink: 0;
-  transform: translateY(-2px);
 }
-/* featured award photo */
-.home-trust-award {
-  margin: 0;
-}
-.home-trust-award-img {
-  display: block;
-  width: 480px;
-  max-width: 100%;
-  aspect-ratio: 3 / 2;
-  object-fit: cover;
-  object-position: center;
-  border-radius: 18px;
-  border: 2px solid rgba(231,193,91,.55);
-  box-shadow: 0 24px 60px -28px rgba(0,0,0,.8);
-}
-.home-trust-award-cap {
-  margin-top: 14px;
-  text-align: center;
-  font-family: 'Poppins', sans-serif;
-  font-size: 13.5px;
-  letter-spacing: .01em;
-  color: #93AC9E;
-}
-@media (max-width: 860px) {
-  .home-trust { padding-top: 48px; padding-bottom: 48px; }
-  .home-trust-inner { grid-template-columns: 1fr; gap: 32px; justify-items: center; text-align: center; }
-  .home-trust-copy { display: flex; flex-direction: column; align-items: center; }
-  .home-trust-list li { font-size: 19px; }
-  .home-trust-list li::before { display: none; }
-  .home-trust-award-img { width: min(88vw, 460px); }
+@media (max-width: 720px) {
+  .home-trust-list li { font-size: 17px; }
 }
 
 /* ── PHILOSOPHY QUOTE BAND ────────────────────────────────────────── */
@@ -630,12 +603,30 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center 30%;
 }
 .home-mission-visual::after {
   content: "";
   position: absolute;
   inset: 0;
   background: radial-gradient(60% 60% at 50% 45%, rgba(14,118,107,.10) 0%, rgba(14,118,107,0) 70%);
+}
+.home-mission-visual-cap {
+  position: absolute;
+  z-index: 2;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
+  font-size: 12.5px;
+  letter-spacing: .01em;
+  color: #F6F2EA;
+  background: rgba(12, 36, 28, .55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  padding: 7px 12px;
+  border-radius: 10px;
 }
 
 /* ── COURSES ──────────────────────────────────────────────────────── */
