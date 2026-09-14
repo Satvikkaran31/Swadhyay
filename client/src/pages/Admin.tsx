@@ -419,7 +419,12 @@ function CourseEditor({ courseId, onSave, onCancel }) {
         }),
       });
       isDirty.current = false;
-      toast.success(isNew ? "Course created" : "Course saved");
+      if (form.is_published) {
+        toast.success(isNew ? "Course created & published" : "Course saved & published");
+      } else {
+        toast("Saved as draft — tick “Published (visible to students)” to show it on the site.",
+          { icon: "📝", duration: 6000 });
+      }
       onSave();
     } catch (err: any) {
       const msg = err?.status === 401
